@@ -1,0 +1,9 @@
+*.egg
+*.egg-info
+*.pyc
+*.pyo
+*$py.class
+*.pt.py
+*.txt.py
+*~
+._*
