@@ -1,7 +1,7 @@
-import os
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
-    name ='Pyrmaid Apex',
+    name ='Pyramid Apex',
     version='0.9.0',
+    packages=find_packages(),
 )
