@@ -1,0 +1,2 @@
+class ApexSessionSecret(Exception):
+    pass
