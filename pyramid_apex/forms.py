@@ -3,6 +3,7 @@ from pyramid.security import remember
 from pyramid.threadlocal import get_current_request
 
 from wtforms import Form
+from wtforms import HiddenField
 from wtforms import PasswordField
 from wtforms import TextField
 from wtforms import validators
@@ -48,3 +49,7 @@ class LoginForm(ExtendedForm):
                                        password=self.data.get('password')):
             errors.append('Login Error -- please try again')
         return errors
+
+class OAuthForm(Form):
+    end_point = HiddenField()
+    csrf_token = HiddenField()
