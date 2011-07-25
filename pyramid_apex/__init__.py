@@ -12,7 +12,6 @@ from sqlalchemy import engine_from_config
 
 from pyramid_apex.exceptions import ApexAuthSecret
 from pyramid_apex.exceptions import ApexSessionSecret
-from pyramid_apex.lib.apex import forbidden_view
 from pyramid_apex.lib.apex import groupfinder
 from pyramid_apex.lib.apex import RootFactory
 from pyramid_apex.models import initialize_sql
@@ -21,6 +20,7 @@ from pyramid_apex.views import change_password
 from pyramid_apex.views import login
 from pyramid_apex.views import logout
 from pyramid_apex.views import forgot_password
+from pyramid_apex.views import forbidden
 from pyramid_apex.views import register
 
 def includeme(config):
@@ -62,7 +62,7 @@ def includeme(config):
     config.add_subscriber('pyramid_apex.lib.subscribers.add_renderer_globals', \
                           'pyramid.events.BeforeRender')
 
-    config.add_view(forbidden_view, context=Forbidden)
+    config.add_view(forbidden, context=Forbidden)
 
     config.add_route('pyramid_apex_login', '/auth/login')
     config.add_view(login, route_name='pyramid_apex_login', \
