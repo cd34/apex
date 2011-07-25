@@ -6,7 +6,7 @@
 
 <form action="${action}" method="POST" accept-charset="utf-8">
 	<table border="0" cellspacing="0" cellpadding="2">
-		%for loop,field in enumerate(form):
+		%for loop, field in enumerate(form):
 			<tr class="${['odd', 'even'][loop % 2]}">
 				<td class="label_col">${field.label} 
 				%if field.flags.required:

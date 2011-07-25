@@ -8,14 +8,18 @@ from pyramid.security import remember
 from pyramid.url import current_route_url
 from pyramid.url import route_url
 
+from velruse.app import parse_config_file
+
 from pyramid_apex.lib import apex_settings
 from pyramid_apex.lib.apex import apexid_from_token
-from pyramid_apex.models import DBSession, AuthUser
+from pyramid_apex.lib.apex import provider_forms
+from pyramid_apex.models import DBSession
+from pyramid_apex.models import AuthUser
 from pyramid_apex.forms import RegisterForm
 from pyramid_apex.forms import LoginForm
 from pyramid_apex.forms import ChangePasswordForm
 
-def login(request):
+def login(request):    
     if authenticated_userid(request):
         return HTTPFound(location=route_url(apex_settings('came_from_route'), request))
 
@@ -23,13 +27,23 @@ def login(request):
     came_from = request.params.get('came_from', route_url(apex_settings('came_from_route'), request))
     form = LoginForm(request.POST)
 
+    velruse_forms = []
+    for provider in parse_config_file(apex_settings('velruse_config'))[0].keys():
+        if provider_forms.has_key(provider):
+            velruse_forms.append(provider_forms[provider](
+                end_point='%s?csrf_token=%s' % \
+                 (request.route_url('pyramid_apex_callback'), \
+                  request.session.get_csrf_token()), \
+                 csrf_token = request.session.get_csrf_token()
+            ))            
+
     if request.method == 'POST' and form.validate():
         user = AuthUser.get_by_username(form.data.get('username'))
         if user:
             headers = remember(request, user.id)
             return HTTPFound(location=came_from, headers=headers)
 
-    return {'title': title, 'form': form}
+    return {'title': title, 'form': form, 'velruse_forms': velruse_forms}
 
 def logout(request):
     headers = forget(request)
