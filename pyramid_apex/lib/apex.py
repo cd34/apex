@@ -15,6 +15,13 @@ from pyramid.security import Authenticated
 from pyramid_apex.models import DBSession
 from pyramid_apex.models import AuthUser
 
+from pyramid_apex.forms import OpenIdLogin
+from pyramid_apex.forms import GoogleLogin
+from pyramid_apex.forms import FacebookLogin
+from pyramid_apex.forms import YahooLogin
+from pyramid_apex.forms import WindowsLiveLogin
+from pyramid_apex.forms import TwitterLogin
+
 def apexid_from_url(provider, identifier):
     id = None
     if provider == 'Google':
@@ -56,3 +63,12 @@ class RootFactory(object):
     def __init__(self, request):
         if request.matchdict:
             self.__dict__.update(request.matchdict)
+
+provider_forms = {
+    'openid': OpenIdLogin,
+    'google': GoogleLogin,
+    'twitter': TwitterLogin,
+    'yahoo': YahooLogin,
+    'live': WindowsLiveLogin,
+    'facebook': FacebookLogin, 
+}

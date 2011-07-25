@@ -32,7 +32,8 @@ class ChangePasswordForm(ExtendedForm):
     password = PasswordField('New Password', [validators.Required(), \
                              validators.EqualTo('password2', \
                              message='Passwords must match')])
-    password2 = PasswordField('Repeat New Password', [validators.Required()])    
+    password2 = PasswordField('Repeat New Password', [validators.Required()])
+    
     def validate_old_password(form, field):
         request = get_current_request()
         if not AuthUser.check_password(id=authenticated_userid(request), \
@@ -50,6 +51,27 @@ class LoginForm(ExtendedForm):
             errors.append('Login Error -- please try again')
         return errors
 
-class OAuthForm(Form):
-    end_point = HiddenField()
-    csrf_token = HiddenField()
+
+class OAuthForm(ExtendedForm):
+    end_point = HiddenField('')
+    csrf_token = HiddenField('')
+
+class OpenIdLogin(OAuthForm):
+    provider_name = 'openid'
+
+    openid_identifier = TextField('OpenID Identifier')
+
+class GoogleLogin(OAuthForm):
+    provider_name = 'google'
+
+class FacebookLogin(OAuthForm):
+    provider_name = 'facebook'
+    
+class YahooLogin(OAuthForm):
+    provider_name = 'yahoo'
+    
+class TwitterLogin(OAuthForm):
+    provider_name = 'twitter'
+    
+class WindowsLiveLogin(OAuthForm):
+    provider_name = 'live'
