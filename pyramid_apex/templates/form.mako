@@ -24,8 +24,8 @@ td {
 %endif
 
 <table border="0" cellspacing="0" cellpadding="2">
-	%for field in form:
-		<tr class="{{ loop.cycle('odd', 'even') }}">
+	%for loop,field in enumerate(form):
+		<tr class="${['odd', 'even'][loop % 2]}">
 			<td class="label_col">${field.label} 
 			%if field.flags.required:
 				<span class="required_star">*</span>

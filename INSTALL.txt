@@ -1,0 +1,30 @@
+__init__.py
+
+config.include('pyramid_apex')
+
+development.ini
+
+apex.session_secret = asdfasdf
+apex.auth_secret = abcdefgh
+
+[app:velruse]
+use = egg:velruse
+config_file = %(here)s/CONFIG.yaml
+beaker.session.data_dir = %(here)s/data/sdata
+beaker.session.lock_dir = %(here)s/data/slock
+beaker.session.key = velruse
+beaker.session.secret = somesecret
+beaker.session.type = cookie
+beaker.session.validate_key = STRONG_KEY_HERE
+beaker.session.cookie_domain = .domain.com
+
+[composite:main]
+use = egg:Paste#urlmap
+/ = ppyrapex
+/velruse = velruse
+
+[filter:exc]
+use=egg:WebError#evalerror
+
+[pipeline:ppyrapex]
+pipeline = exc tm pyrapex

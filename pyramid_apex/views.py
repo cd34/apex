@@ -1,21 +1,26 @@
 from pyramid.httpexceptions import HTTPFound
-from pyramid.security import Allow, Everyone, Authenticated, forget, remember, authenticated_userid
+from pyramid.security import Allow
+from pyramid.security import Authenticated
+from pyramid.security import authenticated_userid
+from pyramid.security import Everyone
+from pyramid.security import forget
+from pyramid.security import remember
 from pyramid.url import route_url
 
 from pyramid_apex.lib import apex_settings
+from pyramid_apex.lib.apex import apexid_from_token
 from pyramid_apex.models import DBSession, AuthUser
-from pyramid_apex.forms import RegisterForm, LoginForm, ChangePasswordForm
-
-#import bcrypt
+from pyramid_apex.forms import RegisterForm
+from pyramid_apex.forms import LoginForm
+from pyramid_apex.forms import ChangePasswordForm
 
 def login(request):
-    #print bcrypt.hashpw('testing', bcrypt.gensalt())
     
     if authenticated_userid(request):
-        return HTTPFound(location=route_url('index', request))
+        return HTTPFound(location=route_url('home', request))
 
     title = 'Login'
-    came_from = request.params.get('came_from', route_url('index', request))
+    came_from = request.params.get('came_from', route_url('home', request))
     form = LoginForm(request.POST)
 
     if request.method == 'POST' and form.validate():
@@ -28,14 +33,14 @@ def login(request):
 
 def logout(request):
     headers = forget(request)
-    return HTTPFound(location=route_url('index', request), headers=headers)
+    return HTTPFound(location=route_url('home', request), headers=headers)
 
 def change_password(request):
     if not authenticated_userid(request):
         return HTTPFound(location=route_url('pyramid_auth_login', request))
 
     title = 'Change your Password'
-    came_from = request.params.get('came_from', route_url('index', request))
+    came_from = request.params.get('came_from', route_url('home', request))
     form = ChangePasswordForm(request.POST)
 
     if request.method == 'POST' and form.validate():
@@ -52,7 +57,7 @@ def forgot_password(request):
     
 def register(request):
     title = 'Register'
-    came_from = request.params.get('came_from', route_url('index', request))
+    came_from = request.params.get('came_from', route_url('home', request))
     form = RegisterForm(request.POST)
     if request.method == 'POST' and form.validate():
         user = AuthUser(
@@ -67,3 +72,15 @@ def register(request):
         return HTTPFound(location=came_from, headers=headers)
         
     return {'title': title, 'form': form}
+
+def apex_callback(request):
+    auth = apexid_from_token(request.POST['token'])
+    user = AuthUser.get_by_login(auth['apexid'])
+    if not user:
+        user = AuthUser(
+            login=auth['apexid'],
+        )
+        DBSession.add(user)
+        DBSession.flush()
+    headers = remember(request, user.id)
+    return HTTPFound(location='/', headers=headers)
