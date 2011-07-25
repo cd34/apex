@@ -11,8 +11,6 @@ from pyramid.httpexceptions import HTTPFound
 from pyramid.security import Allow
 from pyramid.security import Everyone
 from pyramid.security import Authenticated
-from pyramid.url import current_route_url
-from pyramid.url import route_url
 
 from pyramid_apex.models import DBSession
 from pyramid_apex.models import AuthUser
@@ -27,7 +25,8 @@ def apexid_from_url(provider, identifier):
              urlparse.urlparse(identifier).path[1:]
     if provider == 'Twitter':
         id = '$T$%s' % \
-             urlparse.parse_qs(urlparse.urlparse(identifier).query)['id'][0]
+             urlparse.parse_qs(urlparse.urlparse(identifier).query)['id'][0]. \
+                               split('\'')[1]
     if provider == 'Yahoo':
         urlparts = urlparse.urlparse(identifier)        
         id = '$Y$%s#%s' % \

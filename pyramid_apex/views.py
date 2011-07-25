@@ -5,6 +5,7 @@ from pyramid.security import authenticated_userid
 from pyramid.security import Everyone
 from pyramid.security import forget
 from pyramid.security import remember
+from pyramid.url import current_route_url
 from pyramid.url import route_url
 
 from pyramid_apex.lib import apex_settings
