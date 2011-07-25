@@ -6,6 +6,7 @@ development.ini
 
 apex.session_secret = asdfasdf
 apex.auth_secret = abcdefgh
+apex.came_from_route = index
 
 [app:velruse]
 use = egg:velruse

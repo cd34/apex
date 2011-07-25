@@ -57,8 +57,3 @@ class RootFactory(object):
     def __init__(self, request):
         if request.matchdict:
             self.__dict__.update(request.matchdict)
-
-def forbidden_view(request):
-    return HTTPFound(location = '%s?came_from=%s' %
-                                (route_url('pyramid_apex_login', request),
-                                 current_route_url(request)) )
