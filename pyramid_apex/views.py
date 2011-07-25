@@ -15,7 +15,7 @@ from pyramid_apex.forms import RegisterForm
 from pyramid_apex.forms import LoginForm
 from pyramid_apex.forms import ChangePasswordForm
 
-def login(request):    
+def login(request):
     if authenticated_userid(request):
         return HTTPFound(location=route_url(apex_settings('came_from_route'), request))
 

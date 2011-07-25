@@ -32,7 +32,8 @@ class ChangePasswordForm(ExtendedForm):
     password = PasswordField('New Password', [validators.Required(), \
                              validators.EqualTo('password2', \
                              message='Passwords must match')])
-    password2 = PasswordField('Repeat New Password', [validators.Required()])    
+    password2 = PasswordField('Repeat New Password', [validators.Required()])
+    
     def validate_old_password(form, field):
         request = get_current_request()
         if not AuthUser.check_password(id=authenticated_userid(request), \

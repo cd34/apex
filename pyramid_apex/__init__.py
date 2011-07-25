@@ -62,6 +62,8 @@ def includeme(config):
     config.add_subscriber('pyramid_apex.lib.subscribers.add_renderer_globals', \
                           'pyramid.events.BeforeRender')
 
+    config.add_static_view('pyramid_apex/static', 'pyramid_apex:static')
+
     config.add_view(forbidden, context=Forbidden)
 
     config.add_route('pyramid_apex_login', '/auth/login')
