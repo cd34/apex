@@ -12,7 +12,7 @@ from pyramid_apex.lib.form import ExtendedForm
 
 from wtforms.validators import ValidationError
 
-class RegisterForm(Form):
+class RegisterForm(ExtendedForm):
     username = TextField('Username', [validators.Required(), \
                          validators.Length(min=4, max=25)])
     password = PasswordField('Password', [validators.Required(), \
@@ -26,7 +26,7 @@ class RegisterForm(Form):
         if AuthUser.get_by_username(field.data) is not None:
             raise ValidationError('Sorry that username already exists.')
 
-class ChangePasswordForm(Form):
+class ChangePasswordForm(ExtendedForm):
     old_password = PasswordField('Old Password', [validators.Required()])
     password = PasswordField('New Password', [validators.Required(), \
                              validators.EqualTo('password2', \
