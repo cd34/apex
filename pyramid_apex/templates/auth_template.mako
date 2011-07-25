@@ -5,4 +5,4 @@
 	<input type="submit" name="submit" value="Submit" />
 </form>
 
-<a href="${request.route_path('pyramid_auth_forgot')}">Forgot my Password</a>
+<a href="${request.route_path('pyramid_apex_forgot')}">Forgot my Password</a>

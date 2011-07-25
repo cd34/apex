@@ -46,10 +46,10 @@ class AuthUser(Base):
 
     id = Column(mysql.BIGINT(20, unsigned=True), primary_key=True, \
                 autoincrement=True)
-    login = Column(Unicode(80), default=u'')
-    username = Column(Unicode(80), default=u'')
-    _password = Column('password', Unicode(80), default=u'')
-    email = Column(Unicode(80), default=u'')
+    login = Column(Unicode(80), default=u'', index=True)
+    username = Column(Unicode(80), default=u'', index=True)
+    _password = Column('password', Unicode(80), default=u'', index=True)
+    email = Column(Unicode(80), default=u'', index=True)
 
     groups = relation('AuthGroup', secondary=user_group_table, \
                       backref='auth_users')

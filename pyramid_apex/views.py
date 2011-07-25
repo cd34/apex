@@ -32,14 +32,16 @@ def login(request):
 
 def logout(request):
     headers = forget(request)
-    return HTTPFound(location=route_url(apex_settings('came_from_route'), request), headers=headers)
+    return HTTPFound(location=route_url(apex_settings('came_from_route'), \
+                     request), headers=headers)
 
 def change_password(request):
     if not authenticated_userid(request):
-        return HTTPFound(location=route_url('pyramid_auth_login', request))
+        return HTTPFound(location=route_url('pyramid_apex_login', request))
 
     title = 'Change your Password'
-    came_from = request.params.get('came_from', route_url(apex_settings('came_from_route'), request))
+    came_from = request.params.get('came_from', \
+                    route_url(apex_settings('came_from_route'), request))
     form = ChangePasswordForm(request.POST)
 
     if request.method == 'POST' and form.validate():
@@ -56,7 +58,8 @@ def forgot_password(request):
     
 def register(request):
     title = 'Register'
-    came_from = request.params.get('came_from', route_url(apex_settings('came_from_route'), request))
+    came_from = request.params.get('came_from', \
+                    route_url(apex_settings('came_from_route'), request))
     form = RegisterForm(request.POST)
     if request.method == 'POST' and form.validate():
         user = AuthUser(
