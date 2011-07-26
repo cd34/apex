@@ -1,0 +1,26 @@
+Store:
+    Type: SQL
+    DB: mysql://username:password@localhost/apex?use_unicode=1&charset=utf8
+Facebook:
+    API Key: 66666666666666
+    Application Secret: 6666666666666666666666666
+    Application ID: 666666666666666
+Google:
+    OAuth Consumer Key: domain.com
+    OAuth Consumer Secret: xxxxxxxxxxxxxx_XX-6666
+Yahoo:
+    Consumer Key: xxxxxxxxxxxxxxxxxx
+    Consumer Secret: xxxxxxxxxxxxxxxxxx
+Twitter:
+    Consumer Key: xxxxxxxxxxxxxxxxxxxxx
+    Consumer Secret: xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+OpenID:
+    Realm: http://domain.com/
+    Endpoint Regex: http://domain.com
+Live:
+    Application ID: 0000000000000000000
+    Secret Key: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    Policy URL: http://domain.com/policy.html
+    Offers: Contacts.View
+OpenID Store:
+    Type: openid.store.memstore:MemoryStore

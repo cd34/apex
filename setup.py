@@ -1,7 +1,16 @@
 from setuptools import setup, find_packages
 
+version = '0.9.0'
+
 setup(
-    name ='Pyramid Apex',
-    version='0.9.0',
-    packages=find_packages(),
+    version = version
+    name = 'Pyramid Apex',
+    long_description = 'Pyramid starter project to add Velruse, Flash Messages, CSRF, ReCaptcha and Sessions',
+    version= version,
+    install_requires=[
+      "velruse",
+      "pyramid",
+      "wtforms",
+    ],
+    packages= find_packages(),
 )

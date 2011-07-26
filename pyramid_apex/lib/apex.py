@@ -14,6 +14,7 @@ from pyramid.security import Authenticated
 
 from pyramid_apex.models import DBSession
 from pyramid_apex.models import AuthUser
+from pyramid_apex.models import AuthGroup
 
 from pyramid_apex.forms import OpenIdLogin
 from pyramid_apex.forms import GoogleLogin
@@ -50,12 +51,16 @@ def apexid_from_token(token):
     return auth
 
 def groupfinder(userid, request):
-    dbsession = DBSession()
-    auth = dbsession.query(AuthUser).filter(AuthUser.id==userid).first()
+    auth = AuthUser.get_by_id(userid)
     if auth:
         return [('group:%s' % group.name) for group in auth.groups]
 
 class RootFactory(object):
+    """ late binding issue, RootFactory instantiated prior to 
+    initialize_engine
+    dbsession = DBSession()
+    groups = dbsession.query(AuthGroup.name).all()
+    """
     __acl__ = [ (Allow, Everyone, 'view'),
                 (Allow, Authenticated, 'authenticated'),
                 (Allow, 'group:user', 'user'),

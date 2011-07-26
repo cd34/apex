@@ -1,9 +1,12 @@
 import bcrypt
+import transaction
 
 from sqlalchemy import Column
 from sqlalchemy import ForeignKey
+from sqlalchemy import func
 from sqlalchemy import Table
 from sqlalchemy import Unicode
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import backref
 from sqlalchemy.orm import relation
@@ -30,7 +33,7 @@ class AuthGroup(Base):
     id = Column(mysql.BIGINT(20, unsigned=True), primary_key=True, \
                 autoincrement=True)
     name = Column(Unicode(80), unique=True, nullable=False)
-    created = Column(mysql.DATE())
+    created = Column(mysql.DATE(), default=func.curdate())
 
     users = relation('AuthUser', secondary=user_group_table, \
                      backref='auth_groups')
@@ -81,10 +84,6 @@ class AuthUser(Base):
 
     @classmethod
     def check_password(cls, id=None, username=None, password=None):
-        if id and username:
-            return False
-        if not password:
-            return False
         if id:
             user = cls.get_by_id(id)
         if username:
@@ -97,7 +96,20 @@ class AuthUser(Base):
         else:
             return False
 
+def populate():
+    session = DBSession()
+    group = AuthGroup(name=u'users')
+    session.add(group)
+    group = AuthGroup(name=u'admin')
+    session.add(group)
+    session.flush()
+    transaction.commit()
+
 def initialize_sql(engine):
     DBSession.configure(bind=engine)
     Base.metadata.bind = engine
     Base.metadata.create_all(engine)
+    try:
+        populate()
+    except IntegrityError:
+        transaction.abort()
