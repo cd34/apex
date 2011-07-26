@@ -3,7 +3,6 @@ from pyramid.threadlocal import get_current_request
 from pyramid.security import authenticated_userid
 
 from pyramid_apex.lib.flash import flash
-
 from pyramid_apex.models import AuthUser
 
 def user(request):

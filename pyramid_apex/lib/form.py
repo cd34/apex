@@ -1,6 +1,6 @@
-from pyramid.renderers import render
-
 from wtforms import Form
+
+from pyramid.renderers import render
 
 #http://groups.google.com/group/wtforms/browse_thread/thread/8382c40040b69702
 class ExtendedForm(Form): 
