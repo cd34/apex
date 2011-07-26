@@ -11,6 +11,7 @@ setup(
       "velruse",
       "pyramid",
       "wtforms",
+      "wtforms-recaptcha",
     ],
     packages= find_packages(),
 )
