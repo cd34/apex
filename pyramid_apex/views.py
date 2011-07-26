@@ -13,6 +13,7 @@ from velruse.app import parse_config_file
 from pyramid_apex.lib import apex_settings
 from pyramid_apex.lib.apex import apexid_from_token
 from pyramid_apex.lib.apex import provider_forms
+from pyramid_apex.lib.flash import flash
 from pyramid_apex.models import DBSession
 from pyramid_apex.models import AuthUser
 from pyramid_apex.forms import RegisterForm
@@ -103,9 +104,11 @@ def apex_callback(request):
     headers = remember(request, user.id)
     redir = request.GET.get('came_from', \
                 route_url(apex_settings('came_from_route'), request))
+    flash('Successfully Logged in, welcome!', 'success')
     return HTTPFound(location=redir, headers=headers)
 
 def forbidden(request):
+    flash('Not logged in, please log in', 'error')
     return HTTPFound(location='%s?came_from=%s' %
                     (route_url('pyramid_apex_login', request),
                     current_route_url(request)))

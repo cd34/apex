@@ -1,4 +1,11 @@
 <link rel="stylesheet" href="${request.static_url('pyramid_apex:static/css/apex_forms.css')}" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="${request.static_url('pyramid_apex:static/css/apex_flash.css')}" type="text/css" media="screen" charset="utf-8" />
+
+% for flashmsg in flash.get_all():
+    <div class="flash">
+        <p class="${flashmsg['queue']}">${flashmsg['message']}</p>
+    </div>
+% endfor
 
 <h1>${title}</h1>
 
