@@ -2,6 +2,7 @@ from velruse.app import parse_config_file
 from wtfrecaptcha.fields import RecaptchaField
 
 from pyramid.httpexceptions import HTTPFound
+from pyramid.i18n import TranslationString as _
 from pyramid.security import Allow
 from pyramid.security import Authenticated
 from pyramid.security import authenticated_userid
@@ -25,7 +26,7 @@ def login(request):
     if authenticated_userid(request):
         return HTTPFound(location=route_url(apex_settings('came_from_route'), request))
 
-    title = 'Login'
+    title = _('Login')
     came_from = request.params.get('came_from', route_url(apex_settings('came_from_route'), request))
     if apex_settings('recaptcha_public_key') and apex_settings('recaptcha_private_key'):
         LoginForm.captcha = RecaptchaField(
@@ -62,7 +63,7 @@ def change_password(request):
     if not authenticated_userid(request):
         return HTTPFound(location=route_url('pyramid_apex_login', request))
 
-    title = 'Change your Password'
+    title = _('Change your Password')
     came_from = request.params.get('came_from', \
                     route_url(apex_settings('came_from_route'), request))
     form = ChangePasswordForm(request.POST)
@@ -76,11 +77,11 @@ def change_password(request):
     return {'title': title, 'form': form}
             
 def forgot_password(request):
-    title = 'Forgot My Password'
+    title = _('Forgot My Password')
     return {}
     
 def register(request):
-    title = 'Register'
+    title = _('Register')
     came_from = request.params.get('came_from', \
                     route_url(apex_settings('came_from_route'), request))
     form = RegisterForm(request.POST)
@@ -110,11 +111,11 @@ def apex_callback(request):
     headers = remember(request, user.id)
     redir = request.GET.get('came_from', \
                 route_url(apex_settings('came_from_route'), request))
-    flash('Successfully Logged in, welcome!', 'success')
+    flash(_('Successfully Logged in, welcome!'), 'success')
     return HTTPFound(location=redir, headers=headers)
 
 def forbidden(request):
-    flash('Not logged in, please log in', 'error')
+    flash(_('Not logged in, please log in'), 'error')
     return HTTPFound(location='%s?came_from=%s' %
                     (route_url('pyramid_apex_login', request),
                     current_route_url(request)))
