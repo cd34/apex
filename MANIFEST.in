@@ -1,2 +1,2 @@
-graft pyramid_apex/templates/
+graft pyramid_apex/static/
 graft pyramid_apex/templates/
