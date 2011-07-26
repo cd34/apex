@@ -31,9 +31,10 @@ def login(request):
     for provider in parse_config_file(apex_settings('velruse_config'))[0].keys():
         if provider_forms.has_key(provider):
             velruse_forms.append(provider_forms[provider](
-                end_point='%s?csrf_token=%s' % \
+                end_point='%s?csrf_token=%s&came_from=%s' % \
                  (request.route_url('pyramid_apex_callback'), \
-                  request.session.get_csrf_token()), \
+                  request.session.get_csrf_token(),
+                  request.GET['came_from']), \
                  csrf_token = request.session.get_csrf_token()
             ))            
 
@@ -100,7 +101,9 @@ def apex_callback(request):
         DBSession.add(user)
         DBSession.flush()
     headers = remember(request, user.id)
-    return HTTPFound(location='/', headers=headers)
+    redir = request.GET.get('came_from', \
+                route_url(apex_settings('came_from_route'), request))
+    return HTTPFound(location=redir, headers=headers)
 
 def forbidden(request):
     return HTTPFound(location='%s?came_from=%s' %
