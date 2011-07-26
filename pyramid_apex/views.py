@@ -20,14 +20,21 @@ from pyramid_apex.forms import RegisterForm
 from pyramid_apex.forms import LoginForm
 from pyramid_apex.forms import ChangePasswordForm
 
+from wtfrecaptcha.fields import RecaptchaField
+
 def login(request):    
     if authenticated_userid(request):
         return HTTPFound(location=route_url(apex_settings('came_from_route'), request))
 
     title = 'Login'
     came_from = request.params.get('came_from', route_url(apex_settings('came_from_route'), request))
-    form = LoginForm(request.POST)
 
+    LoginForm.captcha = RecaptchaField(
+        public_key=apex_settings('recaptcha_public_key'),
+        private_key=apex_settings('recaptcha_private_key')
+    )
+    form = LoginForm(request.POST, captcha={'ip_address': request.environ['REMOTE_ADDR']})
+    
     velruse_forms = []
     for provider in parse_config_file(apex_settings('velruse_config'))[0].keys():
         if provider_forms.has_key(provider):
