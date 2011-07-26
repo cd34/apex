@@ -14,4 +14,5 @@ setup(
       "wtforms-recaptcha",
     ],
     packages= find_packages(),
+    include_package_data=True,
 )
