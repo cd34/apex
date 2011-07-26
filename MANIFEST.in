@@ -1,2 +1,3 @@
 include *.txt *.ini *.cfg *.rst
-recursive-include *.ico *.png *.css *.gif *.jpg *.pt *.txt *.mak *.mako *.js *.html *.xml
+include templates/
+recursive-include pyramid-apex *.ico *.png *.css *.gif *.jpg *.pt *.txt *.mak *.mako *.js *.html *.xml
