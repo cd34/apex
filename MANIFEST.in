@@ -1,2 +1,2 @@
 include *.txt *.ini *.cfg *.rst
-graft templates/
+graft pyramid_apex/templates/
