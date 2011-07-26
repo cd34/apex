@@ -50,6 +50,7 @@ def includeme(config):
         authz_policy = ACLAuthorizationPolicy()
         config._set_authorization_policy(authz_policy)
 
+    cache = RootFactory.__acl__ 
     config._set_root_factory(RootFactory)
     """ end of evil stuff
     """

@@ -56,18 +56,19 @@ def groupfinder(userid, request):
         return [('group:%s' % group.name) for group in auth.groups]
 
 class RootFactory(object):
-    """ late binding issue, RootFactory instantiated prior to 
-    initialize_engine
-    dbsession = DBSession()
-    groups = dbsession.query(AuthGroup.name).all()
-    """
-    __acl__ = [ (Allow, Everyone, 'view'),
-                (Allow, Authenticated, 'authenticated'),
-                (Allow, 'group:user', 'user'),
-                (Allow, 'group:admin', 'admin') ]
     def __init__(self, request):
         if request.matchdict:
             self.__dict__.update(request.matchdict)
+
+    @property
+    def __acl__(self):
+        dbsession = DBSession()
+        groups = dbsession.query(AuthGroup.name).all()
+        defaultlist = [ (Allow, Everyone, 'view'),
+                (Allow, Authenticated, 'authenticated'),]
+        for g in groups:
+            defaultlist.append( (Allow, 'group:%s' % g, g[0]) )
+        return defaultlist
 
 provider_forms = {
     'openid': OpenIdLogin,
