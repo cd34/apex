@@ -28,11 +28,11 @@ def login(request):
 
     title = 'Login'
     came_from = request.params.get('came_from', route_url(apex_settings('came_from_route'), request))
-
-    LoginForm.captcha = RecaptchaField(
-        public_key=apex_settings('recaptcha_public_key'),
-        private_key=apex_settings('recaptcha_private_key')
-    )
+    if apex_settings('recaptcha_public_key') and apex_settings('recaptcha_private_key'):
+        LoginForm.captcha = RecaptchaField(
+            public_key=apex_settings('recaptcha_public_key'),
+            private_key=apex_settings('recaptcha_private_key'),
+        )
     form = LoginForm(request.POST, captcha={'ip_address': request.environ['REMOTE_ADDR']})
     
     velruse_forms = []
