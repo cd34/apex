@@ -34,7 +34,7 @@ def login(request):
                 end_point='%s?csrf_token=%s&came_from=%s' % \
                  (request.route_url('pyramid_apex_callback'), \
                   request.session.get_csrf_token(),
-                  request.GET['came_from']), \
+                  came_from), \
                  csrf_token = request.session.get_csrf_token()
             ))            
 

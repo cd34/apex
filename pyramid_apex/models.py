@@ -83,15 +83,15 @@ class AuthUser(Base):
         return DBSession.query(cls).filter(cls.email==email).first()
 
     @classmethod
-    def check_password(cls, id=None, username=None, password=None):
-        if id:
-            user = cls.get_by_id(id)
-        if username:
-            user = cls.get_by_username(username)
+    def check_password(cls, **kwargs):
+        if kwargs.has_key('id'):
+            user = cls.get_by_id(kwargs['id'])
+        if kwargs.has_key('username'):
+            user = cls.get_by_username(kwargs['username'])
 
         if not user:
             return False
-        if bcrypt.hashpw(password, user.password) == user.password:
+        if bcrypt.hashpw(kwargs['password'], user.password) == user.password:
             return True
         else:
             return False
