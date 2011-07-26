@@ -1,3 +1,6 @@
+from sqlalchemy import engine_from_config
+from zope.component import getUtility
+
 from pyramid.interfaces import IAuthenticationPolicy
 from pyramid.interfaces import IAuthorizationPolicy
 from pyramid.interfaces import ISessionFactory
@@ -5,10 +8,6 @@ from pyramid.session import UnencryptedCookieSessionFactoryConfig
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.exceptions import Forbidden
-
-from zope.component import getUtility
-
-from sqlalchemy import engine_from_config
 
 from pyramid_apex.exceptions import ApexAuthSecret
 from pyramid_apex.exceptions import ApexSessionSecret

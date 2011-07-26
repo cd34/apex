@@ -1,3 +1,6 @@
+from velruse.app import parse_config_file
+from wtfrecaptcha.fields import RecaptchaField
+
 from pyramid.httpexceptions import HTTPFound
 from pyramid.security import Allow
 from pyramid.security import Authenticated
@@ -8,8 +11,6 @@ from pyramid.security import remember
 from pyramid.url import current_route_url
 from pyramid.url import route_url
 
-from velruse.app import parse_config_file
-
 from pyramid_apex.lib import apex_settings
 from pyramid_apex.lib.apex import apexid_from_token
 from pyramid_apex.lib.apex import provider_forms
@@ -19,8 +20,6 @@ from pyramid_apex.models import AuthUser
 from pyramid_apex.forms import RegisterForm
 from pyramid_apex.forms import LoginForm
 from pyramid_apex.forms import ChangePasswordForm
-
-from wtfrecaptcha.fields import RecaptchaField
 
 def login(request):    
     if authenticated_userid(request):

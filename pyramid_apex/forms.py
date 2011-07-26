@@ -1,12 +1,12 @@
-from pyramid.security import authenticated_userid
-from pyramid.security import remember
-from pyramid.threadlocal import get_current_request
-
 from wtforms import Form
 from wtforms import HiddenField
 from wtforms import PasswordField
 from wtforms import TextField
 from wtforms import validators
+
+from pyramid.security import authenticated_userid
+from pyramid.security import remember
+from pyramid.threadlocal import get_current_request
 
 from pyramid_apex.models import AuthUser
 from pyramid_apex.lib.form import ExtendedForm

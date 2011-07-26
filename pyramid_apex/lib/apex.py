@@ -1,7 +1,11 @@
 """
 id, login, password, display_name, email
 """
-import json
+try:
+    import json
+except ImportError:
+    import simplejson as json
+
 import urlparse
 
 import velruse.store.sqlstore
