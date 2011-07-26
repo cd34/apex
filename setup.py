@@ -8,6 +8,7 @@ setup(
     long_description = 'Pyramid starter project to add Velruse, Flash Messages, CSRF, ReCaptcha and Sessions',
     version= version,
     install_requires=[
+      "py-bcrypt",
       "velruse",
       "pyramid",
       "wtforms",
