@@ -9,6 +9,7 @@ from pyramid.security import authenticated_userid
 from pyramid.security import Everyone
 from pyramid.security import forget
 from pyramid.security import remember
+from pyramid.settings import asbool
 from pyramid.url import current_route_url
 from pyramid.url import route_url
 
@@ -28,11 +29,13 @@ def login(request):
 
     title = _('Login')
     came_from = request.params.get('came_from', route_url(apex_settings('came_from_route'), request))
-    if apex_settings('recaptcha_public_key') and apex_settings('recaptcha_private_key'):
-        LoginForm.captcha = RecaptchaField(
-            public_key=apex_settings('recaptcha_public_key'),
-            private_key=apex_settings('recaptcha_private_key'),
-        )
+
+    if asbool(apex_settings('use_recaptcha_on_login')):
+        if apex_settings('recaptcha_public_key') and apex_settings('recaptcha_private_key'):
+            LoginForm.captcha = RecaptchaField(
+                public_key=apex_settings('recaptcha_public_key'),
+                private_key=apex_settings('recaptcha_private_key'),
+            )
     form = LoginForm(request.POST, captcha={'ip_address': request.environ['REMOTE_ADDR']})
     
     velruse_forms = []
@@ -84,7 +87,15 @@ def register(request):
     title = _('Register')
     came_from = request.params.get('came_from', \
                     route_url(apex_settings('came_from_route'), request))
-    form = RegisterForm(request.POST)
+
+    if asbool(apex_settings('use_recaptcha_on_register')):
+        if apex_settings('recaptcha_public_key') and apex_settings('recaptcha_private_key'):
+            RegisterForm.captcha = RecaptchaField(
+                public_key=apex_settings('recaptcha_public_key'),
+                private_key=apex_settings('recaptcha_private_key'),
+            )
+
+    form = RegisterForm(request.POST, captcha={'ip_address': request.environ['REMOTE_ADDR']})
     if request.method == 'POST' and form.validate():
         user = AuthUser(
             username=form.data['username'],

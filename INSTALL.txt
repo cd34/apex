@@ -10,6 +10,9 @@ apex.came_from_route = index
 apex.velruse_config = %(here)s/CONFIG.yaml
 apex.recaptcha_public_key = asdfasdf
 apex.recaptcha_private_key = asdfasdf
+apex.use_recaptcha_on_login = false
+apex.use_recaptcha_on_register = true
+
 # Apex looks at the Auth Providers configured by Velruse to build the login
 # page
 
