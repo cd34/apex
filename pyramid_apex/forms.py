@@ -58,7 +58,8 @@ class OAuthForm(ExtendedForm):
 class OpenIdLogin(OAuthForm):
     provider_name = 'openid'
 
-    openid_identifier = TextField(_('OpenID Identifier'), [Required()])
+    openid_identifier = TextField(_('OpenID Identifier'), \
+                                  [validators.Required()])
 
 class GoogleLogin(OAuthForm):
     provider_name = 'google'
