@@ -111,18 +111,23 @@ def register(request):
     return {'title': title, 'form': form}
 
 def apex_callback(request):
-    auth = apexid_from_token(request.POST['token'])
-    user = AuthUser.get_by_login(auth['apexid'])
-    if not user:
-        user = AuthUser(
-            login=auth['apexid'],
-        )
-        DBSession.add(user)
-        DBSession.flush()
-    headers = remember(request, user.id)
     redir = request.GET.get('came_from', \
                 route_url(apex_settings('came_from_route'), request))
-    flash(_('Successfully Logged in, welcome!'), 'success')
+    headers = []
+    if 'token' in request.POST:
+        auth = apexid_from_token(request.POST['token'])
+        if auth:
+            user = AuthUser.get_by_login(auth['apexid'])
+            if not user:
+                user = AuthUser(
+                    login=auth['apexid'],
+                )
+                DBSession.add(user)
+                DBSession.flush()
+            headers = remember(request, user.id)
+            redir = request.GET.get('came_from', \
+                        route_url(apex_settings('came_from_route'), request))
+            flash(_('Successfully Logged in, welcome!'), 'success')
     return HTTPFound(location=redir, headers=headers)
 
 def forbidden(request):

@@ -49,10 +49,12 @@ def apexid_from_token(token):
     dbsession = DBSession()
     auth = json.loads(dbsession.query(KeyStorage.value). \
                       filter(KeyStorage.key==token).one()[0])
-    id = apexid_from_url(auth['profile']['providerName'], \
-                         auth['profile']['identifier'])
-    auth['apexid'] = id
-    return auth
+    if 'profile' in auth:
+        id = apexid_from_url(auth['profile']['providerName'], \
+                             auth['profile']['identifier'])
+        auth['apexid'] = id
+        return auth
+    return None
 
 def groupfinder(userid, request):
     auth = AuthUser.get_by_id(userid)
