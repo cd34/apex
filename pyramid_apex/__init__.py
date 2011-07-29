@@ -42,7 +42,7 @@ def includeme(config):
         if not settings.has_key('apex.auth_secret'):
             raise ApexAuthSecret()
         authn_policy = AuthTktAuthenticationPolicy( \
-                       settings.get('apex.session_secret'), \
+                       settings.get('apex.auth_secret'), \
                        callback=groupfinder)
         config._set_authentication_policy(authn_policy)
 

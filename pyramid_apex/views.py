@@ -110,7 +110,9 @@ def forgot_password(request):
         if user:
             """ HMAC email generated
             """
-            hmac_key = hmac.new(str(user.id), user.email).hexdigest()
+            hmac_key = hmac.new('%s:%s' % (str(user.id), \
+                                apex_settings('auth_secret')), \
+                                user.email).hexdigest()
             flash(_('Password Reset email sent. %s' % hmac_key))
             return HTTPFound(location=route_url('pyramid_apex_login', \
                                                 request))
@@ -123,7 +125,9 @@ def reset_password(request):
     if request.method == 'POST' and form.validate():
         user_id = request.matchdict.get('user_id')
         user = AuthUser.get_by_id(user_id)
-        hmac_key = hmac.new(str(user.id), user.email).hexdigest()
+        hmac_key = hmac.new('%s:%s' % (str(user.id), \
+                            apex_settings('auth_secret')), \
+                            user.email).hexdigest()
         if hmac_key == request.matchdict.get('hmac'):
             user.password = form.data['password']
             DBSession.merge(user)
