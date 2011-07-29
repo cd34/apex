@@ -110,7 +110,7 @@ def forgot_password(request):
                                 apex_settings('auth_secret')), \
                                 user.email).hexdigest()
             apex_email_forgot(request, user.id, user.email, hmac_key)
-            flash(_('Password Reset email sent. %s' % hmac_key))
+            flash(_('Password Reset email sent.'))
             return HTTPFound(location=route_url('pyramid_apex_login', \
                                                 request))
         flash(_('An error occurred, please contact the support team.'))
