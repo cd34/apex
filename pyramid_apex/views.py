@@ -176,6 +176,8 @@ def apex_callback(request):
                 user = AuthUser(
                     login=auth['apexid'],
                 )
+                if auth['profile'].has_key('verifiedEmail'):
+                    user.email = auth['profile']['verifiedEmail']
                 DBSession.add(user)
                 DBSession.flush()
             headers = remember(request, user.id)
