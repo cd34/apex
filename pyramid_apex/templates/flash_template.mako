@@ -1,5 +1,4 @@
 <%def name="apex_head()">
-<link rel="stylesheet" href="${request.static_url('pyramid_apex:static/css/apex_forms.css')}" type="text/css" media="screen" charset="utf-8" />
 <link rel="stylesheet" href="${request.static_url('pyramid_apex:static/css/apex_flash.css')}" type="text/css" media="screen" charset="utf-8" />
 </%def>
 
