@@ -21,6 +21,7 @@ from pyramid_apex.views import logout
 from pyramid_apex.views import forgot_password
 from pyramid_apex.views import forbidden
 from pyramid_apex.views import register
+from pyramid_apex.views import reset_password
 
 def includeme(config):
     settings = config.registry.settings
@@ -84,6 +85,10 @@ def includeme(config):
     
     config.add_route('pyramid_apex_forgot', '/auth/forgot')
     config.add_view(forgot_password, route_name='pyramid_apex_forgot', \
+                    renderer='pyramid_apex:templates/apex_template.mako')
+    
+    config.add_route('pyramid_apex_reset', '/auth/reset/:user_id/:hmac')
+    config.add_view(reset_password, route_name='pyramid_apex_reset', \
                     renderer='pyramid_apex:templates/apex_template.mako')
     
     config.add_route('pyramid_apex_callback', '/auth/apex_callback')

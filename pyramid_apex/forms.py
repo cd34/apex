@@ -81,6 +81,13 @@ class ForgotForm(ExtendedForm):
                             'Email address'))
         return errors
 
+class ResetPasswordForm(ExtendedForm):
+    hmac = HiddenField()
+    password = PasswordField(_('New Password'), [validators.Required(), \
+                             validators.EqualTo('password2', \
+                             message=_('Passwords must match'))])
+    password2 = PasswordField(_('Repeat New Password'), [validators.Required()])
+    
 class OAuthForm(ExtendedForm):
     end_point = HiddenField('')
     csrf_token = HiddenField('')

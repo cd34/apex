@@ -1,3 +1,4 @@
+import hmac
 from velruse.app import parse_config_file
 from wtfrecaptcha.fields import RecaptchaField
 
@@ -21,6 +22,7 @@ from pyramid_apex.models import AuthUser
 from pyramid_apex.models import DBSession
 from pyramid_apex.forms import ChangePasswordForm
 from pyramid_apex.forms import ForgotForm
+from pyramid_apex.forms import ResetPasswordForm
 from pyramid_apex.forms import LoginForm
 from pyramid_apex.forms import RegisterForm
 
@@ -104,12 +106,34 @@ def forgot_password(request):
                 return HTTPFound(location=route_url('pyramid_apex_login', \
                                           request))
         if form.data['username']:
-            user = AuthUser.get_by_username(form.data['email'])
+            user = AuthUser.get_by_username(form.data['username'])
         if user:
             """ HMAC email generated
             """
-            pass
+            hmac_key = hmac.new(str(user.id), user.email).hexdigest()
+            flash(_('Password Reset email sent. %s' % hmac_key))
+            return HTTPFound(location=route_url('pyramid_apex_login', \
+                                                request))
         flash(_('An error occurred, please contact the support team.'))
+    return {'title': title, 'form': form}
+
+def reset_password(request):
+    title = _('Reset My Password')
+    form = ResetPasswordForm(request.POST)
+    if request.method == 'POST' and form.validate():
+        user_id = request.matchdict.get('user_id')
+        user = AuthUser.get_by_id(user_id)
+        hmac_key = hmac.new(str(user.id), user.email).hexdigest()
+        if hmac_key == request.matchdict.get('hmac'):
+            user.password = form.data['password']
+            DBSession.merge(user)
+            flash(_('Password Changed. Please log in.'))
+            return HTTPFound(location=route_url('pyramid_apex_login', \
+                                                request))
+        else:
+            flash(_('Invalid request, please try again'))
+            return HTTPFound(location=route_url('pyramid_apex_forgot', \
+                                                request))
     return {'title': title, 'form': form}
     
 def register(request):
