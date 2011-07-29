@@ -37,3 +37,13 @@ use=egg:WebError#evalerror
 
 [pipeline:ppyrapex]
 pipeline = exc tm pyrapex
+
+URLs to get your API keys:
+
+(Velruse Documentation: https://github.com/bbangert/velruse/blob/master/docs/providers.rst )
+
+Facebook: https://developers.facebook.com/apps/
+Twitter: http://dev.twitter.com/apps/new
+Google: https://www.google.com/accounts/ManageDomains
+Yahoo: https://developer.apps.yahoo.com/projects
+Windows Live: http://msdn.microsoft.com/en-us/library/cc287659(v=MSDN.10).aspx
