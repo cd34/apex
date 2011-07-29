@@ -50,6 +50,36 @@ class LoginForm(ExtendedForm):
             errors.append(_('Login Error -- please try again'))
         return errors
 
+class ForgotForm(ExtendedForm):
+    username = TextField(_('Username'))
+    label = HiddenField(label='Or')
+    email = TextField(_('Email Address'), [validators.Optional(), \
+                                           validators.Email()])
+    label = HiddenField(label='')
+    label = HiddenField(label=_('If your username and email weren\'t found,<br>' \
+                              'you may have logged in with a login<br>' \
+                              'provider and didn\'t set your email<br>' \
+                              'address.'))
+
+    """ I realize the potential issue here, someone could continuously
+        hit the page to find valid username/email combinations and leak
+        information, however, that is an enhancement that will be added
+        at a later point.
+    """
+    def validate_username(form, field):
+        if AuthUser.get_by_username(field.data) is None:
+            raise validators.ValidationError(_('Sorry that username doesn\'t exist.'))
+
+    def validate_email(form, field):
+        if AuthUser.get_by_email(field.data) is None:
+            raise validators.ValidationError(_('Sorry that email doesn\'t exist.'))
+
+    def clean(self): 
+        errors = [] 
+        if not self.data.get('username') and not self.data.get('email'):
+            errors.append(_('You need to specify either a Username or ' \
+                            'Email address'))
+        return errors
 
 class OAuthForm(ExtendedForm):
     end_point = HiddenField('')

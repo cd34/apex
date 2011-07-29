@@ -17,11 +17,19 @@ from pyramid_apex.lib import apex_settings
 from pyramid_apex.lib.apex import apexid_from_token
 from pyramid_apex.lib.apex import provider_forms
 from pyramid_apex.lib.flash import flash
-from pyramid_apex.models import DBSession
 from pyramid_apex.models import AuthUser
-from pyramid_apex.forms import RegisterForm
-from pyramid_apex.forms import LoginForm
+from pyramid_apex.models import DBSession
 from pyramid_apex.forms import ChangePasswordForm
+from pyramid_apex.forms import ForgotForm
+from pyramid_apex.forms import LoginForm
+from pyramid_apex.forms import RegisterForm
+
+auth_provider = { 
+    'G':'Google',
+    'F':'Facebook',
+    'T':'Twitter',
+    'Y':'Yahoo',
+    }
 
 def login(request):    
     if authenticated_userid(request):
@@ -81,7 +89,28 @@ def change_password(request):
             
 def forgot_password(request):
     title = _('Forgot My Password')
-    return {}
+    form = ForgotForm(request.POST)
+    if request.method == 'POST' and form.validate():
+        """ Special condition - if email imported from OpenID/Auth, we can
+            direct the person to the appropriate login through a flash
+            message.
+        """
+        if form.data['email']:
+            user = AuthUser.get_by_email(form.data['email'])
+            if user.login:
+                provider_name = auth_provider.get(user.login[1], 'Unknown')
+                flash(_('You used %s as your login provider' % \
+                     provider_name))
+                return HTTPFound(location=route_url('pyramid_apex_login', \
+                                          request))
+        if form.data['username']:
+            user = AuthUser.get_by_username(form.data['email'])
+        if user:
+            """ HMAC email generated
+            """
+            pass
+        flash(_('An error occurred, please contact the support team.'))
+    return {'title': title, 'form': form}
     
 def register(request):
     title = _('Register')
