@@ -82,7 +82,6 @@ class ForgotForm(ExtendedForm):
         return errors
 
 class ResetPasswordForm(ExtendedForm):
-    hmac = HiddenField()
     password = PasswordField(_('New Password'), [validators.Required(), \
                              validators.EqualTo('password2', \
                              message=_('Passwords must match'))])

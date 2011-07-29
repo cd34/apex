@@ -93,3 +93,5 @@ def includeme(config):
     
     config.add_route('pyramid_apex_callback', '/auth/apex_callback')
     config.add_view(apex_callback, route_name='pyramid_apex_callback')
+
+    config.include('pyramid_mailer')

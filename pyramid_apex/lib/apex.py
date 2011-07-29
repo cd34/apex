@@ -1,6 +1,3 @@
-"""
-id, login, password, display_name, email
-"""
 try:
     import json
 except ImportError:
@@ -12,9 +9,15 @@ import velruse.store.sqlstore
 from velruse.store.sqlstore import KeyStorage
 
 from pyramid.httpexceptions import HTTPFound
+from pyramid.i18n import TranslationString as _
 from pyramid.security import Allow
 from pyramid.security import Everyone
 from pyramid.security import Authenticated
+from pyramid.threadlocal import get_current_registry
+from pyramid.url import route_url
+
+from pyramid_mailer import get_mailer
+from pyramid_mailer.message import Message
 
 from pyramid_apex.models import DBSession
 from pyramid_apex.models import AuthUser
@@ -26,6 +29,13 @@ from pyramid_apex.forms import FacebookLogin
 from pyramid_apex.forms import YahooLogin
 from pyramid_apex.forms import WindowsLiveLogin
 from pyramid_apex.forms import TwitterLogin
+
+auth_provider = {
+    'G':'Google',
+    'F':'Facebook',
+    'T':'Twitter',
+    'Y':'Yahoo',
+}
 
 def apexid_from_url(provider, identifier):
     id = None
@@ -84,3 +94,39 @@ provider_forms = {
     'live': WindowsLiveLogin,
     'facebook': FacebookLogin, 
 }
+
+def apex_email(request, recipients, subject, body, sender=None):
+    mailer = get_mailer(request)
+    if not sender:
+        sender = apex_settings('sender_email')
+        if not sender:
+            sender = 'nobody@example.com'
+    message = Message(subject=subject,
+                  sender=sender,
+                  recipients=[recipients],
+                  body=body)
+    mailer.send(message)
+
+def apex_email_forgot(request, user_id, email, hmac):
+    apex_email(request, email, _('Password reset request received'), \
+    """
+A request to reset your password has been received. Please go to 
+the following URL to change your password:
+
+%s
+
+If you did not make this request, you can safely ignore it.
+    """ % route_url('pyramid_apex_reset', request, user_id=user_id, hmac=hmac))
+
+def apex_settings(key=None):
+    settings = get_current_registry().settings
+
+    if key:
+        return settings.get('apex.%s' % key)
+    else:
+        apex_settings = []
+        for k, v in settings.items():
+            if k.startswith('apex.'):
+                apex_settings.append({k.split('.')[1]: v})
+
+        return apex_settings

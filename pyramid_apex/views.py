@@ -1,4 +1,5 @@
 import hmac
+
 from velruse.app import parse_config_file
 from wtfrecaptcha.fields import RecaptchaField
 
@@ -14,8 +15,12 @@ from pyramid.settings import asbool
 from pyramid.url import current_route_url
 from pyramid.url import route_url
 
-from pyramid_apex.lib import apex_settings
+from pyramid_mailer.message import Message
+
+from pyramid_apex.lib.apex import apex_settings
 from pyramid_apex.lib.apex import apexid_from_token
+from pyramid_apex.lib.apex import apex_email_forgot
+from pyramid_apex.lib.apex import auth_provider
 from pyramid_apex.lib.apex import provider_forms
 from pyramid_apex.lib.flash import flash
 from pyramid_apex.models import AuthUser
@@ -25,13 +30,6 @@ from pyramid_apex.forms import ForgotForm
 from pyramid_apex.forms import ResetPasswordForm
 from pyramid_apex.forms import LoginForm
 from pyramid_apex.forms import RegisterForm
-
-auth_provider = { 
-    'G':'Google',
-    'F':'Facebook',
-    'T':'Twitter',
-    'Y':'Yahoo',
-    }
 
 def login(request):    
     if authenticated_userid(request):
@@ -108,11 +106,10 @@ def forgot_password(request):
         if form.data['username']:
             user = AuthUser.get_by_username(form.data['username'])
         if user:
-            """ HMAC email generated
-            """
             hmac_key = hmac.new('%s:%s' % (str(user.id), \
                                 apex_settings('auth_secret')), \
                                 user.email).hexdigest()
+            apex_email_forgot(request, user.id, user.email, hmac_key)
             flash(_('Password Reset email sent. %s' % hmac_key))
             return HTTPFound(location=route_url('pyramid_apex_login', \
                                                 request))

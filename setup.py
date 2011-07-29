@@ -10,6 +10,7 @@ setup(
       "py-bcrypt",
       "velruse",
       "pyramid",
+      "pyramid_mailer",
       "wtforms",
       "wtforms-recaptcha",
     ],
