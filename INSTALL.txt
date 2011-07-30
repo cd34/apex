@@ -11,6 +11,8 @@ apex.velruse_config = %(here)s/CONFIG.yaml
 apex.recaptcha_public_key = asdfasdf
 apex.recaptcha_private_key = asdfasdf
 apex.use_recaptcha_on_login = false
+apex.use_recaptcha_on_forgot = false
+apex.use_recaptcha_on_reset = false
 apex.use_recaptcha_on_register = true
 
 # Apex looks at the Auth Providers configured by Velruse to build the login
@@ -47,3 +49,4 @@ Twitter: http://dev.twitter.com/apps/new
 Google: https://www.google.com/accounts/ManageDomains
 Yahoo: https://developer.apps.yahoo.com/projects
 Windows Live: http://msdn.microsoft.com/en-us/library/cc287659(v=MSDN.10).aspx
+

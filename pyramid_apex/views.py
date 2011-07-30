@@ -44,7 +44,8 @@ def login(request):
                 public_key=apex_settings('recaptcha_public_key'),
                 private_key=apex_settings('recaptcha_private_key'),
             )
-    form = LoginForm(request.POST, captcha={'ip_address': request.environ['REMOTE_ADDR']})
+    form = LoginForm(request.POST, \
+               captcha={'ip_address': request.environ['REMOTE_ADDR']})
     
     velruse_forms = []
     for provider in parse_config_file(apex_settings('velruse_config'))[0].keys():
@@ -89,7 +90,14 @@ def change_password(request):
             
 def forgot_password(request):
     title = _('Forgot My Password')
-    form = ForgotForm(request.POST)
+    if asbool(apex_settings('use_recaptcha_on_forgot')):
+        if apex_settings('recaptcha_public_key') and apex_settings('recaptcha_private_key'):
+            ForgotForm.captcha = RecaptchaField(
+                public_key=apex_settings('recaptcha_public_key'),
+                private_key=apex_settings('recaptcha_private_key'),
+            )
+    form = ForgotForm(request.POST, \
+               captcha={'ip_address': request.environ['REMOTE_ADDR']})
     if request.method == 'POST' and form.validate():
         """ Special condition - if email imported from OpenID/Auth, we can
             direct the person to the appropriate login through a flash
@@ -118,7 +126,14 @@ def forgot_password(request):
 
 def reset_password(request):
     title = _('Reset My Password')
-    form = ResetPasswordForm(request.POST)
+    if asbool(apex_settings('use_recaptcha_on_reset')):
+        if apex_settings('recaptcha_public_key') and apex_settings('recaptcha_private_key'):
+            ResetPasswordForm.captcha = RecaptchaField(
+                public_key=apex_settings('recaptcha_public_key'),
+                private_key=apex_settings('recaptcha_private_key'),
+            )
+    form = ResetPasswordForm(request.POST, \
+               captcha={'ip_address': request.environ['REMOTE_ADDR']})
     if request.method == 'POST' and form.validate():
         user_id = request.matchdict.get('user_id')
         user = AuthUser.get_by_id(user_id)
