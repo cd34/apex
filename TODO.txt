@@ -1,5 +1,4 @@
 Timestamp expiration on HMAC
 Revisit whether HMAC is appropriate, pycrypto is already included from Velruse
 Move login id to password?
-Example overload of AuthUser for additional profile fields
 Check ax_required/scope for providers
