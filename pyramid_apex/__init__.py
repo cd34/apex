@@ -1,4 +1,7 @@
+from pyramid_mailer.interfaces import IMailer
+
 from sqlalchemy import engine_from_config
+
 from zope.component import getUtility
 
 from pyramid.interfaces import IAuthenticationPolicy
@@ -55,6 +58,9 @@ def includeme(config):
     """ end of evil stuff
     """
 
+    if not config.registry.queryUtility(IMailer):
+        config.include('pyramid_mailer')
+
     if not settings.get('mako.directories'):
         config.add_settings({'mako.directories': ['pyramid_apex:templates']})
     
@@ -93,5 +99,3 @@ def includeme(config):
     
     config.add_route('pyramid_apex_callback', '/auth/apex_callback')
     config.add_view(apex_callback, route_name='pyramid_apex_callback')
-
-    config.include('pyramid_mailer')
