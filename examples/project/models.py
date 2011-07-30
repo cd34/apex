@@ -1,6 +1,7 @@
 import transaction
 
 from sqlalchemy import Column
+from sqlalchmey import ForeignKey
 from sqlalchemy import Integer
 from sqlalchemy import Unicode
 
@@ -15,6 +16,8 @@ from zope.sqlalchemy import ZopeTransactionExtension
 from velruse.store.sqlstore import KeyStorage
 from velruse.store.sqlstore import SQLBase
 
+from pyramid_apex.models import AuthUser
+
 DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 Base = declarative_base()
 
@@ -27,6 +30,20 @@ class MyModel(Base):
     def __init__(self, name, value):
         self.name = name
         self.value = value
+
+class ExtendedProfile(AuthUser):
+    __mapper_args__ = {'polymorphic_identity': 'profile'}
+    
+    first_name = Column(Unicode(80))
+    last_name = Column(Unicode(80))
+    
+class ForeignKeyProfile(Base):
+    __tablename__ = 'auth_user_profile'
+    
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey(AuthUser.id))
+    first_name = Column(Unicode(80))
+    last_name = Column(Unicode(80))
 
 def populate():
     session = DBSession()
