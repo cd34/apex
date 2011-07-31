@@ -17,6 +17,7 @@ from pyramid.url import route_url
 
 from pyramid_mailer.message import Message
 
+from pyramid_apex.decorators import login_required
 from pyramid_apex.lib.apex import apex_settings
 from pyramid_apex.lib.apex import apexid_from_token
 from pyramid_apex.lib.apex import apex_email_forgot
@@ -31,12 +32,11 @@ from pyramid_apex.forms import ResetPasswordForm
 from pyramid_apex.forms import LoginForm
 from pyramid_apex.forms import RegisterForm
 
-def login(request):    
-    if authenticated_userid(request):
-        return HTTPFound(location=route_url(apex_settings('came_from_route'), request))
 
+def login(request):
     title = _('Login')
-    came_from = request.params.get('came_from', route_url(apex_settings('came_from_route'), request))
+    came_from = request.GET.get('came_from', \
+                    route_url(apex_settings('came_from_route'), request))
 
     if asbool(apex_settings('use_recaptcha_on_login')):
         if apex_settings('recaptcha_public_key') and apex_settings('recaptcha_private_key'):
@@ -66,16 +66,15 @@ def login(request):
 
     return {'title': title, 'form': form, 'velruse_forms': velruse_forms}
 
+@login_required
 def logout(request):
     headers = forget(request)
     return HTTPFound(location=route_url(apex_settings('came_from_route'), \
                      request), headers=headers)
-
+@login_required
 def change_password(request):
-    if not authenticated_userid(request):
-        return HTTPFound(location=route_url('pyramid_apex_login', request))
-
     title = _('Change your Password')
+    
     came_from = request.params.get('came_from', \
                     route_url(apex_settings('came_from_route'), request))
     form = ChangePasswordForm(request.POST)
@@ -87,9 +86,11 @@ def change_password(request):
         return HTTPFound(location=came_from)
 
     return {'title': title, 'form': form}
-            
+
+@login_required     
 def forgot_password(request):
     title = _('Forgot My Password')
+    
     if asbool(apex_settings('use_recaptcha_on_forgot')):
         if apex_settings('recaptcha_public_key') and apex_settings('recaptcha_private_key'):
             ForgotForm.captcha = RecaptchaField(
@@ -126,6 +127,7 @@ def forgot_password(request):
 
 def reset_password(request):
     title = _('Reset My Password')
+    
     if asbool(apex_settings('use_recaptcha_on_reset')):
         if apex_settings('recaptcha_public_key') and apex_settings('recaptcha_private_key'):
             ResetPasswordForm.captcha = RecaptchaField(
