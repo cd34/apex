@@ -39,7 +39,7 @@ class AuthGroup(Base):
                      backref='auth_groups')
 
     def __repr__(self):
-        return '' % self.name
+        return u'%s' % self.name
 
     def __unicode__(self):
         return self.name
