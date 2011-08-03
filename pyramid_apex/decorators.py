@@ -1,5 +1,3 @@
-import venusian
-
 from pyramid.httpexceptions import HTTPFound
 from pyramid.i18n import TranslationString as _
 from pyramid.security import authenticated_userid

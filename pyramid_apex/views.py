@@ -47,16 +47,18 @@ def login(request):
     form = LoginForm(request.POST, \
                captcha={'ip_address': request.environ['REMOTE_ADDR']})
     
+    
     velruse_forms = []
-    for provider in parse_config_file(apex_settings('velruse_config'))[0].keys():
-        if provider_forms.has_key(provider):
-            velruse_forms.append(provider_forms[provider](
-                end_point='%s?csrf_token=%s&came_from=%s' % \
-                 (request.route_url('pyramid_apex_callback'), \
-                  request.session.get_csrf_token(),
-                  came_from), \
-                 csrf_token = request.session.get_csrf_token()
-            ))            
+    if apex_settings('velruse_config'):
+        for provider in parse_config_file(apex_settings('velruse_config'))[0].keys():
+            if provider_forms.has_key(provider):
+                velruse_forms.append(provider_forms[provider](
+                    end_point='%s?csrf_token=%s&came_from=%s' % \
+                     (request.route_url('pyramid_apex_callback'), \
+                      request.session.get_csrf_token(),
+                      came_from), \
+                     csrf_token = request.session.get_csrf_token()
+                ))
 
     if request.method == 'POST' and form.validate():
         user = AuthUser.get_by_username(form.data.get('username'))
@@ -86,8 +88,7 @@ def change_password(request):
         return HTTPFound(location=came_from)
 
     return {'title': title, 'form': form}
-
-@login_required     
+     
 def forgot_password(request):
     title = _('Forgot My Password')
     
