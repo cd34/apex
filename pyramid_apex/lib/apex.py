@@ -42,17 +42,19 @@ def apexid_from_url(provider, identifier):
     if provider == 'Google':
         id = '$G$%s' % \
              urlparse.parse_qs(urlparse.urlparse(identifier).query)['id'][0]
-    if provider == 'Facebook':
+    elif provider == 'Facebook':
         id = '$F$%s' % \
              urlparse.urlparse(identifier).path[1:]
-    if provider == 'Twitter':
+    elif provider == 'Twitter':
         id = '$T$%s' % \
              urlparse.parse_qs(urlparse.urlparse(identifier).query)['id'][0]. \
                                split('\'')[1]
-    if provider == 'Yahoo':
+    elif provider == 'Yahoo':
         urlparts = urlparse.urlparse(identifier)        
         id = '$Y$%s#%s' % \
              (urlparts.path.split('/')[2], urlparts.fragment)
+    elif provider == "OpenID":
+        id = identifier
     return id
 
 def apexid_from_token(token):

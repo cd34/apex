@@ -3,9 +3,9 @@ import transaction
 
 from sqlalchemy import Column
 from sqlalchemy import ForeignKey
-from sqlalchemy import func
 from sqlalchemy import Table
 from sqlalchemy import Unicode
+from sqlalchemy import types
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import backref
@@ -13,7 +13,7 @@ from sqlalchemy.orm import relation
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import synonym
-from sqlalchemy.databases import mysql
+from sqlalchemy.sql import functions
 
 from zope.sqlalchemy import ZopeTransactionExtension 
 
@@ -21,19 +21,19 @@ DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 Base = declarative_base()
 
 user_group_table = Table('auth_user_groups', Base.metadata,
-    Column('user_id', mysql.BIGINT(20, unsigned=True), \
+    Column('user_id', types.BigInteger(20, unsigned=True), \
         ForeignKey('auth_users.id', onupdate='CASCADE', ondelete='CASCADE')),
-    Column('group_id', mysql.BIGINT(20, unsigned=True), \
+    Column('group_id', types.BigInteger(20, unsigned=True), \
         ForeignKey('auth_groups.id', onupdate='CASCADE', ondelete='CASCADE'))
 )
 
 class AuthGroup(Base):
     __tablename__ = 'auth_groups'
 
-    id = Column(mysql.BIGINT(20, unsigned=True), primary_key=True, \
+    id = Column(types.BigInteger(20, unsigned=True), primary_key=True, \
                 autoincrement=True)
     name = Column(Unicode(80), unique=True, nullable=False)
-    created = Column(mysql.DATE(), default=func.curdate())
+    created = Column(types.DateTime(), default=functions.now())
 
     users = relation('AuthUser', secondary=user_group_table, \
                      backref='auth_groups')
@@ -47,7 +47,7 @@ class AuthGroup(Base):
 class AuthUser(Base):
     __tablename__ = 'auth_users'
 
-    id = Column(mysql.BIGINT(20, unsigned=True), primary_key=True, \
+    id = Column(types.BigInteger(20, unsigned=True), primary_key=True, \
                 autoincrement=True)
     login = Column(Unicode(80), default=u'', index=True)
     username = Column(Unicode(80), default=u'', index=True)
