@@ -35,6 +35,8 @@ auth_provider = {
     'F':'Facebook',
     'T':'Twitter',
     'Y':'Yahoo',
+    'O':'OpenID',
+    'M':'Microsoft Live',
 }
 
 def apexid_from_url(provider, identifier):
@@ -54,7 +56,7 @@ def apexid_from_url(provider, identifier):
         id = '$Y$%s#%s' % \
              (urlparts.path.split('/')[2], urlparts.fragment)
     elif provider == "OpenID":
-        id = identifier
+        id = '$O$%s' % identifier
     return id
 
 def apexid_from_token(token):
