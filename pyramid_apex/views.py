@@ -68,7 +68,6 @@ def login(request):
 
     return {'title': title, 'form': form, 'velruse_forms': velruse_forms}
 
-@login_required
 def logout(request):
     headers = forget(request)
     return HTTPFound(location=route_url(apex_settings('came_from_route'), \
