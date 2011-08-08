@@ -1,4 +1,6 @@
 Timestamp expiration on HMAC
 Revisit whether HMAC is appropriate, pycrypto is already included from Velruse
-Move login id to password?
-Check ax_required/scope for providers
+
+User Creation, add to groups?
+before/after 
+Customize Templates/allow user to override

@@ -4,5 +4,6 @@ ${apex_flash()}
 <p>
 This is the sample index page
 </p>
-<a href="${request.route_path('protected')}">Protected Page</a>
-<a href="${request.route_path('pyramid_apex_logout')}">Logout</a>
+<a href="${request.route_path('protected')}">Protected Page</a><br/>
+<a href="${request.route_path('groupusers')}">Page Restricted to users in group 'users'</a> - by default, no users are placed in users<br/>
+<a href="${request.route_path('pyramid_apex_logout')}">Logout</a><br/>

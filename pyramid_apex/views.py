@@ -50,7 +50,10 @@ def login(request):
     
     velruse_forms = []
     if apex_settings('velruse_config'):
-        for provider in parse_config_file(apex_settings('velruse_config'))[0].keys():
+        configs = parse_config_file(apex_settings('velruse_config'))[0].keys()
+        if apex_settings('provider_exclude'):
+            for provider in apex_settings('provider_exclude').split(','):                configs.remove(provider.strip())
+        for provider in configs:
             if provider_forms.has_key(provider):
                 velruse_forms.append(provider_forms[provider](
                     end_point='%s?csrf_token=%s&came_from=%s' % \
@@ -84,6 +87,7 @@ def change_password(request):
         user = AuthUser.get_by_id(authenticated_userid(request))
         user.password = form.data['password']
         DBSession.merge(user)
+        DBSession.flush()
         return HTTPFound(location=came_from)
 
     return {'title': title, 'form': form}
@@ -145,6 +149,7 @@ def reset_password(request):
         if hmac_key == request.matchdict.get('hmac'):
             user.password = form.data['password']
             DBSession.merge(user)
+            DBSession.flush()
             flash(_('Password Changed. Please log in.'))
             return HTTPFound(location=route_url('pyramid_apex_login', \
                                                 request))

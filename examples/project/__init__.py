@@ -18,6 +18,10 @@ def main(global_config, **settings):
     config.add_view('project.views.protected', route_name='protected',
                     renderer='protected.mako', permission='authenticated')
 
+    config.add_route('groupusers', '/groupusers')
+    config.add_view('project.views.groupusers', route_name='groupusers',
+                    renderer='groupusers.mako', permission='users')
+
     config.add_route('test', '/test')
     config.add_view('project.views.test', route_name='test',
                     renderer='test.mako')
