@@ -1,11 +1,11 @@
-{% block apex_head %}
+{% macro apex_head() -%}
 <link rel="stylesheet" href="{{request.static_url('pyramid_apex:static/css/apex_flash.css')}}" type="text/css" media="screen" charset="utf-8" />
-{% endblock %}
+{% endmacro %}
 
-{% block apex_flash %}
+{% macro apex_flash() -%}
 {%- for flash in flash.get_all() %}
     <div class="flash">
         <p class="{{ flash['queue'] }}">{{ flash['message'] }}</p>
     </div>
 {%- endfor -%}
-{% endblock %}
+{% endmacro %}

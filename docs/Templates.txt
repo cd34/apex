@@ -12,8 +12,14 @@ ${apex_flash()}
 
 Jinja Templates:
 
-{% import "pyramid_apex:templates/flash_template.jinja2" as flash -%}
-{% block apex_head %}{% endblock -%}
+(Currently not working due to import issue, need to copy 
+flash_template.jinja2 to your templates directory)
+{# import "pyramid_apex:templates/flash_template.jinja2" as flash  with context-#}
+{% import "flash_template.jinja2" as flash with context -%}
+
+In the <head> section of your template:
+
+{{ flash.apex_head() }}
 
 Insert this line where you would like the Flash Messages to be displayed:
 
