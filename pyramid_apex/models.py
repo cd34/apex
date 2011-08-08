@@ -15,6 +15,8 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import synonym
 from sqlalchemy.sql import functions
 
+from velruse.store.sqlstore import SQLBase
+
 from zope.sqlalchemy import ZopeTransactionExtension 
 
 DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
@@ -111,6 +113,8 @@ def initialize_sql(engine):
     DBSession.configure(bind=engine)
     Base.metadata.bind = engine
     Base.metadata.create_all(engine)
+    SQLBase.metadata.bind = engine
+    SQLBase.metadata.create_all(engine)
     try:
         populate()
     except IntegrityError:

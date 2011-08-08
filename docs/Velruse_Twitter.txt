@@ -1,0 +1,19 @@
+Go to:
+
+http://dev.twitter.com/apps/new
+
+Sign in.
+
+Application Name, Description and Website are not critical, but, are required
+fields. Leave the Callback URL blank.
+
+After you agree to the terms, you're presented with a page that contains your
+Consumer Key and Consumer Secret.
+
+Modify your CONFIG.yaml file to include the following:
+
+Twitter:
+    Consumer Key: (key from the resulting page)
+    Consumer Secret: (secret from the resulting page)
+
+
