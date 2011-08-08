@@ -96,3 +96,12 @@ In example/__init__.py, we'll add the following route:
 
 The default permissions are view and authenticated. Additionally, groups
 of user and admin are created.
+
+If you want to use a group, the group name is used for the permission setting
+on the view.
+
+    config.add_route('groupusers', '/groupusers')
+    config.add_view('example.views.my_view',
+                    route_name='groupusers',
+                    renderer='templates/mytemplate.pt',
+                    permission='users')
