@@ -184,14 +184,8 @@ def register(request):
 
     form = RegisterForm(request.POST, captcha={'ip_address': request.environ['REMOTE_ADDR']})
     if request.method == 'POST' and form.validate():
-        user = AuthUser(
-            username=form.data['username'],
-            password=form.data['password'],
-            email=form.data['email'],
-        )
-        DBSession.add(user)
-        DBSession.flush()
-        
+        user = form.save()
+
         headers = remember(request, user.id)
         return HTTPFound(location=came_from, headers=headers)
         
