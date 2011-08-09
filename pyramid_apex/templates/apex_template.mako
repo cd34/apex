@@ -21,3 +21,4 @@ ${form.render()|n}
 %endif
 
 <a href="${request.route_path('pyramid_apex_forgot')}">Forgot my Password</a>
+<a href="${request.route_path('pyramid_apex_register')}">Create an Account</a>
