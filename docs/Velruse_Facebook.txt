@@ -1,0 +1,20 @@
+Go to:
+
+https://developers.facebook.com/apps/
+
+Sign in.
+
+Application Name, Description and Website are not critical, but, are required
+fields. Set the Callback URL to:
+
+http://yourdomain.com/velruse/logged_in
+
+After you agree to the terms, you're presented with a page that contains your
+App ID and App Secret.
+
+Modify your CONFIG.yaml file to include the following:
+
+Facebook:
+    API Key: (the generated App ID)
+    Application Secret: (the generated App Secret)
+    Application ID: (the generated App ID)
