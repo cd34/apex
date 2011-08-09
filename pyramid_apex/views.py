@@ -52,7 +52,8 @@ def login(request):
     if apex_settings('velruse_config'):
         configs = parse_config_file(apex_settings('velruse_config'))[0].keys()
         if apex_settings('provider_exclude'):
-            for provider in apex_settings('provider_exclude').split(','):                configs.remove(provider.strip())
+            for provider in apex_settings('provider_exclude').split(','):
+                configs.remove(provider.strip())
         for provider in configs:
             if provider_forms.has_key(provider):
                 velruse_forms.append(provider_forms[provider](
