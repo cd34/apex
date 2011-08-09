@@ -1,11 +1,19 @@
-<link rel="stylesheet" href="${request.static_url('pyramid_apex:static/css/apex_forms.css')}" type="text/css" media="screen" charset="utf-8" />
-<link rel="stylesheet" href="${request.static_url('pyramid_apex:static/css/apex_flash.css')}" type="text/css" media="screen" charset="utf-8" />
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<title>Pyramid Apex</title>
+<%namespace file="pyramid_apex:templates/flash_template.mako" import="*"/>
 
-% for flashmsg in flash.get_all():
-    <div class="flash">
-        <p class="${flashmsg['queue']}">${flashmsg['message']}</p>
-    </div>
-% endfor
+<link rel="stylesheet" href="${request.static_url('pyramid_apex:static/css/apex_forms.css')}" type="text/css" media="screen" charset="utf-8" />
+${apex_head()}
+<link rel="stylesheet" href="${request.static_url('pyramid_apex:static/css/apex_flash.css')}" type="text/css" media="screen" charset="utf-8" />
+<style type="text/css">
+body { margin: 10px auto 10px auto; width: 400px; font-family: Verdana, sans;}
+</style>
+</head>
+<body>
+${apex_flash()}
 
 <h1>${title}</h1>
 
@@ -22,3 +30,5 @@ ${form.render()|n}
 
 <a href="${request.route_path('pyramid_apex_forgot')}">Forgot my Password</a>
 <a href="${request.route_path('pyramid_apex_register')}">Create an Account</a>
+</body>
+</html>
