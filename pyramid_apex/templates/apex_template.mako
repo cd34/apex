@@ -7,7 +7,6 @@
 
 <link rel="stylesheet" href="${request.static_url('pyramid_apex:static/css/apex_forms.css')}" type="text/css" media="screen" charset="utf-8" />
 ${apex_head()}
-<link rel="stylesheet" href="${request.static_url('pyramid_apex:static/css/apex_flash.css')}" type="text/css" media="screen" charset="utf-8" />
 <style type="text/css">
 body { margin: 10px auto 10px auto; width: 400px; font-family: Verdana, sans;}
 </style>
