@@ -50,7 +50,9 @@ def login(request):
     
     velruse_forms = []
     if apex_settings('velruse_config'):
-        for provider in parse_config_file(apex_settings('velruse_config'))[0].keys():
+        if apex_settings('provider_exclude'):
+            for provider in apex_settings('provider_exclude').split(','):                configs.remove(provider.strip())
+        for provider in configs:
             if provider_forms.has_key(provider):
                 velruse_forms.append(provider_forms[provider](
                     end_point='%s?csrf_token=%s&came_from=%s' % \
