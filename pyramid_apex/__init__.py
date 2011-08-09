@@ -90,7 +90,7 @@ def includeme(config):
 
     config.add_route('pyramid_apex_password', '/auth/password')
     config.add_view(change_password, route_name='pyramid_apex_password', \
-                    renderer=render_template)
+                    renderer=render_template, permission='authenticated')
     
     config.add_route('pyramid_apex_forgot', '/auth/forgot')
     config.add_view(forgot_password, route_name='pyramid_apex_forgot', \
