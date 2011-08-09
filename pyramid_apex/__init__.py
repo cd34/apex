@@ -73,29 +73,32 @@ def includeme(config):
 
     config.add_view(forbidden, context=Forbidden)
 
+    render_template = getattr(settings, 'apex.apex_template', \
+                              'pyramid_apex:templates/apex_template.mako')
+
     config.add_route('pyramid_apex_login', '/auth/login')
     config.add_view(login, route_name='pyramid_apex_login', \
-                    renderer='pyramid_apex:templates/apex_template.mako')
+                    renderer=render_template)
     
     config.add_route('pyramid_apex_logout', '/auth/logout')
     config.add_view(logout, route_name='pyramid_apex_logout', \
-                    renderer='pyramid_apex:templates/apex_template.mako')
+                    renderer=render_template)
 
     config.add_route('pyramid_apex_register', '/auth/register')
     config.add_view(register, route_name='pyramid_apex_register', \
-                    renderer='pyramid_apex:templates/apex_template.mako')
+                    renderer=render_template)
 
     config.add_route('pyramid_apex_password', '/auth/password')
     config.add_view(change_password, route_name='pyramid_apex_password', \
-                    renderer='pyramid_apex:templates/apex_template.mako')
+                    renderer=render_template)
     
     config.add_route('pyramid_apex_forgot', '/auth/forgot')
     config.add_view(forgot_password, route_name='pyramid_apex_forgot', \
-                    renderer='pyramid_apex:templates/apex_template.mako')
+                    renderer=render_template)
     
     config.add_route('pyramid_apex_reset', '/auth/reset/:user_id/:hmac')
     config.add_view(reset_password, route_name='pyramid_apex_reset', \
-                    renderer='pyramid_apex:templates/apex_template.mako')
+                    renderer=render_template)
     
     config.add_route('pyramid_apex_callback', '/auth/apex_callback')
     config.add_view(apex_callback, route_name='pyramid_apex_callback')
