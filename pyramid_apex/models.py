@@ -36,7 +36,7 @@ class AuthGroup(Base):
 
     id = Column(types.BigInteger(), primary_key=True)
     name = Column(Unicode(80), unique=True, nullable=False)
-    created = Column(types.DateTime(), default=functions.now())
+    created = Column(types.DateTime(), default=functions.current_date())
 
     users = relation('AuthUser', secondary=user_group_table, \
                      backref='auth_groups')
