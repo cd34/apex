@@ -4,13 +4,19 @@ https://developers.facebook.com/apps/
 
 Sign in.
 
-Application Name, Description and Website are not critical, but, are required
-fields. Set the Callback URL to:
+Create New App (Upper Right Corner)
 
-http://yourdomain.com/velruse/logged_in
+Put in an Application Name and agree to the terms.
 
-After you agree to the terms, you're presented with a page that contains your
-App ID and App Secret.
+Solve the Recaptcha.
+
+Left hand side, Click Web.
+
+For Site URL, put the URL of your site.
+
+Site Domain should be the domain of your site, and needs to be part of the
+site URL. So, if you use http://specialname.domain.com, you would need to 
+put domain.com or specialname.domain.com. You cannot specify a separate domain.
 
 Modify your CONFIG.yaml file to include the following:
 

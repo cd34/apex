@@ -48,3 +48,12 @@ apex.default_user_group =
 
 apex.sender_email = 
   OPTIONAL, defaults to nobody@example.com, 
+
+apex.create_openid_before =
+  OPTIONAL, NOT IMPLEMENTED, since OpenID requests don't allow us to
+  override the signup form, we call this function before the OpenID
+  Provider call.
+
+apex.create_openid_after =
+  OPTIONAL, since OpenID requests don't allow us to override the signup
+  form, we call this function after the OpenID callback.
