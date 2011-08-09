@@ -33,7 +33,6 @@ class AuthGroup(Base):
     __tablename__ = 'auth_groups'
     __table_args__ = {"sqlite_autoincrement": True}
     
-
     id = Column(types.BigInteger(), primary_key=True)
     name = Column(Unicode(80), unique=True, nullable=False)
     created = Column(types.DateTime(), default=functions.current_date())
