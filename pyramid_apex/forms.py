@@ -7,9 +7,11 @@ from wtforms import validators
 from pyramid.i18n import TranslationString as _
 from pyramid.security import authenticated_userid
 from pyramid.security import remember
+from pyramid.threadlocal import get_current_registry
 from pyramid.threadlocal import get_current_request
 
 from pyramid_apex.models import DBSession
+from pyramid_apex.models import AuthGroup
 from pyramid_apex.models import AuthUser
 from pyramid_apex.lib.form import ExtendedForm
 
@@ -34,6 +36,11 @@ class RegisterForm(ExtendedForm):
             email=self.data['email'],
         )
         DBSession.add(user)
+        settings = get_current_registry().settings
+        if settings.has_key('apex.default_user_group'):
+            group = DBSession.query(AuthGroup). \
+               filter(AuthGroup.name==settings['apex.default_user_group']).one()
+            user.groups.append(group)
         DBSession.flush()
         
         return user
