@@ -33,7 +33,6 @@ from pyramid_apex.forms import ChangePasswordForm
 from pyramid_apex.forms import ForgotForm
 from pyramid_apex.forms import ResetPasswordForm
 from pyramid_apex.forms import LoginForm
-from pyramid_apex.forms import RegisterForm
 
 
 def login(request):
@@ -176,9 +175,12 @@ def register(request):
     came_from = request.params.get('came_from', \
                     route_url(apex_settings('came_from_route'), request))
 
+    #This fixes the issue with RegisterForm throwing an UnboundLocalError
     if apex_settings('register_form_class'):
         resolver = DottedNameResolver(apex_settings('register_form_class').split('.')[0])
         RegisterForm = resolver.resolve(apex_settings('register_form_class'))
+    else:
+        from pyramid_apex.forms import RegisterForm
 
     if asbool(apex_settings('use_recaptcha_on_register')):
         if apex_settings('recaptcha_public_key') and apex_settings('recaptcha_private_key'):
