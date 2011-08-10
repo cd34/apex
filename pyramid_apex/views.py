@@ -16,6 +16,7 @@ from pyramid.security import remember
 from pyramid.settings import asbool
 from pyramid.url import current_route_url
 from pyramid.url import route_url
+from pyramid.util import DottedNameResolver
 
 from pyramid_mailer.message import Message
 
@@ -31,7 +32,6 @@ from pyramid_apex.forms import ChangePasswordForm
 from pyramid_apex.forms import ForgotForm
 from pyramid_apex.forms import ResetPasswordForm
 from pyramid_apex.forms import LoginForm
-from pyramid_apex.forms import RegisterForm
 
 
 def login(request):
@@ -168,11 +168,18 @@ def reset_password(request):
                 return HTTPFound(location=route_url('pyramid_apex_forgot', \
                                                     request))
     return {'title': title, 'form': form, 'action': 'reset'}
-    
+
 def register(request):
     title = _('Register')
     came_from = request.params.get('came_from', \
                     route_url(apex_settings('came_from_route'), request))
+
+    #This fixes the issue with RegisterForm throwing an UnboundLocalError
+    if apex_settings('register_form_class'):
+        resolver = DottedNameResolver(apex_settings('register_form_class').split('.')[0])
+        RegisterForm = resolver.resolve(apex_settings('register_form_class'))
+    else:
+        from pyramid_apex.forms import RegisterForm
 
     if asbool(apex_settings('use_recaptcha_on_register')):
         if apex_settings('recaptcha_public_key') and apex_settings('recaptcha_private_key'):
@@ -183,14 +190,8 @@ def register(request):
 
     form = RegisterForm(request.POST, captcha={'ip_address': request.environ['REMOTE_ADDR']})
     if request.method == 'POST' and form.validate():
-        user = AuthUser(
-            username=form.data['username'],
-            password=form.data['password'],
-            email=form.data['email'],
-        )
-        DBSession.add(user)
-        DBSession.flush()
-        
+        user = form.save()
+
         headers = remember(request, user.id)
         return HTTPFound(location=came_from, headers=headers)
         
