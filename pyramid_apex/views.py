@@ -70,7 +70,8 @@ def login(request):
             headers = remember(request, user.id)
             return HTTPFound(location=came_from, headers=headers)
 
-    return {'title': title, 'form': form, 'velruse_forms': velruse_forms}
+    return {'title': title, 'form': form, 'velruse_forms': velruse_forms, \
+            'action': 'login'}
 
 def logout(request):
     headers = forget(request)
@@ -91,7 +92,7 @@ def change_password(request):
         DBSession.flush()
         return HTTPFound(location=came_from)
 
-    return {'title': title, 'form': form}
+    return {'title': title, 'form': form, 'action': 'changepass'}
      
 def forgot_password(request):
     title = _('Forgot My Password')
@@ -128,7 +129,7 @@ def forgot_password(request):
             return HTTPFound(location=route_url('pyramid_apex_login', \
                                                 request))
         flash(_('An error occurred, please contact the support team.'))
-    return {'title': title, 'form': form}
+    return {'title': title, 'form': form, 'action': 'forgot'}
 
 def reset_password(request):
     title = _('Reset My Password')
@@ -158,7 +159,7 @@ def reset_password(request):
             flash(_('Invalid request, please try again'))
             return HTTPFound(location=route_url('pyramid_apex_forgot', \
                                                 request))
-    return {'title': title, 'form': form}
+    return {'title': title, 'form': form, 'action': 'reset'}
     
 def register(request):
     title = _('Register')
@@ -185,7 +186,7 @@ def register(request):
         headers = remember(request, user.id)
         return HTTPFound(location=came_from, headers=headers)
         
-    return {'title': title, 'form': form}
+    return {'title': title, 'form': form, 'action': 'register'}
 
 def apex_callback(request):
     redir = request.GET.get('came_from', \

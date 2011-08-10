@@ -56,9 +56,9 @@ class ForgotForm(ExtendedForm):
     email = TextField(_('Email Address'), [validators.Optional(), \
                                            validators.Email()])
     label = HiddenField(label='')
-    label = HiddenField(label=_('If your username and email weren\'t found,<br>' \
-                              'you may have logged in with a login<br>' \
-                              'provider and didn\'t set your email<br>' \
+    label = HiddenField(label=_('If your username and email weren\'t found, ' \
+                              'you may have logged in with a login ' \
+                              'provider and didn\'t set your email ' \
                               'address.'))
 
     """ I realize the potential issue here, someone could continuously
