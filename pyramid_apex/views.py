@@ -152,12 +152,12 @@ def reset_password(request):
         user = AuthUser.get_by_id(user_id)
         submitted_hmac = request.matchdict.get('hmac')
         current_time = time.time()
-        time_key = base64.urlsafe_b64decode(submitted_hmac[10:])
+        time_key = int(base64.b64decode(submitted_hmac[10:]))
         if current_time < time_key:
             hmac_key = hmac.new('%s:%s:%d' % (str(user.id), \
                                 apex_settings('auth_secret'), time_key), \
                                 user.email).hexdigest()[0:10]
-            if hmac_key == submitted_hmac:
+            if hmac_key == submitted_hmac[0:10]:
                 user.password = form.data['password']
                 DBSession.merge(user)
                 DBSession.flush()
