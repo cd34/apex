@@ -152,7 +152,7 @@ def reset_password(request):
         user = AuthUser.get_by_id(user_id)
         submitted_hmac = request.matchdict.get('hmac')
         current_time = time.time()
-        time_key = base64.urlsafe_b64decode(email_hash[10:])
+        time_key = base64.urlsafe_b64decode(submitted_hmac[10:])
         if current_time < time_key:
             hmac_key = hmac.new('%s:%s:%d' % (str(user.id), \
                                 apex_settings('auth_secret'), time_key), \
