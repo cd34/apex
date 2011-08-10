@@ -7,6 +7,7 @@ from sqlalchemy import Table
 from sqlalchemy import Unicode
 from sqlalchemy import types
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import backref
 from sqlalchemy.orm import relation
@@ -59,6 +60,10 @@ class AuthUser(Base):
 
     groups = relation('AuthGroup', secondary=user_group_table, \
                       backref='auth_users')
+    """
+    Fix this to use association_proxy
+    groups = association_proxy('user_group_table', 'authgroup')
+    """
 
     def _set_password(self, password):
         self._password = bcrypt.hashpw(password, bcrypt.gensalt())

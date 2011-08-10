@@ -26,6 +26,7 @@ from pyramid_apex.lib.apex import apex_email_forgot
 from pyramid_apex.lib.apex import auth_provider
 from pyramid_apex.lib.apex import provider_forms
 from pyramid_apex.lib.flash import flash
+from pyramid_apex.models import AuthGroup
 from pyramid_apex.models import AuthUser
 from pyramid_apex.models import DBSession
 from pyramid_apex.forms import ChangePasswordForm
@@ -212,6 +213,11 @@ def apex_callback(request):
                 if auth['profile'].has_key('verifiedEmail'):
                     user.email = auth['profile']['verifiedEmail']
                 DBSession.add(user)
+                if apex_settings('default_user_group'):
+                    group = DBSession.query(AuthGroup). \
+                       filter(AuthGroup.name== \
+                           apex_settings('default_user_group')).one()
+                    user.groups.append(group)
                 DBSession.flush()
             headers = remember(request, user.id)
             redir = request.GET.get('came_from', \
