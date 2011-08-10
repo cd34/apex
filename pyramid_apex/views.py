@@ -19,7 +19,6 @@ from pyramid.url import route_url
 
 from pyramid_mailer.message import Message
 
-from pyramid_apex.decorators import login_required
 from pyramid_apex.lib.apex import apex_settings
 from pyramid_apex.lib.apex import apexid_from_token
 from pyramid_apex.lib.apex import apex_email_forgot
@@ -79,7 +78,7 @@ def logout(request):
     headers = forget(request)
     return HTTPFound(location=route_url(apex_settings('came_from_route'), \
                      request), headers=headers)
-@login_required
+
 def change_password(request):
     title = _('Change your Password')
     
