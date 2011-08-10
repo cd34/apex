@@ -1,4 +1,6 @@
+import base64
 import hmac
+import time
 
 from velruse.app import parse_config_file
 from wtfrecaptcha.fields import RecaptchaField
@@ -121,10 +123,13 @@ def forgot_password(request):
         if form.data['username']:
             user = AuthUser.get_by_username(form.data['username'])
         if user:
-            hmac_key = hmac.new('%s:%s' % (str(user.id), \
-                                apex_settings('auth_secret')), \
-                                user.email).hexdigest()
-            apex_email_forgot(request, user.id, user.email, hmac_key)
+            timestamp = time.time()+3600
+            hmac_key = hmac.new('%s:%s:%d' % (str(user.id), \
+                                apex_settings('auth_secret'), timestamp), \
+                                user.email).hexdigest()[0:10]
+            time_key = base64.urlsafe_b64encode('%d' % timestamp)
+            email_hash = '%s%s' % (hmac_key, time_key)
+            apex_email_forgot(request, user.id, user.email, email_hash)
             flash(_('Password Reset email sent.'))
             return HTTPFound(location=route_url('pyramid_apex_login', \
                                                 request))
@@ -145,20 +150,24 @@ def reset_password(request):
     if request.method == 'POST' and form.validate():
         user_id = request.matchdict.get('user_id')
         user = AuthUser.get_by_id(user_id)
-        hmac_key = hmac.new('%s:%s' % (str(user.id), \
-                            apex_settings('auth_secret')), \
-                            user.email).hexdigest()
-        if hmac_key == request.matchdict.get('hmac'):
-            user.password = form.data['password']
-            DBSession.merge(user)
-            DBSession.flush()
-            flash(_('Password Changed. Please log in.'))
-            return HTTPFound(location=route_url('pyramid_apex_login', \
-                                                request))
-        else:
-            flash(_('Invalid request, please try again'))
-            return HTTPFound(location=route_url('pyramid_apex_forgot', \
-                                                request))
+        submitted_hmac = request.matchdict.get('hmac')
+        current_time = time.time()
+        time_key = base64.urlsafe_b64decode(email_hash[10:])
+        if current_time < time_key:
+            hmac_key = hmac.new('%s:%s:%d' % (str(user.id), \
+                                apex_settings('auth_secret'), time_key), \
+                                user.email).hexdigest()[0:10]
+            if hmac_key == submitted_hmac:
+                user.password = form.data['password']
+                DBSession.merge(user)
+                DBSession.flush()
+                flash(_('Password Changed. Please log in.'))
+                return HTTPFound(location=route_url('pyramid_apex_login', \
+                                                    request))
+            else:
+                flash(_('Invalid request, please try again'))
+                return HTTPFound(location=route_url('pyramid_apex_forgot', \
+                                                    request))
     return {'title': title, 'form': form, 'action': 'reset'}
     
 def register(request):
