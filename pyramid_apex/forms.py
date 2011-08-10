@@ -9,6 +9,7 @@ from pyramid.security import authenticated_userid
 from pyramid.security import remember
 from pyramid.threadlocal import get_current_request
 
+from pyramid_apex.models import DBSession
 from pyramid_apex.models import AuthUser
 from pyramid_apex.lib.form import ExtendedForm
 
@@ -25,6 +26,26 @@ class RegisterForm(ExtendedForm):
     def validate_username(form, field):
         if AuthUser.get_by_username(field.data) is not None:
             raise validators.ValidationError(_('Sorry that username already exists.'))
+
+    def create_user(self, username):
+        user = AuthUser(
+            username=username,
+            password=self.data['password'],
+            email=self.data['email'],
+        )
+        DBSession.add(user)
+        DBSession.flush()
+        
+        return user
+        
+    def save(self):
+        new_user = self.create_user(self.data['username'])
+        self.after_signup(new_user)
+        
+        return new_user
+
+    def after_signup(self, user, **kwargs):
+        pass
 
 class ChangePasswordForm(ExtendedForm):
     old_password = PasswordField(_('Old Password'), [validators.Required()])

@@ -68,7 +68,14 @@ class AuthUser(Base):
 
     password = synonym('_password', descriptor=property(_get_password, \
                        _set_password))
-    
+
+    def in_group(self, group):
+        for g in self.groups:
+            if g.name == group:
+                return True
+            else:
+                return False
+
     @classmethod
     def get_by_id(cls, id):
         return DBSession.query(cls).filter(cls.id==id).first()    
