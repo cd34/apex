@@ -14,7 +14,7 @@ apex.velruse_config = %(here)s/CONFIG.yaml
   REQUIRED, location of the Velruse CONFIG.yaml file
 
 apex.recaptcha_public_key = 
-  OPTIONAL, REQUIRED if using Recaptch
+  OPTIONAL, REQUIRED if using Recaptcha
 
 apex.recaptcha_private_key = 
   OPTIONAL, REQUIRED if using Recaptcha
