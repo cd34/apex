@@ -17,9 +17,9 @@ apex.use_recaptcha_on_forgot = false
 apex.use_recaptcha_on_reset = false
 apex.use_recaptcha_on_register = true
 apex.provider_exclude = openid
-apex.register_form_class = package.forms.MyRegisterForm
 # comma separated list of providers to exclude even if OpenID settings are
 # set in the config file
+apex.register_form_class = package.forms.MyRegisterForm
 
 # Apex looks at the Auth Providers configured by Velruse to build the login
 # page
