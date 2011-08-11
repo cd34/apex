@@ -36,7 +36,7 @@ class AuthGroup(Base):
     
     id = Column(types.BigInteger(), primary_key=True)
     name = Column(Unicode(80), unique=True, nullable=False)
-    created = Column(types.DateTime(), default=functions.current_date())
+    description = Column(Unicode(255), default=u'')
 
     users = relation('AuthUser', secondary=user_group_table, \
                      backref='auth_groups')
@@ -57,6 +57,8 @@ class AuthUser(Base):
     username = Column(Unicode(80), default=u'', index=True)
     _password = Column('password', Unicode(80), default=u'', index=True)
     email = Column(Unicode(80), default=u'', index=True)
+
+    profile = relation('AuthUserProfile', uselist=False)
 
     groups = relation('AuthGroup', secondary=user_group_table, \
                       backref='auth_users')
@@ -111,11 +113,17 @@ class AuthUser(Base):
         else:
             return False
 
+class AuthUserProfile(Base):
+    __tablename__ = 'auth_user_profile'
+
+    id = Column(types.BigInteger, primary_key=True)
+    user_id = Column(types.BigInteger, ForeignKey(AuthUser.id))
+
 def populate():
     session = DBSession()
-    group = AuthGroup(name=u'users')
+    group = AuthGroup(name=u'users', description=u'User Group')
     session.add(group)
-    group = AuthGroup(name=u'admin')
+    group = AuthGroup(name=u'admin', description=u'Admin Group')
     session.add(group)
     session.flush()
     transaction.commit()

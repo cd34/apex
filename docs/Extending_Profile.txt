@@ -1,0 +1,14 @@
+In your models/__init__.py file:
+
+class ForeignKeyProfile(Base):
+    __tablename__ = 'auth_user_profile'
+    __table_args__ = {'extend_existing':True}
+    populate_existing=reload
+
+    id = Column(types.BigInteger, primary_key=True)
+    user_id = Column(types.BigInteger, ForeignKey(AuthUser.id))
+
+    """ Add your unique options here
+    """
+    first_name = Column(Unicode(80))
+    last_name = Column(Unicode(80))
