@@ -73,7 +73,7 @@ def includeme(config):
 
     config.add_static_view('pyramid_apex/static', 'pyramid_apex:static')
 
-    #config.add_view(forbidden, context=Forbidden)
+    config.add_view(forbidden, context=Forbidden)
 
     render_template = getattr(settings, 'apex.apex_template', \
                               'pyramid_apex:templates/apex_template.mako')
