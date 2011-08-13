@@ -119,9 +119,6 @@ class AuthUserProfile(Base):
     id = Column(types.BigInteger, primary_key=True)
     user_id = Column(types.BigInteger, ForeignKey(AuthUser.id))
 
-    news_karma = Column(types.BigInteger, default=1)
-    qa_karma = Column(types.BigInteger, default=1)
-
 def populate():
     session = DBSession()
     group = AuthGroup(name=u'users')
