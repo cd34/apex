@@ -36,7 +36,7 @@ class AuthGroup(Base):
     
     id = Column(types.BigInteger(), primary_key=True)
     name = Column(Unicode(80), unique=True, nullable=False)
-    created = Column(types.DateTime(), default=functions.current_date())
+    description = Column(Unicode(255), default=u'')
 
     users = relation('AuthUser', secondary=user_group_table, \
                      backref='auth_groups')
@@ -121,9 +121,9 @@ class AuthUserProfile(Base):
 
 def populate():
     session = DBSession()
-    group = AuthGroup(name=u'users')
+    group = AuthGroup(name=u'users', description=u'User Group')
     session.add(group)
-    group = AuthGroup(name=u'admin')
+    group = AuthGroup(name=u'admin', description=u'Admin Group')
     session.add(group)
     session.flush()
     transaction.commit()
