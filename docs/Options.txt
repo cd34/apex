@@ -57,3 +57,7 @@ apex.create_openid_before =
 apex.create_openid_after =
   OPTIONAL, since OpenID requests don't allow us to override the signup
   form, we call this function after the OpenID callback.
+
+apex.openid_required =
+  OPTIONAL, comma separated list of required fields when using OpenID to create
+  an account

@@ -3,6 +3,8 @@ import hmac
 import time
 
 from velruse.app import parse_config_file
+from wtforms import TextField
+from wtforms import validators
 from wtfrecaptcha.fields import RecaptchaField
 
 from pyramid.httpexceptions import HTTPFound
@@ -219,11 +221,48 @@ def apex_callback(request):
                            apex_settings('default_user_group')).one()
                     user.groups.append(group)
                 DBSession.flush()
+            if apex_settings('openid_required'):
+                request.session['id'] = user.id
+                return HTTPFound(location='%s?came_from=%s' % \
+                    (route_url('pyramid_apex_openid_required', request), \
+                    request.GET.get('came_from', \
+                        route_url(apex_settings('came_from_route'), request))))
             headers = remember(request, user.id)
             redir = request.GET.get('came_from', \
                         route_url(apex_settings('came_from_route'), request))
             flash(_('Successfully Logged in, welcome!'), 'success')
     return HTTPFound(location=redir, headers=headers)
+
+def openid_required(request):
+    title = _('OpenID Registration')
+    came_from = request.params.get('came_from', \
+                    route_url(apex_settings('came_from_route'), request))
+
+    #This fixes the issue with RegisterForm throwing an UnboundLocalError
+    if apex_settings('register_form_class'):
+        resolver = DottedNameResolver(apex_settings('register_form_class').split('.')[0])
+        OpenIDRequiredForm = resolver.resolve( \
+                                 apex_settings('register_form_class'))
+    else:
+        from pyramid_apex.forms import OpenIDRequiredForm
+
+    for required in apex_settings('openid_required').split(','):
+        setattr(OpenIDRequiredForm, required, \
+            TextField(required, [validators.Required()]))
+
+    form = OpenIDRequiredForm(request.POST, \
+               captcha={'ip_address': request.environ['REMOTE_ADDR']})
+
+    if request.method == 'POST' and form.validate():
+        user = AuthUser.get_by_id(request.session['id'])
+        for required in apex_settings('openid_required').split(','):
+            setattr(user, required, form.data[required])
+        DBSession.merge(user)
+        DBSession.flush()
+        headers = remember(request, user.id)
+        return HTTPFound(location=came_from, headers=headers)
+
+    return {'title': title, 'form': form, 'action': 'openid_required'}
 
 def forbidden(request):
     flash(_('Not logged in, please log in'), 'error')

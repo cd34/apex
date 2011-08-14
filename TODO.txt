@@ -16,3 +16,7 @@ FormEncode optional validation of email
 ax/sx options for OpenID
 
 correctly use mappers/backref to extend profile
+
+active user (Yes, No, Deactivated)
+
+consolidate form class override

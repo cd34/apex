@@ -23,6 +23,7 @@ from pyramid_apex.views import login
 from pyramid_apex.views import logout
 from pyramid_apex.views import forgot_password
 from pyramid_apex.views import forbidden
+from pyramid_apex.views import openid_required
 from pyramid_apex.views import register
 from pyramid_apex.views import reset_password
 
@@ -104,3 +105,9 @@ def includeme(config):
     
     config.add_route('pyramid_apex_callback', '/auth/apex_callback')
     config.add_view(apex_callback, route_name='pyramid_apex_callback')
+
+    config.add_route('pyramid_apex_openid_required', '/auth/openid_required')
+    config.add_view(openid_required, route_name= \
+                    'pyramid_apex_openid_required', \
+                    renderer=render_template)
+

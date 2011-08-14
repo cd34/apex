@@ -138,3 +138,6 @@ class TwitterLogin(OAuthForm):
     
 class WindowsLiveLogin(OAuthForm):
     provider_name = 'live'
+
+class OpenIDRequiredForm(ExtendedForm):
+    pass
