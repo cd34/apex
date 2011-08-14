@@ -222,10 +222,15 @@ def apex_callback(request):
                     user.groups.append(group)
                 DBSession.flush()
             if apex_settings('openid_required'):
-                request.session['id'] = user.id
-                return HTTPFound(location='%s?came_from=%s' % \
-                    (route_url('pyramid_apex_openid_required', request), \
-                    request.GET.get('came_from', \
+                openid_required = False
+                for required in apex_settings('openid_required').split(','):
+                    if not getattr(user, required):
+                        openid_required = True
+                if openid_required:
+                    request.session['id'] = user.id
+                    return HTTPFound(location='%s?came_from=%s' % \
+                        (route_url('pyramid_apex_openid_required', request), \
+                        request.GET.get('came_from', \
                         route_url(apex_settings('came_from_route'), request))))
             headers = remember(request, user.id)
             redir = request.GET.get('came_from', \
