@@ -4,7 +4,11 @@
 	%endfor
 %endif
 
-<form action="${action}" method="POST" accept-charset="utf-8">
+<form action="${action}" method="POST" accept-charset="utf-8"
+	%if args.has_key('multipart'):
+		 enctype="multipart/form-data"
+	%endif
+	>
 	<table border="0" cellspacing="0" cellpadding="2">
 		%for loop, field in enumerate(form):
 			<tr class="${['odd', 'even'][loop % 2]}">
