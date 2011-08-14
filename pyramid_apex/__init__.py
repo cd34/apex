@@ -2,8 +2,6 @@ from pyramid_mailer.interfaces import IMailer
 
 from sqlalchemy import engine_from_config
 
-from zope.component import getUtility
-
 from pyramid.interfaces import IAuthenticationPolicy
 from pyramid.interfaces import IAuthorizationPolicy
 from pyramid.interfaces import ISessionFactory
@@ -14,6 +12,8 @@ from pyramid.exceptions import Forbidden
 
 from pyramid_apex.exceptions import ApexAuthSecret
 from pyramid_apex.exceptions import ApexSessionSecret
+from pyramid_apex.interfaces import IPyramidApex, PyramidApexImplementation
+from pyramid_apex.interfaces import PyramidApexImplementation
 from pyramid_apex.lib.apex import groupfinder
 from pyramid_apex.lib.apex import RootFactory
 from pyramid_apex.models import initialize_sql
@@ -30,6 +30,8 @@ def includeme(config):
     settings = config.registry.settings
 
     initialize_sql(engine_from_config(settings, 'sqlalchemy.'))
+
+    config.registry.registerUtility(PyramidApexImplementation, IPyramidApex)
 
     if not config.registry.queryUtility(ISessionFactory):
         if not settings.has_key('apex.session_secret'):
