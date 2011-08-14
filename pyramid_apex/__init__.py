@@ -12,7 +12,7 @@ from pyramid.exceptions import Forbidden
 
 from pyramid_apex.exceptions import ApexAuthSecret
 from pyramid_apex.exceptions import ApexSessionSecret
-from pyramid_apex.interfaces import IPyramidApex, PyramidApexImplementation
+from pyramid_apex.interfaces import IPyramidApex
 from pyramid_apex.interfaces import PyramidApexImplementation
 from pyramid_apex.lib.apex import groupfinder
 from pyramid_apex.lib.apex import RootFactory
