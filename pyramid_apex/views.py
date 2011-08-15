@@ -220,6 +220,12 @@ def apex_callback(request):
                        filter(AuthGroup.name== \
                            apex_settings('default_user_group')).one()
                     user.groups.append(group)
+                if apex_settings('create_openid_after'):
+                    resolver = DottedNameResolver( \
+                        apex_settings('create_openid_after').split('.')[0])
+                    openid_after = resolver.resolve( \
+                                       apex_settings('create_openid_after'))
+                    openid_after().after_signup(user)
                 DBSession.flush()
             if apex_settings('openid_required'):
                 openid_required = False
@@ -244,10 +250,10 @@ def openid_required(request):
                     route_url(apex_settings('came_from_route'), request))
 
     #This fixes the issue with RegisterForm throwing an UnboundLocalError
-    if apex_settings('register_form_class'):
-        resolver = DottedNameResolver(apex_settings('register_form_class').split('.')[0])
+    if apex_settings('openid_register_form_class'):
+        resolver = DottedNameResolver(apex_settings('openid_register_form_class').split('.')[0])
         OpenIDRequiredForm = resolver.resolve( \
-                                 apex_settings('register_form_class'))
+                                 apex_settings('openid_register_form_class'))
     else:
         from pyramid_apex.forms import OpenIDRequiredForm
 
