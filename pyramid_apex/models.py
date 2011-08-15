@@ -58,8 +58,6 @@ class AuthUser(Base):
     _password = Column('password', Unicode(80), default=u'', index=True)
     email = Column(Unicode(80), default=u'', index=True)
 
-    profile = relation('AuthUserProfile', uselist=False)
-
     groups = relation('AuthGroup', secondary=user_group_table, \
                       backref='auth_users')
     """
@@ -112,12 +110,6 @@ class AuthUser(Base):
             return True
         else:
             return False
-
-class AuthUserProfile(Base):
-    __tablename__ = 'auth_user_profile'
-
-    id = Column(types.BigInteger, primary_key=True)
-    user_id = Column(types.BigInteger, ForeignKey(AuthUser.id))
 
 def populate():
     session = DBSession()

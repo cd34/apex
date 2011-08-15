@@ -45,6 +45,8 @@ class ForeignKeyProfile(Base):
     first_name = Column(Unicode(80))
     last_name = Column(Unicode(80))
 
+    user = relationship('AuthUser', backref=backref('profile', uselist=False))
+
 def populate():
     session = DBSession()
     model = MyModel(name=u'root', value=55)
