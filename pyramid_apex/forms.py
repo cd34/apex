@@ -7,6 +7,7 @@ from wtforms import validators
 from pyramid.i18n import TranslationString as _
 from pyramid.security import authenticated_userid
 from pyramid.security import remember
+from pyramid.threadlocal import get_current_registry
 from pyramid.threadlocal import get_current_request
 
 from pyramid_apex.models import DBSession
