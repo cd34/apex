@@ -1,4 +1,4 @@
-In your models/__init__.py file:
+In models/__init__.py file:
 
 class ForeignKeyProfile(Base):
     __tablename__ = 'auth_user_profile'
@@ -8,7 +8,26 @@ class ForeignKeyProfile(Base):
     id = Column(types.BigInteger, primary_key=True)
     user_id = Column(types.BigInteger, ForeignKey(AuthUser.id))
 
-    """ Add your unique options here
+    """ Add your locally defined options here
     """
     first_name = Column(Unicode(80))
     last_name = Column(Unicode(80))
+
+    user = relationship('AuthUser', backref=backref('profile', uselist=False))
+
+In project/models/profile.py:
+
+from pyramid_apex.forms import RegisterForm
+
+from project.models import DBSession
+from project.models import ForeignKeyProfile
+
+class NewRegisterForm(RegisterForm):
+    def after_signup(self, user):
+        profile = ForeignKeyProfile(user_id=user.id)
+        DBSession.add(profile)
+        DBSession.flush()
+
+In development.ini:
+
+apex.register_form_class = project.form.NewRegisterForm
