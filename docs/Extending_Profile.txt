@@ -65,7 +65,7 @@ project/profile.py:
 from project.models import DBSession
 from project.models import ForeignKeyProfile
 
-class openid_after():
+class openid_after(object):
     def after_signup(self, user):
         profile = ForeignKeyProfile(user_id=user.id)
         DBSession.add(profile)
