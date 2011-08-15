@@ -6,7 +6,7 @@ class ForeignKeyProfile(Base):
     __tablename__ = 'auth_user_profile'
 
     id = Column(types.BigInteger, primary_key=True)
-    user_id = Column(types.BigInteger, ForeignKey(AuthUser.id))
+    user_id = Column(types.BigInteger, ForeignKey(AuthUser.id), index=True)
 
     """ Add your locally defined options here
     """
