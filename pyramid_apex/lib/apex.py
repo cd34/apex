@@ -157,3 +157,4 @@ def create_user(**kwargs):
     
     DBSession.add(user)
     DBSession.flush()
+    return user
