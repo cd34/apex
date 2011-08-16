@@ -20,3 +20,6 @@ correctly use mappers/backref to extend profile
 active user (Yes, No, Deactivated)
 
 consolidate form class override
+
+pull default groups from config
+allow user to be added to multiple groups on signup
