@@ -8,6 +8,8 @@ import urlparse
 import velruse.store.sqlstore
 from velruse.store.sqlstore import KeyStorage
 
+from sqlalchemy.orm.exc import NoResultFound
+
 from pyramid.httpexceptions import HTTPFound
 from pyramid.i18n import TranslationString as _
 from pyramid.security import Allow
@@ -22,7 +24,6 @@ from pyramid_mailer.message import Message
 from pyramid_apex.models import DBSession
 from pyramid_apex.models import AuthUser
 from pyramid_apex.models import AuthGroup
-
 from pyramid_apex.forms import OpenIdLogin
 from pyramid_apex.forms import GoogleLogin
 from pyramid_apex.forms import FacebookLogin
@@ -134,3 +135,25 @@ def apex_settings(key=None):
                 apex_settings.append({k.split('.')[1]: v})
 
         return apex_settings
+
+def create_user(**kwargs):
+    """Usage: create_user(username='test', password='my_password', group='group')
+    """
+    user = AuthUser()
+
+    if 'group' in kwargs:
+        try:
+            group = DBSession.query(AuthGroup). \
+            filter(AuthGroup.name==kwargs['group']).one()
+
+            user.groups.append(group)
+        except NoResultFound:
+            pass
+
+        del kwargs['group']
+
+    for key, value in kwargs.items():
+        setattr(user, key, value)
+    
+    DBSession.add(user)
+    DBSession.flush()
