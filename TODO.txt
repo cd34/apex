@@ -23,3 +23,5 @@ consolidate form class override
 
 pull default groups from config
 allow user to be added to multiple groups on signup
+
+Registration should also include OAuth methods
