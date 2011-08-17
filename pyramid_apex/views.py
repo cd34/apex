@@ -52,7 +52,7 @@ def login(request):
                captcha={'ip_address': request.environ['REMOTE_ADDR']})
     
     
-    velruse_forms = generate_velruse_forms(request)
+    velruse_forms = generate_velruse_forms(request, came_from)
 
     if request.method == 'POST' and form.validate():
         user = AuthUser.get_by_username(form.data.get('username'))

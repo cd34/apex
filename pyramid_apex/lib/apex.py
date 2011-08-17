@@ -160,7 +160,7 @@ def create_user(**kwargs):
     DBSession.flush()
     return user
 
-def generate_velruse_forms(request):
+def generate_velruse_forms(request, came_from):
     velruse_forms = []
     if apex_settings('velruse_config'):
         configs = parse_config_file(apex_settings('velruse_config'))[0].keys()
