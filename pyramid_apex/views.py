@@ -2,7 +2,6 @@ import base64
 import hmac
 import time
 
-from velruse.app import parse_config_file
 from wtforms import TextField
 from wtforms import validators
 from wtfrecaptcha.fields import RecaptchaField

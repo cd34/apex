@@ -6,6 +6,7 @@ except ImportError:
 import urlparse
 
 import velruse.store.sqlstore
+from velruse.app import parse_config_file
 from velruse.store.sqlstore import KeyStorage
 
 from sqlalchemy.orm.exc import NoResultFound
