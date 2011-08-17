@@ -26,6 +26,7 @@ from pyramid_apex.lib.apex import apex_settings
 from pyramid_apex.lib.apex import apexid_from_token
 from pyramid_apex.lib.apex import apex_email_forgot
 from pyramid_apex.lib.apex import auth_provider
+from pyramid_apex.lib.apex import generate_velruse_forms
 from pyramid_apex.lib.apex import provider_forms
 from pyramid_apex.lib.flash import flash
 from pyramid_apex.models import AuthGroup
@@ -52,21 +53,7 @@ def login(request):
                captcha={'ip_address': request.environ['REMOTE_ADDR']})
     
     
-    velruse_forms = []
-    if apex_settings('velruse_config'):
-        configs = parse_config_file(apex_settings('velruse_config'))[0].keys()
-        if apex_settings('provider_exclude'):
-            for provider in apex_settings('provider_exclude').split(','):
-                configs.remove(provider.strip())
-        for provider in configs:
-            if provider_forms.has_key(provider):
-                velruse_forms.append(provider_forms[provider](
-                    end_point='%s?csrf_token=%s&came_from=%s' % \
-                     (request.route_url('pyramid_apex_callback'), \
-                      request.session.get_csrf_token(),
-                      came_from), \
-                     csrf_token = request.session.get_csrf_token()
-                ))
+    velruse_forms = generate_velruse_forms(request)
 
     if request.method == 'POST' and form.validate():
         user = AuthUser.get_by_username(form.data.get('username'))
@@ -176,6 +163,7 @@ def register(request):
     title = _('Register')
     came_from = request.params.get('came_from', \
                     route_url(apex_settings('came_from_route'), request))
+    velruse_forms = generate_velruse_forms(request)
 
     #This fixes the issue with RegisterForm throwing an UnboundLocalError
     if apex_settings('register_form_class'):
@@ -198,7 +186,8 @@ def register(request):
         headers = remember(request, user.id)
         return HTTPFound(location=came_from, headers=headers)
         
-    return {'title': title, 'form': form, 'action': 'register'}
+    return {'title': title, 'form': form, 'velruse_forms': velruse_forms, \
+            'action': 'register'}
 
 def apex_callback(request):
     redir = request.GET.get('came_from', \
