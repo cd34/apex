@@ -162,7 +162,7 @@ def register(request):
     title = _('Register')
     came_from = request.params.get('came_from', \
                     route_url(apex_settings('came_from_route'), request))
-    velruse_forms = generate_velruse_forms(request)
+    velruse_forms = generate_velruse_forms(request, came_from)
 
     #This fixes the issue with RegisterForm throwing an UnboundLocalError
     if apex_settings('register_form_class'):
