@@ -6,7 +6,21 @@ from wtforms import validators
 from pyramid.renderers import render
 
 #http://groups.google.com/group/wtforms/msg/d6e5aca36a69ff5d
-class ExtendedForm(Form):    
+class ExtendedForm(Form):
+
+    def __init__(self, formdata=None, obj=None, prefix='', **kwargs):
+        super(Form, self).__init__(self._unbound_fields, prefix=prefix)
+
+        self.is_multipart = False
+
+        for name, field in self._fields.iteritems():
+            if field.type == 'FileField':
+                self.is_multipart = True
+
+            setattr(self, name, field)
+
+        self.process(formdata, obj, **kwargs)
+
     def clean(self): 
         """Override me to validate a whole form.""" 
         pass
@@ -23,8 +37,9 @@ class ExtendedForm(Form):
     def render(self, **kwargs):
         action = kwargs.pop('action', '')
         submit_text = kwargs.pop('submit_text', 'Submit')
+        template = kwargs.pop('template', 'tableform')
 
-        return render('pyramid_apex:templates/forms/tableform.mako', {
+        return render('pyramid_apex:templates/forms/%s.mako' % template, {
             'form': self,
             'action': action,
             'submit_text': submit_text,

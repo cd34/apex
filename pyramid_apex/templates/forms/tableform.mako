@@ -5,7 +5,7 @@
 %endif
 
 <form action="${action}" method="POST" accept-charset="utf-8"
-	%if args.has_key('multipart'):
+	%if form.is_multipart:
 		 enctype="multipart/form-data"
 	%endif
 	>

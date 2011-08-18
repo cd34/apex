@@ -25,3 +25,5 @@ pull default groups from config
 allow user to be added to multiple groups on signup
 
 disable local authentication
+
+add more detail to exceptions
