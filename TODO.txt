@@ -19,8 +19,6 @@ correctly use mappers/backref to extend profile
 
 consolidate form class override
 
-pull default groups from config (load order problem, config object not set
-  during instantiation)
 allow user to be added to multiple groups on signup
 
 disable local authentication
