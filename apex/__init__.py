@@ -14,8 +14,8 @@ from apex.exceptions import ApexAuthSecret
 from apex.exceptions import ApexSessionSecret
 from apex.interfaces import IPyramidApex
 from apex.interfaces import PyramidApexImplementation
-from apex.lib.apex import groupfinder
-from apex.lib.apex import RootFactory
+from apex.lib.libapex import groupfinder
+from apex.lib.libapex import RootFactory
 from apex.models import initialize_sql
 from apex.views import apex_callback
 from apex.views import change_password

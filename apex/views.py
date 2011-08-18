@@ -21,12 +21,12 @@ from pyramid.util import DottedNameResolver
 
 from pyramid_mailer.message import Message
 
-from apex.lib.apex import apex_settings
-from apex.lib.apex import apexid_from_token
-from apex.lib.apex import apex_email_forgot
-from apex.lib.apex import auth_provider
-from apex.lib.apex import generate_velruse_forms
-from apex.lib.apex import provider_forms
+from apex.lib.libapex import apex_settings
+from apex.lib.libapex import apexid_from_token
+from apex.lib.libapex import apex_email_forgot
+from apex.lib.libapex import auth_provider
+from apex.lib.libapex import generate_velruse_forms
+from apex.lib.libapex import provider_forms
 from apex.lib.flash import flash
 from apex.models import AuthGroup
 from apex.models import AuthUser
