@@ -1,8 +1,8 @@
 from zope.interface import implements
 from zope.interface import Interface
 
-class IPyramidApex(Interface):
+class IApex(Interface):
     pass
     
-class PyramidApexImplementation(object):
-    implements(IPyramidApex)
+class ApexImplementation(object):
+    implements(IApex)

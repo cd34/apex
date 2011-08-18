@@ -12,8 +12,8 @@ from pyramid.exceptions import Forbidden
 
 from apex.exceptions import ApexAuthSecret
 from apex.exceptions import ApexSessionSecret
-from apex.interfaces import IPyramidApex
-from apex.interfaces import PyramidApexImplementation
+from apex.interfaces import IApex
+from apex.interfaces import ApexImplementation
 from apex.lib.libapex import groupfinder
 from apex.lib.libapex import RootFactory
 from apex.models import initialize_sql
@@ -32,7 +32,7 @@ def includeme(config):
 
     initialize_sql(engine_from_config(settings, 'sqlalchemy.'), settings)
 
-    config.registry.registerUtility(PyramidApexImplementation, IPyramidApex)
+    config.registry.registerUtility(ApexImplementation, IApex)
 
     if not config.registry.queryUtility(ISessionFactory):
         if not settings.has_key('apex.session_secret'):
