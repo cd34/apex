@@ -37,14 +37,14 @@ beaker.session.cookie_domain = .domain.com
 
 [composite:main]
 use = egg:Paste#urlmap
-/ = ppyrapex
+/ = pexample
 /velruse = velruse
 
 [filter:exc]
 use=egg:WebError#evalerror
 
-[pipeline:ppyrapex]
-pipeline = exc tm pyrapex
+[pipeline:pexample]
+pipeline = exc tm example
 
 URLs to get your API keys:
 

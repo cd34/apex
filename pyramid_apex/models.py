@@ -1,10 +1,6 @@
 import bcrypt
 import transaction
 
-from pyramid.threadlocal import get_current_request
-from pyramid.security import authenticated_userid
-from pyramid.util import DottedNameResolver
-
 from sqlalchemy import Column
 from sqlalchemy import ForeignKey
 from sqlalchemy import Table
@@ -24,7 +20,7 @@ from velruse.store.sqlstore import SQLBase
 
 from zope.sqlalchemy import ZopeTransactionExtension 
 
-from pyramid_apex.lib.db import get_or_create
+from pyramid.threadlocal import get_current_registry
 
 DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 Base = declarative_base()
@@ -52,6 +48,7 @@ class AuthGroup(Base):
 
     def __unicode__(self):
         return self.name
+    
 
 class AuthUser(Base):
     __tablename__ = 'auth_users'
@@ -62,6 +59,9 @@ class AuthUser(Base):
     username = Column(Unicode(80), default=u'', index=True)
     _password = Column('password', Unicode(80), default=u'', index=True)
     email = Column(Unicode(80), default=u'', index=True)
+    """ Yes, No, Disabled
+    """
+    active = Column(Unicode(1), default=u'Y')
 
     groups = relation('AuthGroup', secondary=user_group_table, \
                       backref='auth_users')
@@ -116,24 +116,26 @@ class AuthUser(Base):
         else:
             return False
 
-    @classmethod   
-    def get_profile(cls, request=None):
-        if not request:
-            request = get_current_request()
-
-        if authenticated_userid(request):
-            auth_profile = request.registry.settings.get('apex.auth_profile')
-            if auth_profile:
-                resolver = DottedNameResolver(auth_profile.split('.')[0])
-                profile_cls = resolver.resolve(auth_profile)
-                return get_or_create(DBSession, profile_cls, user_id=authenticated_userid(request))
-            
 def populate():
     session = DBSession()
-    group = AuthGroup(name=u'users', description=u'User Group')
-    session.add(group)
-    group = AuthGroup(name=u'admin', description=u'Admin Group')
-    session.add(group)
+    
+    """
+    both apex_settings and registry return None - again, load order issues
+    default_groups = []
+    settings = get_current_registry().settings
+    if settings.has_key('apex.default_groups'):
+        for name in settings['apex.default_groups'].split(','):
+            default_groups.append((name.strip(),u''))
+    else:
+        default_groups = [(u'users',u'User Group'), \
+                          (u'admin',u'Admin Group')]
+    """
+    default_groups = [(u'users',u'User Group'), \
+                      (u'admin',u'Admin Group')]
+    for name,description in default_groups:
+        group = AuthGroup(name=name, description=description)
+        session.add(group)
+
     session.flush()
     transaction.commit()
 

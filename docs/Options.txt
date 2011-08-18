@@ -61,3 +61,7 @@ apex.create_openid_after =
 apex.openid_required =
   OPTIONAL, comma separated list of required fields when using OpenID to create
   an account
+
+apex.default_groups = 
+  OPTIONAL, comma separated list of group names to create. Defaults to admin, 
+  user

@@ -70,3 +70,5 @@ class openid_after(object):
         profile = ForeignKeyProfile(user_id=user.id)
         DBSession.add(profile)
         DBSession.flush()
+
+AuthUser.get_profile()
