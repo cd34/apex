@@ -1,6 +1,10 @@
 import bcrypt
 import transaction
 
+from pyramid.threadlocal import get_current_request
+from pyramid.security import authenticated_userid
+from pyramid.util import DottedNameResolver
+
 from sqlalchemy import Column
 from sqlalchemy import ForeignKey
 from sqlalchemy import Table
@@ -19,6 +23,8 @@ from sqlalchemy.sql import functions
 from velruse.store.sqlstore import SQLBase
 
 from zope.sqlalchemy import ZopeTransactionExtension 
+
+from pyramid_apex.lib.db import get_or_create
 
 DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 Base = declarative_base()
@@ -46,7 +52,6 @@ class AuthGroup(Base):
 
     def __unicode__(self):
         return self.name
-    
 
 class AuthUser(Base):
     __tablename__ = 'auth_users'
@@ -111,6 +116,18 @@ class AuthUser(Base):
         else:
             return False
 
+    @classmethod   
+    def get_profile(cls, request=None):
+        if not request:
+            request = get_current_request()
+
+        if authenticated_userid(request):
+            auth_profile = request.registry.settings.get('apex.auth_profile')
+            if auth_profile:
+                resolver = DottedNameResolver(auth_profile.split('.')[0])
+                profile_cls = resolver.resolve(auth_profile)
+                return get_or_create(DBSession, profile_cls, user_id=authenticated_userid(request))
+            
 def populate():
     session = DBSession()
     group = AuthGroup(name=u'users', description=u'User Group')
