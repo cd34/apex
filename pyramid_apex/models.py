@@ -133,36 +133,30 @@ class AuthUser(Base):
                 profile_cls = resolver.resolve(auth_profile)
                 return get_or_create(DBSession, profile_cls, user_id=authenticated_userid(request))
 
-def populate():
+def populate(settings):
     session = DBSession()
     
-    """
-    both apex_settings and registry return None - again, load order issues
     default_groups = []
-    settings = get_current_registry().settings
     if settings.has_key('apex.default_groups'):
         for name in settings['apex.default_groups'].split(','):
             default_groups.append((name.strip(),u''))
     else:
         default_groups = [(u'users',u'User Group'), \
                           (u'admin',u'Admin Group')]
-    """
-    default_groups = [(u'users',u'User Group'), \
-                      (u'admin',u'Admin Group')]
-    for name,description in default_groups:
+    for name, description in default_groups:
         group = AuthGroup(name=name, description=description)
         session.add(group)
 
     session.flush()
     transaction.commit()
 
-def initialize_sql(engine):
+def initialize_sql(engine, settings):
     DBSession.configure(bind=engine)
     Base.metadata.bind = engine
     Base.metadata.create_all(engine)
     SQLBase.metadata.bind = engine
     SQLBase.metadata.create_all(engine)
     try:
-        populate()
+        populate(settings)
     except IntegrityError:
         transaction.abort()

@@ -30,7 +30,7 @@ from pyramid_apex.views import reset_password
 def includeme(config):
     settings = config.registry.settings
 
-    initialize_sql(engine_from_config(settings, 'sqlalchemy.'))
+    initialize_sql(engine_from_config(settings, 'sqlalchemy.'), settings)
 
     config.registry.registerUtility(PyramidApexImplementation, IPyramidApex)
 
