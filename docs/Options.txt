@@ -63,5 +63,5 @@ apex.openid_required =
   an account
 
 apex.default_groups = 
-  OPTIONAL, comma separated list of group names to create. Defaults to admin, 
+  OPTIONAL, NOT IMPLEMENTED, comma separated list of group names to create. Defaults to admin, 
   user
