@@ -4,7 +4,7 @@ version = '0.9.0'
 
 setup(
     version = version,
-    name = 'Pyramid Apex',
+    name = 'Apex',
     long_description = 'Pyramid starter project to add Velruse, Flash Messages, CSRF, ReCaptcha and Sessions',
     install_requires=[
       "py-bcrypt",
