@@ -17,7 +17,7 @@ class ForeignKeyProfile(Base):
 
 project/models/profile.py:
 
-from pyramid_apex.forms import RegisterForm
+from apex.forms import RegisterForm
 
 from project.models import DBSession
 from project.models import ForeignKeyProfile
@@ -58,7 +58,7 @@ class ForeignKeyProfile(Base):
 
 In project/models/profile.py:
 
-from pyramid_apex.forms import RegisterForm
+from apex.forms import RegisterForm
 
 project/profile.py:
 

@@ -1,0 +1,24 @@
+.flash {
+    text-align: center;
+    padding: 5px 0px 5px 0px;
+}
+.flash p {
+    margin: 0px 0px 0px 0px;
+    padding: 5px 0px 5px 5px;
+}
+.flash .notice {
+    border: 1px solid #39f;
+    background: #cff;
+}
+.flash .error {
+    border: 1px solid #f33;
+    background: #fcc;
+}
+.flash .warning {
+    border: 1px solid #ff0;
+    background: #ff9;
+}
+.flash .success {
+    border: 1px solid #3f0;
+    background: #9f9;
+}

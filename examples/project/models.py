@@ -16,7 +16,7 @@ from zope.sqlalchemy import ZopeTransactionExtension
 from velruse.store.sqlstore import KeyStorage
 from velruse.store.sqlstore import SQLBase
 
-from pyramid_apex.models import AuthUser
+from apex.models import AuthUser
 
 DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 Base = declarative_base()

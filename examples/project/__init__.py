@@ -26,7 +26,7 @@ def main(global_config, **settings):
     config.add_view('project.views.test', route_name='test',
                     renderer='test.mako')
 
-    config.include('pyramid_apex')
+    config.include('apex')
 
     return config.make_wsgi_app()
 
