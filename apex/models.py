@@ -1,4 +1,4 @@
-import bcrypt
+from cryptacular.bcrypt import BCRYPTPasswordManager
 import transaction
 
 from pyramid.security import authenticated_userid
@@ -76,7 +76,7 @@ class AuthUser(Base):
     """
 
     def _set_password(self, password):
-        self._password = bcrypt.hashpw(password, bcrypt.gensalt())
+        self._password = BCRYPTPasswordManager().encode(password, rounds=12)
 
     def _get_password(self):
         return self._password
@@ -116,7 +116,7 @@ class AuthUser(Base):
 
         if not user:
             return False
-        if bcrypt.hashpw(kwargs['password'], user.password) == user.password:
+        if BCRYPTPasswordManager().check(user.password, kwargs['password']):
             return True
         else:
             return False

@@ -7,7 +7,7 @@ setup(
     name = 'Apex',
     long_description = 'Pyramid starter project to add Velruse, Flash Messages, CSRF, ReCaptcha and Sessions',
     install_requires=[
-      "py-bcrypt",
+      "cryptacular",
       "velruse",
       "pyramid",
       "pyramid_mailer",
