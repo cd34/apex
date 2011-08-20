@@ -71,6 +71,8 @@ def includeme(config):
                           'pyramid.events.NewRequest')
     config.add_subscriber('apex.lib.subscribers.add_renderer_globals', \
                           'pyramid.events.BeforeRender')
+    config.add_subscriber('apex.lib.subscribers.add_user_context', \
+                          'pyramid.events.ContextFound')
 
     config.add_static_view('apex/static', 'apex:static')
 
