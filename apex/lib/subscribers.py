@@ -31,3 +31,8 @@ def add_renderer_globals(event):
         'user': user(request),
     }
     event.update(globs)
+
+def add_user_context(event):
+    request = event.request
+    context = request.context
+    request.user = user(request)
