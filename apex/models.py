@@ -68,9 +68,9 @@ class AuthUser(Base):
     username = Column(Unicode(80), default=u'', index=True)
     _password = Column('password', Unicode(80), default=u'', index=True)
     email = Column(Unicode(80), default=u'', index=True)
+    active = Column(Unicode(1), default=u'Y')
     """ Yes, No, Disabled
     """
-    active = Column(Unicode(1), default=u'Y')
 
     groups = relation('AuthGroup', secondary=user_group_table, \
                       backref='auth_users')
@@ -97,18 +97,54 @@ class AuthUser(Base):
 
     @classmethod
     def get_by_id(cls, id):
+        """ 
+        Returns AuthUser object or None by id
+
+        .. code-block:: python
+
+           from apex.models import AuthUser
+
+           user = AuthUser().get_by_id(1)
+        """
         return DBSession.query(cls).filter(cls.id==id).first()    
 
     @classmethod
     def get_by_login(cls, login):
+        """ 
+        Returns AuthUser object or None by login
+
+        .. code-block:: python
+
+           from apex.models import AuthUser
+
+           user = AuthUser().get_by_login('$G$1023001')
+        """
         return DBSession.query(cls).filter(cls.login==login).first()
 
     @classmethod
     def get_by_username(cls, username):
+        """ 
+        Returns AuthUser object or None by username
+
+        .. code-block:: python
+
+           from apex.models import AuthUser
+
+           user = AuthUser().get_by_id('username')
+        """
         return DBSession.query(cls).filter(cls.username==username).first()
 
     @classmethod
     def get_by_email(cls, email):
+        """ 
+        Returns AuthUser object or None by email
+
+        .. code-block:: python
+
+           from apex.models import AuthUser
+
+           user = AuthUser().get_by_id('email@address.com')
+        """
         return DBSession.query(cls).filter(cls.email==email).first()
 
     @classmethod
@@ -127,7 +163,14 @@ class AuthUser(Base):
 
     @classmethod   
     def get_profile(cls, request=None):
-        """ Return the profile
+        """
+        Returns AuthUser.profile object
+
+        .. code-block:: python
+
+           from apex.models import AuthUser
+
+           user = AuthUser().get_profile(MyClass, request)
         """
         if not request:
             request = get_current_request()

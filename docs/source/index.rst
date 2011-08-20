@@ -11,10 +11,10 @@ Authentication, Form Library, I18N/L10N, Flash Message Template
 
 Uses pyramid_routesalchemy
 
-* Authentication
+Authentication
 
-Local authentication uses BCrypt
-http://codahale.com/how-to-safely-store-a-password/
+  * Local authentication uses BCrypt
+  * http://codahale.com/how-to-safely-store-a-password/
 
 Velruse is used for OpenID/OpenAuth providers and supports
   * Google
@@ -45,10 +45,11 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   INSTALL
+   QUICKSTART
    models
    extending_profile
    extensions
-   INSTALL
    models
    options
    redefine_login_page
