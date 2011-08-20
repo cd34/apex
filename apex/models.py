@@ -38,6 +38,8 @@ user_group_table = Table('auth_user_groups', Base.metadata,
 )
 
 class AuthGroup(Base):
+    """ AuthGroup
+    """
     __tablename__ = 'auth_groups'
     __table_args__ = {"sqlite_autoincrement": True}
     
@@ -56,6 +58,8 @@ class AuthGroup(Base):
     
 
 class AuthUser(Base):
+    """ AuthUser
+    """
     __tablename__ = 'auth_users'
     __table_args__ = {"sqlite_autoincrement": True}
 
@@ -123,6 +127,8 @@ class AuthUser(Base):
 
     @classmethod   
     def get_profile(cls, request=None):
+        """ Return the profile
+        """
         if not request:
             request = get_current_request()
 

@@ -1,0 +1,231 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Models &mdash; Apex v0.9.0 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.9.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Apex v0.9.0 documentation" href="index.html" />
+    <link rel="next" title="Options" href="options.html" />
+    <link rel="prev" title="Installation Instructions" href="INSTALL.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="options.html" title="Options"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="INSTALL.html" title="Installation Instructions"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Apex v0.9.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-apex.models">
+<span id="models"></span><h1>Models<a class="headerlink" href="#module-apex.models" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="apex.models.AuthGroup">
+<em class="property">class </em><tt class="descclassname">apex.models.</tt><tt class="descname">AuthGroup</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/apex/models.html#AuthGroup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apex.models.AuthGroup" title="Permalink to this definition">¶</a></dt>
+<dd><p>AuthGroup</p>
+<dl class="attribute">
+<dt id="apex.models.AuthGroup.description">
+<tt class="descname">description</tt><a class="headerlink" href="#apex.models.AuthGroup.description" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="apex.models.AuthGroup.id">
+<tt class="descname">id</tt><a class="headerlink" href="#apex.models.AuthGroup.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="apex.models.AuthGroup.name">
+<tt class="descname">name</tt><a class="headerlink" href="#apex.models.AuthGroup.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="apex.models.AuthGroup.users">
+<tt class="descname">users</tt><a class="headerlink" href="#apex.models.AuthGroup.users" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="apex.models.AuthUser">
+<em class="property">class </em><tt class="descclassname">apex.models.</tt><tt class="descname">AuthUser</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/apex/models.html#AuthUser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apex.models.AuthUser" title="Permalink to this definition">¶</a></dt>
+<dd><p>AuthUser</p>
+<dl class="attribute">
+<dt id="apex.models.AuthUser.active">
+<tt class="descname">active</tt><a class="headerlink" href="#apex.models.AuthUser.active" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="apex.models.AuthUser.check_password">
+<em class="property">classmethod </em><tt class="descname">check_password</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/apex/models.html#AuthUser.check_password"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apex.models.AuthUser.check_password" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="apex.models.AuthUser.email">
+<tt class="descname">email</tt><a class="headerlink" href="#apex.models.AuthUser.email" title="Permalink to this definition">¶</a></dt>
+<dd><p>Yes, No, Disabled</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="apex.models.AuthUser.get_by_email">
+<em class="property">classmethod </em><tt class="descname">get_by_email</tt><big>(</big><em>email</em><big>)</big><a class="reference internal" href="_modules/apex/models.html#AuthUser.get_by_email"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apex.models.AuthUser.get_by_email" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="apex.models.AuthUser.get_by_id">
+<em class="property">classmethod </em><tt class="descname">get_by_id</tt><big>(</big><em>id</em><big>)</big><a class="reference internal" href="_modules/apex/models.html#AuthUser.get_by_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apex.models.AuthUser.get_by_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="apex.models.AuthUser.get_by_login">
+<em class="property">classmethod </em><tt class="descname">get_by_login</tt><big>(</big><em>login</em><big>)</big><a class="reference internal" href="_modules/apex/models.html#AuthUser.get_by_login"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apex.models.AuthUser.get_by_login" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="apex.models.AuthUser.get_by_username">
+<em class="property">classmethod </em><tt class="descname">get_by_username</tt><big>(</big><em>username</em><big>)</big><a class="reference internal" href="_modules/apex/models.html#AuthUser.get_by_username"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apex.models.AuthUser.get_by_username" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="apex.models.AuthUser.get_profile">
+<em class="property">classmethod </em><tt class="descname">get_profile</tt><big>(</big><em>request=None</em><big>)</big><a class="reference internal" href="_modules/apex/models.html#AuthUser.get_profile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apex.models.AuthUser.get_profile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the profile</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="apex.models.AuthUser.groups">
+<tt class="descname">groups</tt><a class="headerlink" href="#apex.models.AuthUser.groups" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fix this to use association_proxy
+groups = association_proxy(&#8216;user_group_table&#8217;, &#8216;authgroup&#8217;)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="apex.models.AuthUser.id">
+<tt class="descname">id</tt><a class="headerlink" href="#apex.models.AuthUser.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="apex.models.AuthUser.in_group">
+<tt class="descname">in_group</tt><big>(</big><em>group</em><big>)</big><a class="reference internal" href="_modules/apex/models.html#AuthUser.in_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apex.models.AuthUser.in_group" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="apex.models.AuthUser.login">
+<tt class="descname">login</tt><a class="headerlink" href="#apex.models.AuthUser.login" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="apex.models.AuthUser.password">
+<tt class="descname">password</tt><a class="headerlink" href="#apex.models.AuthUser.password" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="apex.models.AuthUser.username">
+<tt class="descname">username</tt><a class="headerlink" href="#apex.models.AuthUser.username" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="apex.models.initialize_sql">
+<tt class="descclassname">apex.models.</tt><tt class="descname">initialize_sql</tt><big>(</big><em>engine</em>, <em>settings</em><big>)</big><a class="reference internal" href="_modules/apex/models.html#initialize_sql"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apex.models.initialize_sql" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="apex.models.populate">
+<tt class="descclassname">apex.models.</tt><tt class="descname">populate</tt><big>(</big><em>settings</em><big>)</big><a class="reference internal" href="_modules/apex/models.html#populate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apex.models.populate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="INSTALL.html"
+                        title="previous chapter">Installation Instructions</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="options.html"
+                        title="next chapter">Options</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/models.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="options.html" title="Options"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="INSTALL.html" title="Installation Instructions"
+             >previous</a> |</li>
+        <li><a href="index.html">Apex v0.9.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Chris Davies, Matthew Housden.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

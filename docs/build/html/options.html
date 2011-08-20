@@ -1,0 +1,165 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Options &mdash; Apex v0.9.0 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.9.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Apex v0.9.0 documentation" href="index.html" />
+    <link rel="next" title="Redefine Login Page" href="redefine_login_page.html" />
+    <link rel="prev" title="Models" href="models.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="redefine_login_page.html" title="Redefine Login Page"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="models.html" title="Models"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Apex v0.9.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="options">
+<h1>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h1>
+<p>(development|production).ini settings</p>
+<dl class="docutils">
+<dt>apex.session_secret = sess_secret</dt>
+<dd>REQUIRED, defines the session secret used for Pyramid</dd>
+<dt>apex.auth_secret = auth_secret</dt>
+<dd>REQUIRED, defines the authentication secret used for Pyramid</dd>
+<dt>apex.came_from_route = home</dt>
+<dd>REQUIRED, defines the default home route. Pyramid defaults to home, but
+some installations may use index, etc.</dd>
+<dt>apex.velruse_config = %(here)s/CONFIG.yaml</dt>
+<dd>REQUIRED, location of the Velruse CONFIG.yaml file</dd>
+<dt>apex.recaptcha_public_key =</dt>
+<dd>OPTIONAL, REQUIRED if using Recaptcha</dd>
+<dt>apex.recaptcha_private_key =</dt>
+<dd>OPTIONAL, REQUIRED if using Recaptcha</dd>
+<dt>apex.use_recaptcha_on_login = false</dt>
+<dd>OPTIONAL, Display Recaptcha form on Login Page</dd>
+<dt>apex.use_recaptcha_on_forgot = false</dt>
+<dd>OPTIONAL, Display Recaptcha form on Forgot my Password Page</dd>
+<dt>apex.use_recaptcha_on_reset = false</dt>
+<dd>OPTIONAL, Display Recaptcha form on Reset my Password Page</dd>
+<dt>apex.use_recaptcha_on_register = true</dt>
+<dd>OPTIONAL, Display Recaptcha form on Registration Page</dd>
+<dt>apex.provider_exclude = openid</dt>
+<dd>OPTIONAL, comma separated list to exclude configured providers</dd>
+<dt>apex.apex_template = project:templates/auth.mako</dt>
+<dd>OPTIONAL, an optional template for rendering the authentication forms</dd>
+<dt>apex.register_form_class = project.models.form_name</dt>
+<dd>OPTIONAL, requires DOTTED notation, specifies overloaded form for
+registration</dd>
+<dt>apex.default_user_group =</dt>
+<dd>OPTIONAL, If defined, will add the user to this group when created. If
+undefined, users will not be assigned to a group and you&#8217;ll only have the
+permissions &#8216;view&#8217; and &#8216;authenticated&#8217;.</dd>
+<dt>apex.sender_email =</dt>
+<dd>OPTIONAL, defaults to <a class="reference external" href="mailto:nobody&#37;&#52;&#48;example&#46;com">nobody<span>&#64;</span>example<span>&#46;</span>com</a>,</dd>
+<dt>apex.create_openid_before =</dt>
+<dd>OPTIONAL, NOT IMPLEMENTED, since OpenID requests don&#8217;t allow us to
+override the signup form, we call this function before the OpenID
+Provider call.</dd>
+<dt>apex.create_openid_after =</dt>
+<dd>OPTIONAL, since OpenID requests don&#8217;t allow us to override the signup
+form, we call this function after the OpenID callback.</dd>
+<dt>apex.openid_required =</dt>
+<dd>OPTIONAL, comma separated list of required fields when using OpenID to create
+an account</dd>
+<dt>apex.default_groups =</dt>
+<dd>OPTIONAL, comma separated list of group names to create. Defaults to
+admin,user</dd>
+</dl>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="models.html"
+                        title="previous chapter">Models</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="redefine_login_page.html"
+                        title="next chapter">Redefine Login Page</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/options.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="redefine_login_page.html" title="Redefine Login Page"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="models.html" title="Models"
+             >previous</a> |</li>
+        <li><a href="index.html">Apex v0.9.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Chris Davies, Matthew Housden.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

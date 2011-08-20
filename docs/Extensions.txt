@@ -1,3 +1,0 @@
-Deform Extension
-
-from apex.ext.deform import deferred_csrf_token

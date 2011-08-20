@@ -1,0 +1,177 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Extending Profile &mdash; Apex v0.9.0 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.9.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Apex v0.9.0 documentation" href="index.html" />
+    <link rel="next" title="Extensions" href="extensions.html" />
+    <link rel="prev" title="Models" href="models.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="extensions.html" title="Extensions"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="models.html" title="Models"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Apex v0.9.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="extending-profile">
+<h1>Extending Profile<a class="headerlink" href="#extending-profile" title="Permalink to this headline">¶</a></h1>
+<p>If you are using a local authentication database:</p>
+<p>models/__init__.py:</p>
+<dl class="docutils">
+<dt>class ForeignKeyProfile(Base):</dt>
+<dd><p class="first">__tablename__ = &#8216;auth_user_profile&#8217;</p>
+<p>id = Column(types.BigInteger, primary_key=True)
+user_id = Column(types.BigInteger, ForeignKey(AuthUser.id), index=True)</p>
+<p>&#8220;&#8221;&#8221; Add your locally defined options here
+&#8220;&#8221;&#8221;
+first_name = Column(Unicode(80))
+last_name = Column(Unicode(80))</p>
+<p class="last">user = relationship(&#8216;AuthUser&#8217;, backref=backref(&#8216;profile&#8217;, uselist=False))</p>
+</dd>
+</dl>
+<p>project/models/profile.py:</p>
+<p>from apex.forms import RegisterForm</p>
+<p>from project.models import DBSession
+from project.models import ForeignKeyProfile</p>
+<dl class="docutils">
+<dt>class NewRegisterForm(RegisterForm):</dt>
+<dd><dl class="first last docutils">
+<dt>def after_signup(self, user):</dt>
+<dd>profile = ForeignKeyProfile(user_id=user.id)
+DBSession.add(profile)
+DBSession.flush()</dd>
+</dl>
+</dd>
+</dl>
+<p>In development.ini:</p>
+<p>apex.register_form_class = project.form.NewRegisterForm</p>
+<p>If you are using OpenID providers:</p>
+<p>development.ini:</p>
+<p>apex.create_openid_after = sflh.form.openid_after</p>
+<p>project/models/__init__.py:</p>
+<dl class="docutils">
+<dt>class ForeignKeyProfile(Base):</dt>
+<dd><p class="first">__tablename__ = &#8216;auth_user_profile&#8217;</p>
+<p>id = Column(types.BigInteger, primary_key=True)
+user_id = Column(types.BigInteger, ForeignKey(AuthUser.id))</p>
+<p>&#8220;&#8221;&#8221; Add your locally defined options here
+&#8220;&#8221;&#8221;
+first_name = Column(Unicode(80))
+last_name = Column(Unicode(80))</p>
+<p class="last">user = relationship(&#8216;AuthUser&#8217;, backref=backref(&#8216;profile&#8217;, uselist=False))</p>
+</dd>
+</dl>
+<p>In project/models/profile.py:</p>
+<p>from apex.forms import RegisterForm</p>
+<p>project/profile.py:</p>
+<p>from project.models import DBSession
+from project.models import ForeignKeyProfile</p>
+<dl class="docutils">
+<dt>class openid_after(object):</dt>
+<dd><dl class="first last docutils">
+<dt>def after_signup(self, user):</dt>
+<dd>profile = ForeignKeyProfile(user_id=user.id)
+DBSession.add(profile)
+DBSession.flush()</dd>
+</dl>
+</dd>
+</dl>
+<p>AuthUser.get_profile()</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="models.html"
+                        title="previous chapter">Models</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="extensions.html"
+                        title="next chapter">Extensions</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/extending_profile.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="extensions.html" title="Extensions"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="models.html" title="Models"
+             >previous</a> |</li>
+        <li><a href="index.html">Apex v0.9.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Chris Davies, Matthew Housden.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>
