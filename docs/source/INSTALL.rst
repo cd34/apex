@@ -1,7 +1,7 @@
 Installation Instructions
 =========================
 
-In the file __init__.py:
+**__init__.py**
 
 ::
 
@@ -9,7 +9,7 @@ In the file __init__.py:
     # other includes.
     config.include('apex')
 
-In the file development.ini:
+**development.ini**
 
 ::
 
@@ -55,7 +55,7 @@ In the file development.ini:
 
 URLs to get your API keys:
 
-(Velruse Documentation: https://github.com/bbangert/velruse/blob/master/docs/providers.rst )
+Velruse Documentation: https://github.com/bbangert/velruse/blob/master/docs/providers.rst
 
 * Facebook: https://developers.facebook.com/apps/
 * Twitter: http://dev.twitter.com/apps/new

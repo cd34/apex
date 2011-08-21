@@ -15,7 +15,7 @@ http://yourdomain.com/velruse/logged_in
 After you agree to the terms, you're presented with a page that contains your
 Consumer Key and Consumer Secret.
 
-Modify your CONFIG.yaml file to include the following:
+Modify your **CONFIG.yaml** file to include the following:
 
 ::
 

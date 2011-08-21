@@ -3,75 +3,87 @@ Extending Profile
 
 If you are using a local authentication database:
 
-models/__init__.py:
+**models/__init__.py**
 
-class ForeignKeyProfile(Base):
-    __tablename__ = 'auth_user_profile'
+::
 
-    id = Column(types.BigInteger, primary_key=True)
-    user_id = Column(types.BigInteger, ForeignKey(AuthUser.id), index=True)
+    class ForeignKeyProfile(Base):
+        __tablename__ = 'auth_user_profile'
 
-    """ Add your locally defined options here
-    """
-    first_name = Column(Unicode(80))
-    last_name = Column(Unicode(80))
+        id = Column(types.BigInteger, primary_key=True)
+        user_id = Column(types.BigInteger, ForeignKey(AuthUser.id), index=True)
 
-    user = relationship('AuthUser', backref=backref('profile', uselist=False))
+        """ Add your locally defined options here
+        """
+        first_name = Column(Unicode(80))
+        last_name = Column(Unicode(80))
 
-project/models/profile.py:
+        user = relationship('AuthUser', backref=backref('profile', uselist=False))
 
-from apex.forms import RegisterForm
+**project/models/profile.py**
 
-from project.models import DBSession
-from project.models import ForeignKeyProfile
+::
 
-class NewRegisterForm(RegisterForm):
+    from apex.forms import RegisterForm
+
+    from project.models import DBSession
+    from project.models import ForeignKeyProfile
+
+    class NewRegisterForm(RegisterForm):
     def after_signup(self, user):
-        profile = ForeignKeyProfile(user_id=user.id)
-        DBSession.add(profile)
-        DBSession.flush()
+            profile = ForeignKeyProfile(user_id=user.id)
+            DBSession.add(profile)
+            DBSession.flush()
 
-In development.ini:
+**development.ini**
 
-apex.register_form_class = project.form.NewRegisterForm
+::
 
-
+    apex.register_form_class = project.form.NewRegisterForm
 
 
 If you are using OpenID providers:
 
-development.ini:
+**development.ini**
 
-apex.create_openid_after = sflh.form.openid_after
+::
 
-project/models/__init__.py:
+    apex.create_openid_after = sflh.form.openid_after
 
-class ForeignKeyProfile(Base):
-    __tablename__ = 'auth_user_profile'
+**project/models/__init__.py**
 
-    id = Column(types.BigInteger, primary_key=True)
-    user_id = Column(types.BigInteger, ForeignKey(AuthUser.id))
+::
 
-    """ Add your locally defined options here
-    """
-    first_name = Column(Unicode(80))
-    last_name = Column(Unicode(80))
+    class ForeignKeyProfile(Base):
+        __tablename__ = 'auth_user_profile'
 
-    user = relationship('AuthUser', backref=backref('profile', uselist=False))
+        id = Column(types.BigInteger, primary_key=True)
+        user_id = Column(types.BigInteger, ForeignKey(AuthUser.id))
 
-In project/models/profile.py:
+        """ Add your locally defined options here
+        """
+        first_name = Column(Unicode(80))
+        last_name = Column(Unicode(80))
 
-from apex.forms import RegisterForm
+        user = relationship('AuthUser', backref=backref('profile', uselist=False))
 
-project/profile.py:
+**project/models/profile.py**
 
-from project.models import DBSession
-from project.models import ForeignKeyProfile
+::
 
-class openid_after(object):
-    def after_signup(self, user):
-        profile = ForeignKeyProfile(user_id=user.id)
-        DBSession.add(profile)
-        DBSession.flush()
+    from apex.forms import RegisterForm
 
-AuthUser.get_profile()
+**project/profile.py**
+
+::
+
+    from project.models import DBSession
+    from project.models import ForeignKeyProfile
+
+    class openid_after(object):
+        def after_signup(self, user):
+            profile = ForeignKeyProfile(user_id=user.id)
+            DBSession.add(profile)
+            DBSession.flush()
+
+    AuthUser.get_profile()

@@ -13,7 +13,7 @@ Initial Setup of Pyramid-Apex
   cd example
   vi development.ini
 
-Changes made to development.ini
+**development.ini**
 
 In the [app:example] section, add:
 
@@ -88,6 +88,8 @@ backing store, so, we've opted to use Type: SQL. You can use any store as
 long as the backend can be read without calling /velruse/authinfo. The
 Memory Store requires the additional urllib2 call.
 
+**CONFIG.yaml**
+
 ::
 
     Store:
@@ -99,13 +101,13 @@ Memory Store requires the additional urllib2 call.
     OpenID Store:
         Type: openid.store.memstore:MemoryStore
 
-In example/__init__.py, before the return config.make_wsgi_app(), put:
+In **example/__init__.py**, before the return config.make_wsgi_app(), put:
 
 ::
 
     config.include('apex')
 
-In example/__init__.py, we'll add the following route:
+In **example/__init__.py**, we'll add the following route:
 
 ::
 

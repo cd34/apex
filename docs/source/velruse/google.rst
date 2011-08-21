@@ -20,7 +20,7 @@ http://domain.com/velruse/logged_in
 Once you've done this, you're presented with your OAuth Consumer Key
 and OAuth Consumer Secret.
 
-Modify your CONFIG.yaml file to include the following:
+Modify your **CONFIG.yaml** file to include the following:
 
 ::
 

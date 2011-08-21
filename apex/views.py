@@ -38,7 +38,10 @@ from apex.forms import LoginForm
 
 
 def login(request):
-    """ login form
+    """ login(request)
+    No return value
+
+    Function called from route_url('apex_login', request)
     """
     title = _('Login')
     came_from = request.GET.get('came_from', \
@@ -66,11 +69,17 @@ def login(request):
             'action': 'login'}
 
 def logout(request):
+    """ logout(request):
+    no return value, called with route_url('apex_logout', request)
+    """
     headers = forget(request)
     return HTTPFound(location=route_url(apex_settings('came_from_route'), \
                      request), headers=headers)
 
 def change_password(request):
+    """ change_password(request):
+    no return value, called with route_url('apex_change_password', request)
+    """
     title = _('Change your Password')
     
     came_from = request.params.get('came_from', \
@@ -87,6 +96,9 @@ def change_password(request):
     return {'title': title, 'form': form, 'action': 'changepass'}
      
 def forgot_password(request):
+    """ forgot_password(request):
+    no return value, called with route_url('apex_forgot_password', request)
+    """
     title = _('Forgot My Password')
     
     if asbool(apex_settings('use_recaptcha_on_forgot')):
@@ -127,6 +139,9 @@ def forgot_password(request):
     return {'title': title, 'form': form, 'action': 'forgot'}
 
 def reset_password(request):
+    """ reset_password(request):
+    no return value, called with route_url('apex_reset_password', request)
+    """
     title = _('Reset My Password')
     
     if asbool(apex_settings('use_recaptcha_on_reset')):
@@ -161,6 +176,9 @@ def reset_password(request):
     return {'title': title, 'form': form, 'action': 'reset'}
 
 def register(request):
+    """ register(request):
+    no return value, called with route_url('apex_register', request)
+    """
     title = _('Register')
     came_from = request.params.get('came_from', \
                     route_url(apex_settings('came_from_route'), request))
@@ -191,6 +209,11 @@ def register(request):
             'action': 'register'}
 
 def apex_callback(request):
+    """ apex_callback(request):
+    no return value, called with route_url('apex_callback', request)
+
+    This is the URL that Velruse returns an OpenID request to
+    """
     redir = request.GET.get('came_from', \
                 route_url(apex_settings('came_from_route'), request))
     headers = []
@@ -235,6 +258,15 @@ def apex_callback(request):
     return HTTPFound(location=redir, headers=headers)
 
 def openid_required(request):
+    """ openid_required(request)
+    no return value
+
+    If apex_settings.openid_required is set, and the ax/sx from the OpenID
+    auth doesn't return the required fields, this is called which builds
+    a dynamic form to ask for the missing inforation.
+
+    Called on Registration or Login with OpenID Authentication.
+    """
     title = _('OpenID Registration')
     came_from = request.params.get('came_from', \
                     route_url(apex_settings('came_from_route'), request))
@@ -266,6 +298,12 @@ def openid_required(request):
     return {'title': title, 'form': form, 'action': 'openid_required'}
 
 def forbidden(request):
+    """ forbidden(request)
+    No return value
+
+    Called when user hits a resource that requires a permission and the
+    user doesn't have the required permission. Will prompt for login.
+    """
     flash(_('Not logged in, please log in'), 'error')
     return HTTPFound(location='%s?came_from=%s' %
                     (route_url('apex_login', request),

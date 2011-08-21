@@ -1,20 +1,20 @@
 Options
 =======
 
-(development|production).ini settings
+**development.ini** settings
 
 apex.session_secret = sess_secret
-  REQUIRED, defines the session secret used for Pyramid
+  **REQUIRED**, defines the session secret used for Pyramid
 
 apex.auth_secret = auth_secret
-  REQUIRED, defines the authentication secret used for Pyramid
+  **REQUIRED**, defines the authentication secret used for Pyramid
 
 apex.came_from_route = home
-  REQUIRED, defines the default home route. Pyramid defaults to home, but
+  **REQUIRED**, defines the default home route. Pyramid defaults to home, but
   some installations may use index, etc.
 
 apex.velruse_config = %(here)s/CONFIG.yaml
-  REQUIRED, location of the Velruse CONFIG.yaml file
+  **REQUIRED**, location of the Velruse CONFIG.yaml file
 
 apex.recaptcha_public_key = 
   OPTIONAL, REQUIRED if using Recaptcha

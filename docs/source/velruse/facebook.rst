@@ -21,7 +21,7 @@ Site Domain should be the domain of your site, and needs to be part of the
 site URL. So, if you use http://specialname.domain.com, you would need to 
 put domain.com or specialname.domain.com. You cannot specify a separate domain.
 
-Modify your CONFIG.yaml file to include the following:
+Modify your **CONFIG.yaml** file to include the following:
 
 ::
 

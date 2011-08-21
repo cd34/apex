@@ -11,12 +11,12 @@ Authentication, Form Library, I18N/L10N, Flash Message Template
 
 Uses pyramid_routesalchemy
 
-Authentication
+**Authentication**
 
   * Local authentication uses BCrypt
   * http://codahale.com/how-to-safely-store-a-password/
 
-Velruse is used for OpenID/OpenAuth providers and supports
+Velruse is used for OpenID/OpenAuth providers and supports:
   * Google
   * Facebook
   * Twitter
@@ -27,15 +27,15 @@ Velruse is used for OpenID/OpenAuth providers and supports
 Ability to overload the login form, extend the AuthUser class through
 polymorphism or a Foreign Key user profile table.
 
-* Form Library
+**Form Library**
 
 WTForms is used to help those transitioning over from Django to Pyramid.
 
-* I18N/L10N
+**I18N/L10N**
 
 Babel is used to support Internationalization and Localization.
 
-* Flash Messages
+**Flash Messages**
 
 Templates and helpers for Mako and Jinja2 are included to support Flash
 Messages in your application.
