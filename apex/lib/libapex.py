@@ -44,19 +44,32 @@ auth_provider = {
 def apexid_from_url(provider, identifier):
     id = None
     if provider == 'Google':
-        id = '$G$%s' % \
-             urlparse.parse_qs(urlparse.urlparse(identifier).query)['id'][0]
+        try:
+            id = '$G$%s' % \
+                 urlparse.parse_qs(urlparse.urlparse(identifier).query)['id'][0]
+        except KeyError:
+            pass
     elif provider == 'Facebook':
-        id = '$F$%s' % \
-             urlparse.urlparse(identifier).path[1:]
+        path = urlparse.urlparse(identifier).path[1:]
+        if path:
+            try:
+                id = '$F$%s' % path
+            except:
+                pass
     elif provider == 'Twitter':
-        id = '$T$%s' % \
-             urlparse.parse_qs(urlparse.urlparse(identifier).query)['id'][0]. \
-                               split('\'')[1]
+        try:
+            id = '$T$%s' % \
+                 urlparse.parse_qs(urlparse.urlparse(identifier).query) \
+                     ['id'][0].split('\'')[1]
+        except KeyError:
+            pass
     elif provider == 'Yahoo':
         urlparts = urlparse.urlparse(identifier)        
-        id = '$Y$%s#%s' % \
-             (urlparts.path.split('/')[2], urlparts.fragment)
+        try:
+            id = '$Y$%s#%s' % \
+                 (urlparts.path.split('/')[2], urlparts.fragment)
+        except:
+            pass
     elif provider == "OpenID":
         id = '$O$%s' % identifier
     return id
