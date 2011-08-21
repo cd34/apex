@@ -23,5 +23,5 @@ setup(
     include_package_data=True,
     zip_safe=True,
     tests_require=tests_require,
-    test_suite="pyramid.tests",
+    test_suite="apex.tests",
 )
