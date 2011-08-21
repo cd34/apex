@@ -23,7 +23,9 @@ put domain.com or specialname.domain.com. You cannot specify a separate domain.
 
 Modify your CONFIG.yaml file to include the following:
 
-Facebook:
-    API Key: (the generated App ID)
-    Application Secret: (the generated App Secret)
-    Application ID: (the generated App ID)
+::
+
+    Facebook:
+        API Key: (the generated App ID)
+        Application Secret: (the generated App Secret)
+        Application ID: (the generated App ID)

@@ -17,8 +17,8 @@ Consumer Key and Consumer Secret.
 
 Modify your CONFIG.yaml file to include the following:
 
-Twitter:
-    Consumer Key: (key from the resulting page)
-    Consumer Secret: (secret from the resulting page)
+::
 
-
+    Twitter:
+        Consumer Key: (key from the resulting page)
+        Consumer Secret: (secret from the resulting page)

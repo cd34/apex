@@ -22,6 +22,8 @@ and OAuth Consumer Secret.
 
 Modify your CONFIG.yaml file to include the following:
 
-Google:
-    OAuth Consumer Key: domain.com
-    OAuth Consumer Secret: (OAuth Consumer Secret)
+::
+
+    Google:
+        OAuth Consumer Key: domain.com
+        OAuth Consumer Secret: (OAuth Consumer Secret)
