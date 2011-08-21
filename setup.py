@@ -12,7 +12,7 @@ install_requires=[
 ]
 
 tests_require = install_requires + ['Sphinx', 'docutils', 
-                                    'WebTest', 'virtualenv']
+                                    'WebTest', 'virtualenv', 'nose']
 
 setup(
     version = version,
