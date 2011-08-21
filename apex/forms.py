@@ -16,6 +16,8 @@ from apex.models import AuthUser
 from apex.lib.form import ExtendedForm
 
 class RegisterForm(ExtendedForm):
+    """ Registration Form
+    """
     username = TextField(_('Username'), [validators.Required(), \
                          validators.Length(min=4, max=25)])
     password = PasswordField(_('Password'), [validators.Required(), \
@@ -52,9 +54,15 @@ class RegisterForm(ExtendedForm):
         return new_user
 
     def after_signup(self, user, **kwargs):
+        """ Function to be overloaded and called after form submission
+        to allow you the ability to save additional form data or perform
+        extra actions after the form submission.
+        """
         pass
 
 class ChangePasswordForm(ExtendedForm):
+    """ Change Password Form
+    """
     old_password = PasswordField(_('Old Password'), [validators.Required()])
     password = PasswordField(_('New Password'), [validators.Required(), \
                              validators.EqualTo('password2', \

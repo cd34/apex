@@ -47,12 +47,16 @@ Contents:
 
    INSTALL
    QUICKSTART
-   models
-   extending_profile
-   extensions
-   models
    options
+   extending_profile
    redefine_login_page
+   models
+   decorators
+   exceptions
+   forms
+   interfaces
+   views
+   extensions
    subscribers
    templates
    ext/deform

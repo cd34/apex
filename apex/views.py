@@ -38,6 +38,8 @@ from apex.forms import LoginForm
 
 
 def login(request):
+    """ login form
+    """
     title = _('Login')
     came_from = request.GET.get('came_from', \
                     route_url(apex_settings('came_from_route'), request))
