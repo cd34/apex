@@ -5,8 +5,13 @@ from wtforms import validators
 
 from pyramid.renderers import render
 
-#http://groups.google.com/group/wtforms/msg/d6e5aca36a69ff5d
 class ExtendedForm(Form):
+    """ Base Model used to wrap WTForms for local use
+    Global Validator, Renderer Function, determines whether
+    it needs to be multipart based on file field present in form.
+
+    http://groups.google.com/group/wtforms/msg/d6e5aca36a69ff5d
+    """
 
     def __init__(self, formdata=None, obj=None, prefix='', **kwargs):
         super(Form, self).__init__(self._unbound_fields, prefix=prefix)
@@ -46,8 +51,11 @@ class ExtendedForm(Form):
             'args': kwargs,
         })
 
-#http://groups.google.com/group/wtforms/msg/6c7dd4dc7fee872d
 class StyledWidget(object): 
+    """ Allows a user to pass style to specific form field
+
+    http://groups.google.com/group/wtforms/msg/6c7dd4dc7fee872d
+    """
     def __init__(self, widget=None, **kwargs): 
         self.widget = widget
         self.kw = kwargs
@@ -58,10 +66,12 @@ class StyledWidget(object):
 
         return self.widget(field, **dict(self.kw, **kwargs)) 
 
-#http://groups.google.com/group/wtforms/msg/666254426eff1102
 class FileRequired(validators.Required): 
     """ 
     Required validator for file upload fields. 
+
+    Bug mention for validating file field:
+    http://groups.google.com/group/wtforms/msg/666254426eff1102
     """ 
     def __call__(self, form, field): 
         if not isinstance(field.data, cgi.FieldStorage): 

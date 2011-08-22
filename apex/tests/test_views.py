@@ -39,7 +39,9 @@ class Test_views(unittest.TestCase):
         self.config.add_settings(settings)
         self.config.include('apex')
 
+        """ creating user for later testing
         create_user(username='test', password='password')
+        """
 
     def tearDown(self):
         """ import Base so that we can drop the tables after each test
@@ -50,6 +52,14 @@ class Test_views(unittest.TestCase):
 
     def test_login(self):
         pass
+        """ requires REMOTE_ADDR
+        from apex.views import login
+        request = testing.DummyRequest(environ=environ)
+        request.context = testing.DummyResource()
+        response = login(request)
+
+        self.assertEqual('302 Found', response.status)
+        """
 
     def test_logout(self):
         """ need to import environ for SERVER_NAME and HOST_NAME
