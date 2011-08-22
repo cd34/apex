@@ -7,7 +7,6 @@ Welcome to Apex's documentation!
 ================================
 
 Authentication, Form Library, I18N/L10N, Flash Message Template
-(not associated with Pyramid, a Pylons project)
 
 Uses pyramid_routesalchemy
 

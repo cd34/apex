@@ -31,9 +31,9 @@ DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 Base = declarative_base()
 
 user_group_table = Table('auth_user_groups', Base.metadata,
-    Column('user_id', types.BigInteger(), \
+    Column('user_id', types.Integer(), \
         ForeignKey('auth_users.id', onupdate='CASCADE', ondelete='CASCADE')),
-    Column('group_id', types.BigInteger(), \
+    Column('group_id', types.Integer(), \
         ForeignKey('auth_groups.id', onupdate='CASCADE', ondelete='CASCADE'))
 )
 
@@ -43,7 +43,7 @@ class AuthGroup(Base):
     __tablename__ = 'auth_groups'
     __table_args__ = {"sqlite_autoincrement": True}
     
-    id = Column(types.BigInteger(), primary_key=True)
+    id = Column(types.Integer(), primary_key=True)
     name = Column(Unicode(80), unique=True, nullable=False)
     description = Column(Unicode(255), default=u'')
 
@@ -63,7 +63,7 @@ class AuthUser(Base):
     __tablename__ = 'auth_users'
     __table_args__ = {"sqlite_autoincrement": True}
 
-    id = Column(types.BigInteger(), primary_key=True)
+    id = Column(types.Integer(), primary_key=True)
     login = Column(Unicode(80), default=u'', index=True)
     username = Column(Unicode(80), default=u'', index=True)
     _password = Column('password', Unicode(80), default=u'', index=True)
