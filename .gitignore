@@ -10,3 +10,4 @@
 *.swp
 *.db
 *.db-journal
+.coverage
