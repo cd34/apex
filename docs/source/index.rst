@@ -49,11 +49,7 @@ Contents:
    options
    extending_profile
    redefine_login_page
-   lib/libapex
-   lib/subscribers
-   lib/db
-   lib/flash
-   lib/form
+   lib/index
    models
    decorators
    exceptions
@@ -63,9 +59,8 @@ Contents:
    extensions
    templates
    ext/deform
-   velruse/google
-   velruse/facebook
-   velruse/twitter
+   velruse/index
+   example/index
 
 Indices and tables
 ==================

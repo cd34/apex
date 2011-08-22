@@ -42,6 +42,9 @@ auth_provider = {
 }
 
 def apexid_from_url(provider, identifier):
+    """
+    returns the login ID for apex
+    """
     id = None
     if provider == 'Google':
         try:
@@ -75,6 +78,8 @@ def apexid_from_url(provider, identifier):
     return id
 
 def apexid_from_token(token):
+    """ Returns the apex id from the OpenID Token
+    """
     dbsession = DBSession()
     auth = json.loads(dbsession.query(KeyStorage.value). \
                       filter(KeyStorage.key==token).one()[0])
@@ -86,11 +91,16 @@ def apexid_from_token(token):
     return None
 
 def groupfinder(userid, request):
+    """ Returns ACL formatted list of groups for the userid in the 
+    current request
+    """
     auth = AuthUser.get_by_id(userid)
     if auth:
         return [('group:%s' % group.name) for group in auth.groups]
 
 class RootFactory(object):
+    """ Defines the default ACLs, groups populated from SQLAlchemy.
+    """
     def __init__(self, request):
         if request.matchdict:
             self.__dict__.update(request.matchdict)
@@ -115,6 +125,8 @@ provider_forms = {
 }
 
 def apex_email(request, recipients, subject, body, sender=None):
+    """ Sends email message
+    """
     mailer = get_mailer(request)
     if not sender:
         sender = apex_settings('sender_email')
@@ -152,6 +164,7 @@ def apex_settings(key=None):
 
 def create_user(**kwargs):
     """Usage: create_user(username='test', password='my_password', group='group')
+    Returns: AuthUser object
     """
     user = AuthUser()
 
@@ -174,6 +187,9 @@ def create_user(**kwargs):
     return user
 
 def generate_velruse_forms(request, came_from):
+    """ Generates variable form based on OpenID providers supported in
+    the CONFIG.yaml file
+    """
     velruse_forms = []
     if apex_settings('velruse_config'):
         configs = parse_config_file(apex_settings('velruse_config'))[0].keys()
