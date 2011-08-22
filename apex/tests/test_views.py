@@ -1,17 +1,20 @@
-"""
-initial test issue due to fact that we're not testing an app, but an include
-"""
 import os
 import unittest
+
 from pyramid import testing
 
 here = os.path.abspath(os.path.dirname(__file__))
 
+""" added to provide dummy environment to prevent exception when
+hostname isn't defined.
+"""
 environ = {
     'HTTP_HOST':'test.com',
     'SERVER_NAME':'test.com',
 }
 
+""" bare minimum settings required for testing
+"""
 settings = {
     'sqlalchemy.url':'sqlite:///apex.test.db',
     'mako.directories':'{0}/../apex/templates'.format(here),
@@ -23,6 +26,8 @@ settings = {
 
 class Test_views(unittest.TestCase):
     def setUp(self):
+        """ must add default route 'home' and include apex
+        """
         import apex
         self.config = testing.setUp()
         self.config.add_route('home', '/')
@@ -32,10 +37,32 @@ class Test_views(unittest.TestCase):
     def tearDown(self):
         testing.tearDown()
 
+    def test_login(self):
+        pass
+
     def test_logout(self):
+        """ need to import environ for SERVER_NAME and HOST_NAME
+        since we're dealing with cookies.
+        """
         from apex.views import logout
         request = testing.DummyRequest(environ=environ)
         request.context = testing.DummyResource()
         response = logout(request)
 
         self.assertEqual('302 Found', response.status)
+
+    def test_change_password(self):
+        pass
+
+    def test_forgot_password(self):
+        pass
+
+    def test_reset_password(self):
+        pass
+
+    def test_register(self):
+        pass
+
+    def test_apex_callback(self):
+        pass
+
