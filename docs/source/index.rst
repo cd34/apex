@@ -49,6 +49,11 @@ Contents:
    options
    extending_profile
    redefine_login_page
+   lib/libapex
+   lib/subscribers
+   lib/db
+   lib/flash
+   lib/form
    models
    decorators
    exceptions
@@ -56,7 +61,6 @@ Contents:
    interfaces
    views
    extensions
-   subscribers
    templates
    ext/deform
    velruse/google

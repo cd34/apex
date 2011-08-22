@@ -1,6 +1,8 @@
 import os
 import unittest
 
+from sqlalchemy import engine_from_config
+
 from pyramid import testing
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -27,15 +29,24 @@ settings = {
 class Test_views(unittest.TestCase):
     def setUp(self):
         """ must add default route 'home' and include apex
+            we also must create a default user/pass/group to test
         """
         import apex
+        from apex.lib.libapex import create_user
+        self.engine = engine_from_config(settings, 'sqlalchemy.')
         self.config = testing.setUp()
         self.config.add_route('home', '/')
         self.config.add_settings(settings)
         self.config.include('apex')
 
+        create_user(username='test', password='password')
+
     def tearDown(self):
+        """ import Base so that we can drop the tables after each test
+        """
+        from apex.models import Base
         testing.tearDown()
+        Base.metadata.drop_all(self.engine)
 
     def test_login(self):
         pass
