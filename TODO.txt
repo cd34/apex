@@ -24,3 +24,5 @@ allow user to be added to multiple groups on signup
 disable local authentication
 
 add more detail to exceptions
+
+configurable number of rounds for bcrypt
