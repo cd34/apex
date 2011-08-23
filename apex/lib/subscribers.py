@@ -1,4 +1,5 @@
 from pyramid.httpexceptions import HTTPForbidden
+from pyramid.i18n import TranslationString as _
 from pyramid.threadlocal import get_current_request
 from pyramid.security import authenticated_userid
 
@@ -19,7 +20,7 @@ def csrf_validation(event):
     if event.request.method == 'POST':
         token = event.request.POST.get('csrf_token') or event.request.GET.get('csrf_token')
         if token is None or token != event.request.session.get_csrf_token():
-            raise HTTPForbidden('CSRF token is missing or invalid')
+            raise HTTPForbidden(_('CSRF token is missing or invalid'))
 
 def add_renderer_globals(event):
     """ add globals to forms

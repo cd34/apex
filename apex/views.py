@@ -8,6 +8,7 @@ from wtfrecaptcha.fields import RecaptchaField
 
 from pyramid.httpexceptions import HTTPFound
 from pyramid.i18n import TranslationString as _
+from pyramid.response import Response
 from pyramid.security import Allow
 from pyramid.security import Authenticated
 from pyramid.security import authenticated_userid
@@ -304,11 +305,20 @@ def forbidden(request):
     Called when user hits a resource that requires a permission and the
     user doesn't have the required permission. Will prompt for login.
 
-    request['repoze.bfg.message'] contains our forbidden error in case
+    request.environ['repoze.bfg.message'] contains our forbidden error in case
     of a csrf problem. Proper solution is probably an error page that
     can be customized.
+
+    bfg.routes.route and repoze.bfg.message are scheduled to be deprecated,
+    however, corresponding objects are not present in the request to be able
+    to determine why the Forbidden exception was called.
+
+    **THIS WILL BREAK EVENTUALLY**
     """
-    flash(_('Not logged in, please log in'), 'error')
-    return HTTPFound(location='%s?came_from=%s' %
-                    (route_url('apex_login', request),
-                    current_route_url(request)))
+    if request.environ.has_key('bfg.routes.route'):
+        flash(_('Not logged in, please log in'), 'error')
+        return HTTPFound(location='%s?came_from=%s' %
+                        (route_url('apex_login', request),
+                        current_route_url(request)))
+    else:
+        return Response(request.environ['repoze.bfg.message'])
