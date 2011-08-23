@@ -26,3 +26,5 @@ disable local authentication
 add more detail to exceptions
 
 configurable number of rounds for bcrypt
+
+last login date, last login IP

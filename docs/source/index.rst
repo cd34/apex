@@ -6,6 +6,17 @@
 Welcome to Apex's documentation!
 ================================
 
+**Quick Overview**
+
+Apex is a framework that works on top of Pyramid_ focused on simplifying
+authentication, but, also activating a number of other features. Apex
+has a single user model and encourages you to use a Foreign Key relation
+to any Profile information you would like to store.
+
+.. _Pyramid: http://www.pylonsproject.org/
+
+**What is included?**
+
 Authentication, Form Library, I18N/L10N, Flash Message Template
 
 Uses pyramid_routesalchemy
@@ -15,13 +26,15 @@ Uses pyramid_routesalchemy
   * Local authentication uses BCrypt
   * http://codahale.com/how-to-safely-store-a-password/
 
-Velruse is used for OpenID/OpenAuth providers and supports:
+Velruse_ is used for OpenID/OpenAuth providers and supports:
   * Google
   * Facebook
   * Twitter
   * Yahoo
   * Microsoft Live
   * Any OpenID provider
+
+.. _Velruse: https://github.com/bbangert/velruse
 
 Ability to overload the login form, extend the AuthUser class through
 polymorphism or a Foreign Key user profile table.
