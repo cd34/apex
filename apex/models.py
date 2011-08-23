@@ -38,7 +38,13 @@ user_group_table = Table('auth_user_groups', Base.metadata,
 )
 
 class AuthGroup(Base):
-    """ AuthGroup
+    """ Table name: auth_groups
+    
+::
+
+    id = Column(types.Integer(), primary_key=True)
+    name = Column(Unicode(80), unique=True, nullable=False)
+    description = Column(Unicode(255), default=u'')
     """
     __tablename__ = 'auth_groups'
     __table_args__ = {"sqlite_autoincrement": True}
@@ -58,7 +64,16 @@ class AuthGroup(Base):
     
 
 class AuthUser(Base):
-    """ AuthUser
+    """ Table name: auth_users
+
+::
+
+    id = Column(types.Integer(), primary_key=True)
+    login = Column(Unicode(80), default=u'', index=True)
+    username = Column(Unicode(80), default=u'', index=True)
+    _password = Column('password', Unicode(80), default=u'')
+    email = Column(Unicode(80), default=u'', index=True)
+    active = Column(types.Enum(u'Y',u'N',u'D'), default=u'Y')
     """
     __tablename__ = 'auth_users'
     __table_args__ = {"sqlite_autoincrement": True}
@@ -66,11 +81,9 @@ class AuthUser(Base):
     id = Column(types.Integer(), primary_key=True)
     login = Column(Unicode(80), default=u'', index=True)
     username = Column(Unicode(80), default=u'', index=True)
-    _password = Column('password', Unicode(80), default=u'', index=True)
+    _password = Column('password', Unicode(80), default=u'')
     email = Column(Unicode(80), default=u'', index=True)
-    active = Column(Unicode(1), default=u'Y')
-    """ Yes, No, Disabled
-    """
+    active = Column(types.Enum(u'Y',u'N',u'D'), default=u'Y')
 
     groups = relation('AuthGroup', secondary=user_group_table, \
                       backref='auth_users')
@@ -164,7 +177,7 @@ class AuthUser(Base):
     @classmethod   
     def get_profile(cls, request=None):
         """
-        Returns AuthUser.profile object
+        Returns AuthUser.profile object, creates record if it doesn't exist.
 
         .. code-block:: python
 
