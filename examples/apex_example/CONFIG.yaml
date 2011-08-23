@@ -1,0 +1,6 @@
+Store:
+    Type: SQL
+    DB: sqlite:///%(here)s/apex_example.db
+
+OpenID Store:
+    Type: openid.store.memstore:MemoryStore
