@@ -46,6 +46,7 @@ Contents:
 
    INSTALL
    QUICKSTART
+   routes
    options
    extending_profile
    redefine_login_page

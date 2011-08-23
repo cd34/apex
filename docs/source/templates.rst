@@ -1,6 +1,14 @@
 Templates
 =========
 
+Variables exposed to your template if you are redefining your Authentication
+Template:
+
+title - formal name of form (Login, Change Password, Forgot Password, 
+    Reset Password, Register, OpenID Required)
+action - short representation of form (login, changepass, forgot, reset, 
+    register, openid_required)
+
 Mako Template:
 
 To handle flash messages when using Mako, insert the following into your
