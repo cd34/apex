@@ -23,12 +23,11 @@ def csrf_validation(event):
             raise HTTPForbidden(_('CSRF token is missing or invalid'))
 
 def add_renderer_globals(event):
-    """ add globals to forms
+    """ add globals to templates
 
     csrf_token - bare token
     csrf_token_field - hidden input field with token inserted
     flash - flash messages
-    user - user object
     """
 
     request = event.get('request')
@@ -41,7 +40,6 @@ def add_renderer_globals(event):
         'csrf_token': csrf_token,
         'csrf_token_field': '<input type="hidden" name="csrf_token" value="%s" />' % csrf_token,
         'flash': flash,
-        'user': user(request),
     }
     event.update(globs)
 
