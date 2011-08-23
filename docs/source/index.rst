@@ -13,8 +13,6 @@ authentication, but, also activating a number of other features. Apex
 has a single user model and encourages you to use a Foreign Key relation
 to any Profile information you would like to store.
 
-.. _Pyramid: http://www.pylonsproject.org/
-
 **What is included?**
 
 Authentication, Form Library, I18N/L10N, Flash Message Template
@@ -34,22 +32,20 @@ Velruse_ is used for OpenID/OpenAuth providers and supports:
   * Microsoft Live
   * Any OpenID provider
 
-.. _Velruse: https://github.com/bbangert/velruse
-
 Ability to overload the login form, extend the AuthUser class through
 polymorphism or a Foreign Key user profile table.
 
 **Form Library**
 
-WTForms is used to help those transitioning over from Django to Pyramid.
+WTForms_ is used to help those transitioning over from Django to Pyramid.
 
 **I18N/L10N**
 
-Babel is used to support Internationalization and Localization.
+Babel_ is used to support Internationalization and Localization.
 
 **Flash Messages**
 
-Templates and helpers for Mako and Jinja2 are included to support Flash
+Templates and helpers for Mako_ and Jinja2_ are included to support Flash
 Messages in your application.
 
 Contents:
@@ -84,3 +80,9 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
+.. _WTForms: http://wtforms.simplecodes.com/
+.. _Babel: http://babel.edgewall.org/
+.. _Pyramid: http://www.pylonsproject.org/
+.. _Velruse: https://github.com/bbangert/velruse
+.. _Mako: http://www.makotemplates.org/
+.. _Jinja2: http://jinja.pocoo.org/
