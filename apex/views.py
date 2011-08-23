@@ -303,6 +303,10 @@ def forbidden(request):
 
     Called when user hits a resource that requires a permission and the
     user doesn't have the required permission. Will prompt for login.
+
+    request['repoze.bfg.message'] contains our forbidden error in case
+    of a csrf problem. Proper solution is probably an error page that
+    can be customized.
     """
     flash(_('Not logged in, please log in'), 'error')
     return HTTPFound(location='%s?came_from=%s' %
