@@ -12,7 +12,7 @@ generate the value for the csrf token to be inserted into the form
 
     class SubmitNewsSchema(MappingSchema):
         csrf_token = colander.SchemaNode(
-        colander.String(),
+            colander.String(),
             widget = deform.widget.HiddenWidget(),
             default = deferred_csrf_token,
         )
