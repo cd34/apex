@@ -104,7 +104,7 @@ class AuthUser(Base):
 
            from apex.models import AuthUser
 
-           user = AuthUser().get_by_id(1)
+           user = AuthUser.get_by_id(1)
         """
         return DBSession.query(cls).filter(cls.id==id).first()    
 
@@ -117,7 +117,7 @@ class AuthUser(Base):
 
            from apex.models import AuthUser
 
-           user = AuthUser().get_by_login('$G$1023001')
+           user = AuthUser.get_by_login('$G$1023001')
         """
         return DBSession.query(cls).filter(cls.login==login).first()
 
@@ -130,7 +130,7 @@ class AuthUser(Base):
 
            from apex.models import AuthUser
 
-           user = AuthUser().get_by_id('username')
+           user = AuthUser.get_by_username('username')
         """
         return DBSession.query(cls).filter(cls.username==username).first()
 
@@ -143,7 +143,7 @@ class AuthUser(Base):
 
            from apex.models import AuthUser
 
-           user = AuthUser().get_by_id('email@address.com')
+           user = AuthUser.get_by_email('email@address.com')
         """
         return DBSession.query(cls).filter(cls.email==email).first()
 
@@ -170,7 +170,13 @@ class AuthUser(Base):
 
            from apex.models import AuthUser
 
-           user = AuthUser().get_profile(MyClass, request)
+           user = AuthUser.get_profile(request)
+
+        in **development.ini**
+
+        .. code-block:: python
+
+           apex.auth_profile = 
         """
         if not request:
             request = get_current_request()
