@@ -18,6 +18,7 @@ from pyramid.security import Everyone
 from pyramid.security import Authenticated
 from pyramid.threadlocal import get_current_registry
 from pyramid.url import route_url
+from pyramid.util import DottedNameResolver
 
 from pyramid_mailer import get_mailer
 from pyramid_mailer.message import Message
@@ -206,3 +207,9 @@ def generate_velruse_forms(request, came_from):
                      csrf_token = request.session.get_csrf_token()
                 ))
     return velruse_forms
+
+def get_module(package):
+    """ Returns a module based on the string passed
+    """
+    resolver = DottedNameResolver(package.split('.', 1)[0])
+    return resolver.resolve(package)
