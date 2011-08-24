@@ -20,7 +20,7 @@ it in your own templates directory and override the existing template with:
         %for provider_form in velruse_forms:
             ${provider_form.render(
                 action='/velruse/%s/auth' % provider_form.provider_name,
-                submit_text=provider_form.provider_name,
+                submit_text=provider_form.provider_proper_name,
             )|n}
         %endfor
     %endif

@@ -135,18 +135,23 @@ class OpenIdLogin(OAuthForm):
 
 class GoogleLogin(OAuthForm):
     provider_name = 'google'
+    provider_proper_name = 'Google'
 
 class FacebookLogin(OAuthForm):
     provider_name = 'facebook'
+    provider_proper_name = 'Facebook'
     
 class YahooLogin(OAuthForm):
     provider_name = 'yahoo'
+    provider_proper_name = 'Yahoo'
     
 class TwitterLogin(OAuthForm):
     provider_name = 'twitter'
+    provider_proper_name = 'Twitter'
     
 class WindowsLiveLogin(OAuthForm):
     provider_name = 'live'
+    provider_proper_name = 'Microsoft Live'
 
 class OpenIDRequiredForm(ExtendedForm):
     pass
