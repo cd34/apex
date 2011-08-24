@@ -38,10 +38,7 @@ from apex.forms import ResetPasswordForm
 from apex.forms import LoginForm
 
 
-def login(request):
-    
-    print get_parent_package(apex_settings('auth_profile'))
-    
+def login(request):    
     """ login(request)
     No return value
 
