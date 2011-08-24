@@ -17,8 +17,6 @@ ax/sx options for OpenID
 
 correctly use mappers/backref to extend profile
 
-consolidate form class override
-
 allow user to be added to multiple groups on signup
 
 disable local authentication
