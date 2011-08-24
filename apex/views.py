@@ -18,7 +18,6 @@ from pyramid.security import remember
 from pyramid.settings import asbool
 from pyramid.url import current_route_url
 from pyramid.url import route_url
-from pyramid.util import DottedNameResolver
 
 from pyramid_mailer.message import Message
 
@@ -27,6 +26,7 @@ from apex.lib.libapex import apexid_from_token
 from apex.lib.libapex import apex_email_forgot
 from apex.lib.libapex import auth_provider
 from apex.lib.libapex import generate_velruse_forms
+from apex.lib.libapex import get_module
 from apex.lib.libapex import provider_forms
 from apex.lib.flash import flash
 from apex.models import AuthGroup
@@ -39,6 +39,9 @@ from apex.forms import LoginForm
 
 
 def login(request):
+    
+    print get_parent_package(apex_settings('auth_profile'))
+    
     """ login(request)
     No return value
 
@@ -187,8 +190,7 @@ def register(request):
 
     #This fixes the issue with RegisterForm throwing an UnboundLocalError
     if apex_settings('register_form_class'):
-        resolver = DottedNameResolver(apex_settings('register_form_class').split('.')[0])
-        RegisterForm = resolver.resolve(apex_settings('register_form_class'))
+        RegisterForm = get_module(apex_settings('register_form_class'))
     else:
         from apex.forms import RegisterForm
 
@@ -235,10 +237,7 @@ def apex_callback(request):
                            apex_settings('default_user_group')).one()
                     user.groups.append(group)
                 if apex_settings('create_openid_after'):
-                    resolver = DottedNameResolver( \
-                        apex_settings('create_openid_after').split('.')[0])
-                    openid_after = resolver.resolve( \
-                                       apex_settings('create_openid_after'))
+                    openid_after = get_module(apex_settings('create_openid_after'))
                     openid_after().after_signup(user)
                 DBSession.flush()
             if apex_settings('openid_required'):
@@ -274,9 +273,7 @@ def openid_required(request):
 
     #This fixes the issue with RegisterForm throwing an UnboundLocalError
     if apex_settings('openid_register_form_class'):
-        resolver = DottedNameResolver(apex_settings('openid_register_form_class').split('.')[0])
-        OpenIDRequiredForm = resolver.resolve( \
-                                 apex_settings('openid_register_form_class'))
+        OpenIDRequiredForm = get_module(apex_settings('openid_register_form_class'))
     else:
         from apex.forms import OpenIDRequiredForm
 
