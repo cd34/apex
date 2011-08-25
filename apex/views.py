@@ -14,7 +14,6 @@ from pyramid.security import Authenticated
 from pyramid.security import authenticated_userid
 from pyramid.security import Everyone
 from pyramid.security import forget
-from pyramid.security import remember
 from pyramid.settings import asbool
 from pyramid.url import current_route_url
 from pyramid.url import route_url
@@ -24,6 +23,7 @@ from pyramid_mailer.message import Message
 from apex.lib.libapex import apex_settings
 from apex.lib.libapex import apexid_from_token
 from apex.lib.libapex import apex_email_forgot
+from apex.lib.libapex import apex_remember
 from apex.lib.libapex import auth_provider
 from apex.lib.libapex import generate_velruse_forms
 from apex.lib.libapex import get_module
@@ -63,7 +63,7 @@ def login(request):
     if request.method == 'POST' and form.validate():
         user = AuthUser.get_by_username(form.data.get('username'))
         if user:
-            headers = remember(request, user.id)
+            headers = apex_remember(request, user.id)
             return HTTPFound(location=came_from, headers=headers)
 
     return {'title': title, 'form': form, 'velruse_forms': velruse_forms, \
@@ -202,7 +202,7 @@ def register(request):
     if request.method == 'POST' and form.validate():
         user = form.save()
 
-        headers = remember(request, user.id)
+        headers = apex_remember(request, user.id)
         return HTTPFound(location=came_from, headers=headers)
         
     return {'title': title, 'form': form, 'velruse_forms': velruse_forms, \
@@ -229,10 +229,11 @@ def apex_callback(request):
                     user.email = auth['profile']['verifiedEmail']
                 DBSession.add(user)
                 if apex_settings('default_user_group'):
-                    group = DBSession.query(AuthGroup). \
-                       filter(AuthGroup.name== \
-                           apex_settings('default_user_group')).one()
-                    user.groups.append(group)
+                    for name in apex_settings('default_user_group'). \
+                                              split(','):
+                        group = DBSession.query(AuthGroup). \
+                           filter(AuthGroup.name==name.strip()).one()
+                        user.groups.append(group)
                 if apex_settings('create_openid_after'):
                     openid_after = get_module(apex_settings('create_openid_after'))
                     openid_after().after_signup(user)
@@ -248,7 +249,7 @@ def apex_callback(request):
                         (route_url('apex_openid_required', request), \
                         request.GET.get('came_from', \
                         route_url(apex_settings('came_from_route'), request))))
-            headers = remember(request, user.id)
+            headers = apex_remember(request, user.id)
             redir = request.GET.get('came_from', \
                         route_url(apex_settings('came_from_route'), request))
             flash(_('Successfully Logged in, welcome!'), 'success')
@@ -287,7 +288,7 @@ def openid_required(request):
             setattr(user, required, form.data[required])
         DBSession.merge(user)
         DBSession.flush()
-        headers = remember(request, user.id)
+        headers = apex_remember(request, user.id)
         return HTTPFound(location=came_from, headers=headers)
 
     return {'title': title, 'form': form, 'action': 'openid_required'}

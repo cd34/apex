@@ -68,3 +68,11 @@ apex.openid_required =
 apex.default_groups = 
   OPTIONAL, comma separated list of group names to create. Defaults to 
   admin,user
+
+apex.log_logins =
+  OPTIONAL, boolean flag to log timestamp and IP address on each login.
+ 
+apex.log_login_header =
+  OPTIONAL, Default value is to use REMOTE_ADDR, but, if you run behind
+  a cache or proxy server, you might need to set this to X-Forwarded-For
+  or another header value that contains the Real IP address of the surfer.

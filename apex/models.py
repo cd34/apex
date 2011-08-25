@@ -20,6 +20,7 @@ from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import synonym
 from sqlalchemy.sql import functions
+from sqlalchemy.sql.expression import func
 
 from velruse.store.sqlstore import SQLBase
 
@@ -87,6 +88,9 @@ class AuthUser(Base):
 
     groups = relation('AuthGroup', secondary=user_group_table, \
                       backref='auth_users')
+
+    last_login = relation('AuthUser_Login_Log')
+    login_log = relation('AuthUser_Login_Log')
     """
     Fix this to use association_proxy
     groups = association_proxy('user_group_table', 'authgroup')
@@ -200,6 +204,15 @@ class AuthUser(Base):
                 resolver = DottedNameResolver(auth_profile.split('.')[0])
                 profile_cls = resolver.resolve(auth_profile)
                 return get_or_create(DBSession, profile_cls, user_id=authenticated_userid(request))
+
+class AuthUser_Login_Log(Base):
+    __tablename__ = 'auth_user_log'
+    __table_args__ = {"sqlite_autoincrement": True}
+
+    id = Column(types.Integer, primary_key=True)
+    user_id = Column(types.Integer, ForeignKey(AuthUser.id), index=True)
+    login_time = Column(types.DateTime(), default=func.now())
+    ip_addr = Column(Unicode(39), nullable=False)
 
 def populate(settings):
     session = DBSession()

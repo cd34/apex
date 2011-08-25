@@ -1,28 +1,16 @@
-Revisit whether HMAC is appropriate, pycrypto is already included from Velruse
+Registration Hooks
+* before/after methods that pass user object for local interaction
 
-before/after 
-Activation Email
-Customize Forgot Email/Activate Email message and From: address
+Email Issues
+* Activation Email
+* Customize Forgot Email/Activate Email message and From: address
+* Require email
+* Email Verification
+* Email Authentication
+* FormEncode optional validation of email
 
-Require email
-Email Verification
-Email Authentication
-Unique Email
-
-Remember me - customizable expiration
-
-FormEncode optional validation of email
-
-ax/sx options for OpenID
-
-correctly use mappers/backref to extend profile
-
-allow user to be added to multiple groups on signup
+UX Issues
+* add more detail to exceptions
 
 disable local authentication
-
-add more detail to exceptions
-
-configurable number of rounds for bcrypt
-
-last login date, last login IP
+Unique Email

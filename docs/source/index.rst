@@ -72,6 +72,7 @@ Contents:
    ext/deform
    velruse/index
    example/index
+   wishlist
 
 Indices and tables
 ==================

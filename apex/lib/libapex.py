@@ -16,6 +16,8 @@ from pyramid.i18n import TranslationString as _
 from pyramid.security import Allow
 from pyramid.security import Everyone
 from pyramid.security import Authenticated
+from pyramid.security import remember
+from pyramid.settings import asbool
 from pyramid.threadlocal import get_current_registry
 from pyramid.url import route_url
 from pyramid.util import DottedNameResolver
@@ -26,6 +28,7 @@ from pyramid_mailer.message import Message
 from apex.models import DBSession
 from apex.models import AuthUser
 from apex.models import AuthGroup
+from apex.models import AuthUser_Login_Log
 from apex.forms import OpenIdLogin
 from apex.forms import GoogleLogin
 from apex.forms import FacebookLogin
@@ -213,3 +216,15 @@ def get_module(package):
     """
     resolver = DottedNameResolver(package.split('.', 1)[0])
     return resolver.resolve(package)
+
+def apex_remember(request, user_id):
+    if asbool(apex_settings('log_logins')):
+        if apex_settings('log_login_header'):
+            ip_addr=request.environ.get(apex_settings('log_login_header'), \
+                    u'invalid value - apex.log_login_header')
+        else:
+             ip_addr=request.environ['REMOTE_ADDR']
+        record = AuthUser_Login_Log(user_id=user_id, ip_addr=ip_addr)
+        DBSession.add(record)
+        DBSession.flush()
+    return remember(request, user_id)
