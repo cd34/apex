@@ -345,5 +345,7 @@ def edit(request):
         record = merge_session_with_post(record, request.POST.items())
         DBSession.merge(record)
         DBSession.flush()
+        flash(_('Profile Updated'))
+        return HTTPFound(location=request.url)
 
     return {'title': title, 'form': form, 'action': 'edit'}

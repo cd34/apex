@@ -76,3 +76,7 @@ apex.log_login_header =
   OPTIONAL, Default value is to use REMOTE_ADDR, but, if you run behind
   a cache or proxy server, you might need to set this to X-Forwarded-For
   or another header value that contains the Real IP address of the surfer.
+
+apex.use_apex_edit = false
+  OPTIONAL, use apex's model form profile edit function. This is a quick,
+  simple function.
