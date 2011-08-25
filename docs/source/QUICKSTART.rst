@@ -105,6 +105,7 @@ In **example/__init__.py**, before the return config.make_wsgi_app(), put:
 
 ::
 
+    config.init()
     config.include('apex')
 
 In **example/__init__.py**, we'll add the following route:

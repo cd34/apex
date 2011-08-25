@@ -7,6 +7,7 @@ Installation Instructions
 
     # this must be the very last thing done in __init__.py or, under any
     # other includes.
+    config.init()
     config.include('apex')
 
 **development.ini**

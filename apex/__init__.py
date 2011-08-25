@@ -59,7 +59,7 @@ def includeme(config):
         config._set_authorization_policy(authz_policy)
 
     cache = RootFactory.__acl__ 
-    config._set_root_factory(RootFactory)
+    config.set_root_factory(RootFactory)
     """ end of evil stuff
     """
 
