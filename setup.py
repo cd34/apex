@@ -5,7 +5,7 @@ version = '0.9.0'
 install_requires=[
   "cryptacular",
   "velruse",
-  "pyramid",
+  "pyramid==1.1.2",
   "pyramid_mailer",
   "wtforms",
   "wtforms-recaptcha",
