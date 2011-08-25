@@ -78,8 +78,8 @@ def includeme(config):
 
     config.add_view(forbidden, context=Forbidden)
 
-    render_template = getattr(settings, 'apex.apex_template', \
-                              'apex:templates/apex_template.mako')
+    render_template = settings.get('apex.apex_template', \
+                            'apex:templates/apex_template.mako')
 
     config.add_route('apex_login', '/auth/login')
     config.add_view(login, route_name='apex_login', \
