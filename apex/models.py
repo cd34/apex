@@ -89,10 +89,10 @@ class AuthUser(Base):
     groups = relationship('AuthGroup', secondary=user_group_table, \
                       backref='auth_users')
 
-    last_login = relationship('AuthUser_Log', \
-                         order_by='AuthUser_Log.id.desc()')
-    login_log = relationship('AuthUser_Log', \
-                         order_by='AuthUser_Log.id')
+    last_login = relationship('AuthUserLog', \
+                         order_by='AuthUserLog.id.desc()')
+    login_log = relationship('AuthUserLog', \
+                         order_by='AuthUserLog.id')
     """
     Fix this to use association_proxy
     groups = association_proxy('user_group_table', 'authgroup')
@@ -207,7 +207,7 @@ class AuthUser(Base):
                 profile_cls = resolver.resolve(auth_profile)
                 return get_or_create(DBSession, profile_cls, user_id=authenticated_userid(request))
 
-class AuthUser_Log(Base):
+class AuthUserLog(Base):
     """
     event: 
       L - Login
