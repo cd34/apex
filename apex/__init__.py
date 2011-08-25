@@ -52,14 +52,14 @@ def includeme(config):
         authn_policy = AuthTktAuthenticationPolicy( \
                        settings.get('apex.auth_secret'), \
                        callback=groupfinder)
-        config._set_authentication_policy(authn_policy)
+        config.set_authentication_policy(authn_policy)
 
     if not config.registry.queryUtility(IAuthorizationPolicy):
         authz_policy = ACLAuthorizationPolicy()
-        config._set_authorization_policy(authz_policy)
+        config.set_authorization_policy(authz_policy)
 
     cache = RootFactory.__acl__ 
-    config._set_root_factory(RootFactory)
+    config.set_root_factory(RootFactory)
     """ end of evil stuff
     """
 
