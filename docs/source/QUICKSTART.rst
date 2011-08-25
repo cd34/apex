@@ -105,7 +105,11 @@ In **example/__init__.py**, before the return config.make_wsgi_app(), put:
 
 ::
 
-    config.include('apex')
+    config.commit()
+    config.include('apex', route_prefix='/auth')
+
+If you are using config.scan(), make sure the scan is done after the
+config.include('apex', route_prefix='/auth')
 
 In **example/__init__.py**, we'll add the following route:
 

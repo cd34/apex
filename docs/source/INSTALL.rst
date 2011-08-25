@@ -7,7 +7,11 @@ Installation Instructions
 
     # this must be the very last thing done in __init__.py or, under any
     # other includes.
-    config.include('apex')
+    config.commit()
+    config.include('apex', route_prefix='/auth')
+
+If you are using config.scan(), make sure the scan is done after the 
+config.include('apex', route_prefix='/auth')
 
 **development.ini**
 
