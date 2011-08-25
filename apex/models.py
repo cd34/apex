@@ -15,7 +15,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import backref
-from sqlalchemy.orm import relation
+from sqlalchemy.orm import relationship
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import synonym
@@ -54,7 +54,7 @@ class AuthGroup(Base):
     name = Column(Unicode(80), unique=True, nullable=False)
     description = Column(Unicode(255), default=u'')
 
-    users = relation('AuthUser', secondary=user_group_table, \
+    users = relationship('AuthUser', secondary=user_group_table, \
                      backref='auth_groups')
 
     def __repr__(self):
@@ -86,11 +86,13 @@ class AuthUser(Base):
     email = Column(Unicode(80), default=u'', index=True)
     active = Column(types.Enum(u'Y',u'N',u'D'), default=u'Y')
 
-    groups = relation('AuthGroup', secondary=user_group_table, \
+    groups = relationship('AuthGroup', secondary=user_group_table, \
                       backref='auth_users')
 
-    last_login = relation('AuthUser_Login_Log')
-    login_log = relation('AuthUser_Login_Log')
+    last_login = relationship('AuthUser_Login_Log', \
+                         order_by='AuthUser_Login_Log.id.desc()')
+    login_log = relationship('AuthUser_Login_Log', \
+                         order_by='AuthUser_Login_Log.id')
     """
     Fix this to use association_proxy
     groups = association_proxy('user_group_table', 'authgroup')
