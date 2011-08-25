@@ -89,10 +89,10 @@ class AuthUser(Base):
     groups = relationship('AuthGroup', secondary=user_group_table, \
                       backref='auth_users')
 
-    last_login = relationship('AuthUser_Login_Log', \
-                         order_by='AuthUser_Login_Log.id.desc()')
-    login_log = relationship('AuthUser_Login_Log', \
-                         order_by='AuthUser_Login_Log.id')
+    last_login = relationship('AuthUser_Log', \
+                         order_by='AuthUser_Log.id.desc()')
+    login_log = relationship('AuthUser_Log', \
+                         order_by='AuthUser_Log.id')
     """
     Fix this to use association_proxy
     groups = association_proxy('user_group_table', 'authgroup')
@@ -207,14 +207,22 @@ class AuthUser(Base):
                 profile_cls = resolver.resolve(auth_profile)
                 return get_or_create(DBSession, profile_cls, user_id=authenticated_userid(request))
 
-class AuthUser_Login_Log(Base):
+class AuthUser_Log(Base):
+    """
+    event: 
+      L - Login
+      R - Register
+      P - Password
+      F - Forgot
+    """
     __tablename__ = 'auth_user_log'
     __table_args__ = {"sqlite_autoincrement": True}
 
     id = Column(types.Integer, primary_key=True)
     user_id = Column(types.Integer, ForeignKey(AuthUser.id), index=True)
-    login_time = Column(types.DateTime(), default=func.now())
+    time = Column(types.DateTime(), default=func.now())
     ip_addr = Column(Unicode(39), nullable=False)
+    event = Column(types.Enum(u'L',u'R',u'P',u'F'), default=u'L')
 
 def populate(settings):
     session = DBSession()

@@ -28,7 +28,7 @@ from pyramid_mailer.message import Message
 from apex.models import DBSession
 from apex.models import AuthUser
 from apex.models import AuthGroup
-from apex.models import AuthUser_Login_Log
+from apex.models import AuthUser_Log
 from apex.forms import OpenIdLogin
 from apex.forms import GoogleLogin
 from apex.forms import FacebookLogin
@@ -224,7 +224,7 @@ def apex_remember(request, user_id):
                     u'invalid value - apex.log_login_header')
         else:
              ip_addr=request.environ['REMOTE_ADDR']
-        record = AuthUser_Login_Log(user_id=user_id, ip_addr=ip_addr)
+        record = AuthUser_Log(user_id=user_id, ip_addr=ip_addr)
         DBSession.add(record)
         DBSession.flush()
     return remember(request, user_id)
