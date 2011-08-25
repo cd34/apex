@@ -11,3 +11,11 @@ http://stackoverflow.com/questions/2546207/does-sqlalchemy-have-an-equivalent-of
         session.add(obj)
         session.flush()
         return obj
+        
+def merge_session_with_post(session, post):
+    """ Basic function to merge data into an sql object.
+        This function doesn't work with relations.
+    """
+    for key, value in post:
+        setattr(session, key, value)
+    return session

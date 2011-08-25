@@ -19,6 +19,7 @@ from apex.lib.libapex import RootFactory
 from apex.models import initialize_sql
 from apex.views import apex_callback
 from apex.views import change_password
+from apex.views import edit
 from apex.views import login
 from apex.views import logout
 from apex.views import forgot_password
@@ -112,4 +113,9 @@ def includeme(config):
     config.add_view(openid_required, route_name= \
                     'apex_openid_required', \
                     renderer=render_template)
+
+    if settings.has_key('apex.auth_profile'):
+        config.add_route('apex_edit', '/auth/edit')
+        config.add_view(edit, route_name='apex_edit', \
+                        renderer=render_template)
 

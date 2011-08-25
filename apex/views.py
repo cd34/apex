@@ -4,6 +4,8 @@ import time
 
 from wtforms import TextField
 from wtforms import validators
+from wtforms.ext.sqlalchemy.orm import model_form
+
 from wtfrecaptcha.fields import RecaptchaField
 
 from pyramid.httpexceptions import HTTPFound
@@ -20,6 +22,7 @@ from pyramid.url import route_url
 
 from pyramid_mailer.message import Message
 
+from apex.lib.db import merge_session_with_post
 from apex.lib.libapex import apex_settings
 from apex.lib.libapex import apexid_from_token
 from apex.lib.libapex import apex_email_forgot
@@ -29,6 +32,7 @@ from apex.lib.libapex import generate_velruse_forms
 from apex.lib.libapex import get_module
 from apex.lib.libapex import provider_forms
 from apex.lib.flash import flash
+from apex.lib.form import ExtendedForm
 from apex.models import AuthGroup
 from apex.models import AuthUser
 from apex.models import DBSession
@@ -317,3 +321,29 @@ def forbidden(request):
                         current_route_url(request)))
     else:
         return Response(request.environ['repoze.bfg.message'])
+
+def edit(request):
+    """ edit(request)
+        no return value, called with route_url('apex_edit', request)
+        
+        This function will only work if you have set apex.auth_profile.
+
+        This is a very simple edit function it works off your auth_profile
+        class, all columns inside your auth_profile class will be rendered.
+    """
+    title = _('Edit')
+
+    ProfileForm = model_form(
+        model=get_module(apex_settings('auth_profile')),
+        base_class=ExtendedForm,
+        exclude=('id', 'user_id'),
+    )
+
+    record = AuthUser.get_profile(request)
+    form = ProfileForm(obj=record)
+    if request.method == 'POST' and form.validate():
+        record = merge_session_with_post(record, request.POST.items())
+        DBSession.merge(record)
+        DBSession.flush()
+
+    return {'title': title, 'form': form, 'action': 'edit'}
