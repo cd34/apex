@@ -6,6 +6,7 @@ from pyramid.interfaces import IAuthenticationPolicy
 from pyramid.interfaces import IAuthorizationPolicy
 from pyramid.interfaces import ISessionFactory
 from pyramid.session import UnencryptedCookieSessionFactoryConfig
+from pyramid.settings import asbool
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.exceptions import Forbidden
@@ -115,7 +116,9 @@ def includeme(config):
                     renderer=render_template)
 
     if settings.has_key('apex.auth_profile'):
-        config.add_route('apex_edit', '/auth/edit')
-        config.add_view(edit, route_name='apex_edit', \
-                        renderer=render_template)
-
+        use_edit = asbool(settings.get('apex.use_apex_edit', False))
+        if use_edit:
+            config.add_route('apex_edit', '/auth/edit')
+            config.add_view(edit, route_name='apex_edit', \
+                            renderer=render_template, \
+                            permission='authenticated')
