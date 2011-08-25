@@ -38,7 +38,7 @@ from apex.forms import ResetPasswordForm
 from apex.forms import LoginForm
 
 
-def login(request):    
+def login(request):
     """ login(request)
     No return value
 
