@@ -14,3 +14,6 @@ td {
 #field_error_back {
 	background: #fcc;
 }
+fieldset {
+   border: none;
+}
