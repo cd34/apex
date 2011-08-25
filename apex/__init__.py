@@ -44,24 +44,20 @@ def includeme(config):
                UnencryptedCookieSessionFactoryConfig( \
                settings.get('apex.session_secret')))
 
-    """ evil stuff, will break one day
-    """    
     if not config.registry.queryUtility(IAuthenticationPolicy):
         if not settings.has_key('apex.auth_secret'):
             raise ApexAuthSecret()
         authn_policy = AuthTktAuthenticationPolicy( \
                        settings.get('apex.auth_secret'), \
                        callback=groupfinder)
-        config._set_authentication_policy(authn_policy)
+        config.set_authentication_policy(authn_policy)
 
     if not config.registry.queryUtility(IAuthorizationPolicy):
         authz_policy = ACLAuthorizationPolicy()
-        config._set_authorization_policy(authz_policy)
+        config.set_authorization_policy(authz_policy)
 
     cache = RootFactory.__acl__ 
-    config._set_root_factory(RootFactory)
-    """ end of evil stuff
-    """
+    config.set_root_factory(RootFactory)
 
     if not config.registry.queryUtility(IMailer):
         config.include('pyramid_mailer')
@@ -83,34 +79,34 @@ def includeme(config):
     render_template = settings.get('apex.apex_template', \
                             'apex:templates/apex_template.mako')
 
-    config.add_route('apex_login', '/auth/login')
+    config.add_route('apex_login', '/login')
     config.add_view(login, route_name='apex_login', \
                     renderer=render_template)
     
-    config.add_route('apex_logout', '/auth/logout')
+    config.add_route('apex_logout', '/logout')
     config.add_view(logout, route_name='apex_logout', \
                     renderer=render_template)
 
-    config.add_route('apex_register', '/auth/register')
+    config.add_route('apex_register', '/register')
     config.add_view(register, route_name='apex_register', \
                     renderer=render_template)
 
-    config.add_route('apex_password', '/auth/password')
+    config.add_route('apex_password', '/password')
     config.add_view(change_password, route_name='apex_password', \
                     renderer=render_template, permission='authenticated')
     
-    config.add_route('apex_forgot', '/auth/forgot')
+    config.add_route('apex_forgot', '/forgot')
     config.add_view(forgot_password, route_name='apex_forgot', \
                     renderer=render_template)
     
-    config.add_route('apex_reset', '/auth/reset/:user_id/:hmac')
+    config.add_route('apex_reset', '/reset/:user_id/:hmac')
     config.add_view(reset_password, route_name='apex_reset', \
                     renderer=render_template)
     
-    config.add_route('apex_callback', '/auth/apex_callback')
+    config.add_route('apex_callback', '/apex_callback')
     config.add_view(apex_callback, route_name='apex_callback')
 
-    config.add_route('apex_openid_required', '/auth/openid_required')
+    config.add_route('apex_openid_required', '/openid_required')
     config.add_view(openid_required, route_name= \
                     'apex_openid_required', \
                     renderer=render_template)
@@ -118,7 +114,7 @@ def includeme(config):
     if settings.has_key('apex.auth_profile'):
         use_edit = asbool(settings.get('apex.use_apex_edit', False))
         if use_edit:
-            config.add_route('apex_edit', '/auth/edit')
+            config.add_route('apex_edit', '/edit')
             config.add_view(edit, route_name='apex_edit', \
                             renderer=render_template, \
                             permission='authenticated')
