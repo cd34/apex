@@ -1,17 +1,21 @@
 Installation Instructions
 =========================
 
+Temporarily, 1.2a1 as installed from easy_install pyramid has a bug with
+the Root Factory. You'll need to install Pyramid from Github:
+
+::
+
+    easy_install -U https://github.com/Pylons/pyramid/tarball/master
+
 **__init__.py**
 
 ::
 
-    # this must be the very last thing done in __init__.py or, under any
-    # other includes.
-    config.commit()
-    config.include('apex', route_prefix='/auth')
+    # place this line in __init__.py above
+    # return config.make_wsgi_app()
 
-If you are using config.scan(), make sure the scan is done after the 
-config.include('apex', route_prefix='/auth')
+    config.include('apex', route_prefix='/auth')
 
 **development.ini**
 

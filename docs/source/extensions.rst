@@ -1,8 +1,11 @@
 Extensions
 ==========
 
-:function:apex.ext.deform.deferred_csrf_token Deform Extension
+Helpers for various template and form libraries
 
-::
+Contents:
 
-    from apex.ext.deform import deferred_csrf_token
+.. toctree::
+   :maxdepth: 2
+
+   ext/deform

@@ -14,6 +14,8 @@ Contents:
    google
    facebook
    twitter
+   yahoo
+   live
 
 Indices and tables
 ==================

@@ -69,7 +69,6 @@ Contents:
    views
    extensions
    templates
-   ext/deform
    velruse/index
    example/index
    wishlist

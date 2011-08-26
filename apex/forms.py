@@ -129,6 +129,7 @@ class OAuthForm(ExtendedForm):
 
 class OpenIdLogin(OAuthForm):
     provider_name = 'openid'
+    provider_proper_name = 'OpenID'
 
     openid_identifier = TextField(_('OpenID Identifier'), \
                                   [validators.Required()])
