@@ -23,3 +23,9 @@ Modify your **CONFIG.yaml** file to include the following:
         Secret Key: (Client secret)
         Policy URL: http://domain.com/policy.html
         Offers: Contacts.View
+
+If you are using Live, and are not using Velruse 0.20a1dev, you need to do:
+
+::
+
+    easy_install -U https://github.com/bbangert/velruse/tarball/master
