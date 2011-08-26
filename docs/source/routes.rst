@@ -6,13 +6,20 @@ or views
 
 ::
 
-    Route Name: apex_login - /apex/login
-    Route Name: apex_logout - /apex/logout
-    Route Name: apex_register - /apex/register
-    Route Name: apex_password - /apex/password
-    Route Name: apex_forgot - /apex/forgot
-    Route Name: apex_reset - /apex/reset
-    Route Name: apex_callback - /apex/callback
+    Route Name: apex_login - /auth/login
+    Route Name: apex_logout - /auth/logout
+    Route Name: apex_register - /auth/register
+    Route Name: apex_password - /auth/password
+    Route Name: apex_forgot - /auth/forgot
+    Route Name: apex_reset - /auth/reset
+    Route Name: apex_callback - /auth/callback
+
+The routes can be overridden by changing route_prefix in the line added in 
+**__init__.py**:
+
+::
+
+    config.include('apex', route_prefix='/auth')
 
 In your mako templates, these can be accessed as:
 

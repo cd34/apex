@@ -8,4 +8,3 @@ The following variables are available in your templates:
   safe quote/raw the field. In Mako, ${csrf_token_field|n}
 * flash methods are provided to access this for Mako/Jinja, but, if you
   want to access it directly, it is available.
-* user - the user model
