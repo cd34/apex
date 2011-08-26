@@ -105,11 +105,15 @@ In **example/__init__.py**, before the return config.make_wsgi_app(), put:
 
 ::
 
+    # place these two lines in __init__.py above
+    # return config.make_wsgi_app()
+
     config.commit()
     config.include('apex', route_prefix='/auth')
 
 If you are using config.scan(), make sure the scan is done after the
-config.include('apex', route_prefix='/auth')
+config.include('apex', route_prefix='/auth')  For some reason, Pyramid
+is very picky regarding placement of the include.
 
 In **example/__init__.py**, we'll add the following route:
 
