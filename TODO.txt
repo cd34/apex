@@ -8,9 +8,8 @@ Email Issues
 * Email Verification
 * Email Authentication
 * FormEncode optional validation of email
+* Unique Email address requirement
 
 UX Issues
 * add more detail to exceptions
 
-disable local authentication
-Unique Email

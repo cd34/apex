@@ -35,7 +35,8 @@ apex.use_recaptcha_on_register = true
   OPTIONAL, Display Recaptcha form on Registration Page
 
 apex.provider_exclude = openid
-  OPTIONAL, comma separated list to exclude configured providers
+  OPTIONAL, comma separated list to exclude configured providers. The
+  value local will exclude local validation
 
 apex.apex_template = project:templates/auth.mako
   OPTIONAL, an optional template for rendering the authentication forms

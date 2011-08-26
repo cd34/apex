@@ -52,15 +52,17 @@ def login(request):
     came_from = request.GET.get('came_from', \
                     route_url(apex_settings('came_from_route'), request))
 
-    if asbool(apex_settings('use_recaptcha_on_login')):
-        if apex_settings('recaptcha_public_key') and apex_settings('recaptcha_private_key'):
-            LoginForm.captcha = RecaptchaField(
-                public_key=apex_settings('recaptcha_public_key'),
-                private_key=apex_settings('recaptcha_private_key'),
-            )
-    form = LoginForm(request.POST, \
-               captcha={'ip_address': request.environ['REMOTE_ADDR']})
-    
+    if 'local' not in apex_settings('provider_exclude'):
+        if asbool(apex_settings('use_recaptcha_on_login')):
+            if apex_settings('recaptcha_public_key') and apex_settings('recaptcha_private_key'):
+                LoginForm.captcha = RecaptchaField(
+                    public_key=apex_settings('recaptcha_public_key'),
+                    private_key=apex_settings('recaptcha_private_key'),
+                )
+        form = LoginForm(request.POST, \
+                   captcha={'ip_address': request.environ['REMOTE_ADDR']})
+    else:
+        form = None
     
     velruse_forms = generate_velruse_forms(request, came_from)
 
@@ -195,14 +197,18 @@ def register(request):
     else:
         from apex.forms import RegisterForm
 
-    if asbool(apex_settings('use_recaptcha_on_register')):
-        if apex_settings('recaptcha_public_key') and apex_settings('recaptcha_private_key'):
-            RegisterForm.captcha = RecaptchaField(
-                public_key=apex_settings('recaptcha_public_key'),
-                private_key=apex_settings('recaptcha_private_key'),
-            )
+    if 'local' not in apex_settings('provider_exclude'):
+        if asbool(apex_settings('use_recaptcha_on_register')):
+            if apex_settings('recaptcha_public_key') and apex_settings('recaptcha_private_key'):
+                RegisterForm.captcha = RecaptchaField(
+                    public_key=apex_settings('recaptcha_public_key'),
+                    private_key=apex_settings('recaptcha_private_key'),
+                )
 
-    form = RegisterForm(request.POST, captcha={'ip_address': request.environ['REMOTE_ADDR']})
+        form = RegisterForm(request.POST, captcha={'ip_address': request.environ['REMOTE_ADDR']})
+    else:
+        form = None
+
     if request.method == 'POST' and form.validate():
         user = form.save()
 
