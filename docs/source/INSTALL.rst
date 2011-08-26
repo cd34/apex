@@ -1,6 +1,13 @@
 Installation Instructions
 =========================
 
+Temporarily, 1.2a1 as installed from easy_install pyramid has a bug with
+the Root Factory. You'll need to install Pyramid from Github:
+
+::
+
+    easy_install -U https://github.com/Pylons/pyramid/tarball/master
+
 **__init__.py**
 
 ::
