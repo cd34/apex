@@ -52,7 +52,7 @@ def login(request):
     came_from = request.GET.get('came_from', \
                     route_url(apex_settings('came_from_route'), request))
 
-    if 'local' not in apex_settings('provider_exclude'):
+    if 'local' not in apex_settings('provider_exclude', []):
         if asbool(apex_settings('use_recaptcha_on_login')):
             if apex_settings('recaptcha_public_key') and apex_settings('recaptcha_private_key'):
                 LoginForm.captcha = RecaptchaField(
@@ -197,7 +197,7 @@ def register(request):
     else:
         from apex.forms import RegisterForm
 
-    if 'local' not in apex_settings('provider_exclude'):
+    if 'local' not in apex_settings('provider_exclude', []):
         if asbool(apex_settings('use_recaptcha_on_register')):
             if apex_settings('recaptcha_public_key') and apex_settings('recaptcha_private_key'):
                 RegisterForm.captcha = RecaptchaField(
