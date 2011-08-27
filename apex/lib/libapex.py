@@ -153,11 +153,17 @@ the following URL to change your password:
 If you did not make this request, you can safely ignore it.
     """ % route_url('apex_reset', request, user_id=user_id, hmac=hmac))
 
-def apex_settings(key=None):
+def apex_settings(key=None, default=None):
+    """ Gets an apex setting if the key is set.
+        If no key it set, returns all the apex settings.
+        
+        Some settings have issue with a Nonetype value error,
+        you can set the default to fix this issue.        
+    """
     settings = get_current_registry().settings
 
     if key:
-        return settings.get('apex.%s' % key)
+        return settings.get('apex.%s' % key, default)
     else:
         apex_settings = []
         for k, v in settings.items():
