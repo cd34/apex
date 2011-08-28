@@ -4,7 +4,7 @@
 	%endfor
 %endif
 
-<form action="${action}" method="POST" accept-charset="utf-8"
+<form id="${form.__class__.__name__}" action="${action}" method="POST" accept-charset="utf-8"
 	%if form.is_multipart:
 		 enctype="multipart/form-data"
 	%endif
