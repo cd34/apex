@@ -197,7 +197,12 @@ def apex_settings(key=None, default=None):
         return apex_settings
 
 def create_user(**kwargs):
-    """Usage: create_user(username='test', password='my_password', group='group')
+    """
+::
+    from apex.lib.libapex import create_user
+
+    create_user(username='test', password='my_password', active='Y', group='group')
+
     Returns: AuthUser object
     """
     user = AuthUser()
