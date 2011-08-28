@@ -245,8 +245,9 @@ def initialize_sql(engine, settings):
     DBSession.configure(bind=engine)
     Base.metadata.bind = engine
     Base.metadata.create_all(engine)
-    SQLBase.metadata.bind = engine
-    SQLBase.metadata.create_all(engine)
+    if settings.has_key('apex.velruse_config'):
+        SQLBase.metadata.bind = engine
+        SQLBase.metadata.create_all(engine)
     try:
         populate(settings)
     except IntegrityError:
