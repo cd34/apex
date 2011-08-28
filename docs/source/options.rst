@@ -50,9 +50,6 @@ apex.default_user_group =
   undefined, users will not be assigned to a group and you'll only have the
   permissions 'view' and 'authenticated'.
 
-apex.sender_email = 
-  OPTIONAL, defaults to nobody@example.com, 
-
 apex.create_openid_before =
   OPTIONAL, NOT IMPLEMENTED, since OpenID requests don't allow us to
   override the signup form, we call this function before the OpenID
@@ -81,3 +78,19 @@ apex.log_login_header =
 apex.use_apex_edit = false
   OPTIONAL, use apex's model form profile edit function. This is a quick,
   simple function.
+
+**Email Settings**
+
+Email Messages that Apex sends can be customized. The following replacements
+are made on messages:
+
+* %_email_% - recipient's email
+
+apex.sender_email = 
+  OPTIONAL, defaults to nobody@example.com, 
+
+apex.email_validate = false
+  OPTIONAL, require email address to be validated before activating account.
+
+apex.email_responses = 
+  OPTIONAL, dotted class notation 

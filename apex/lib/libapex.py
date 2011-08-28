@@ -45,6 +45,30 @@ auth_provider = {
     'M':'Microsoft Live',
 }
 
+class EmailMessageText(object):
+    """ Default email message text
+    
+    In the message body, %_url_% is replaced with:
+
+::
+
+        route_url('apex_reset', request, user_id=user_id, hmac=hmac))
+
+    """
+
+    def forgot(self):
+        return {
+                'subject': _('Password reset request received'),
+                'body': _("""
+A request to reset your password has been received. Please go to 
+the following URL to change your password:
+
+%_url_%
+
+If you did not make this request, you can safely ignore it.
+"""),
+        }
+
 def apexid_from_url(provider, identifier):
     """
     returns the login ID for apex
@@ -143,15 +167,15 @@ def apex_email(request, recipients, subject, body, sender=None):
     mailer.send(message)
 
 def apex_email_forgot(request, user_id, email, hmac):
-    apex_email(request, email, _('Password reset request received'), \
-    """
-A request to reset your password has been received. Please go to 
-the following URL to change your password:
+    message_class_name = get_module(apex_settings('email_message_text', \
+                             'apex.lib.libapex.EmailMessageText'))
+    message_class = message_class_name()
+    message_text = getattr(message_class, 'forgot')()
 
-%s
-
-If you did not make this request, you can safely ignore it.
-    """ % route_url('apex_reset', request, user_id=user_id, hmac=hmac))
+    message_body = message_text['body'].replace('%_url_%', \
+        route_url('apex_reset', request, user_id=user_id, hmac=hmac))
+        
+    apex_email(request, email, message_text['subject'], message_body)
 
 def apex_settings(key=None, default=None):
     """ Gets an apex setting if the key is set.
