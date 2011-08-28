@@ -230,7 +230,7 @@ def populate(settings):
     default_groups = []
     if settings.has_key('apex.default_groups'):
         for name in settings['apex.default_groups'].split(','):
-            default_groups.append((name.strip(),u''))
+            default_groups.append((unicode(name.strip()),u''))
     else:
         default_groups = [(u'users',u'User Group'), \
                           (u'admin',u'Admin Group')]
