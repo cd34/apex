@@ -92,5 +92,5 @@ apex.sender_email =
 apex.email_validate = false
   OPTIONAL, require email address to be validated before activating account.
 
-apex.email_responses = 
-  OPTIONAL, dotted class notation 
+apex.email_message_text = apex.lib.libapex.EmailMessageText
+  OPTIONAL, dotted class notation containing replacement message text
