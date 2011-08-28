@@ -84,7 +84,7 @@ apex.use_apex_edit = false
 Email Messages that Apex sends can be customized. The following replacements
 are made on messages:
 
-* %_email_% - recipient's email
+* %_url_% - URL of the Reset Password form
 
 apex.sender_email = 
   OPTIONAL, defaults to nobody@example.com, 
