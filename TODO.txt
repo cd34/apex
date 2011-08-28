@@ -3,7 +3,6 @@ Registration Hooks
 
 Email Issues
 * Activation Email
-* Customize Forgot Email/Activate Email message and From: address
 * Require email
 * Email Verification
 * Email Authentication

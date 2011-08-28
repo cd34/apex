@@ -9,7 +9,7 @@ title - formal name of form (Login, Change Password, Forgot Password,
 action - short representation of form (login, changepass, forgot, reset, 
     register, openid_required)
 
-Mako Template:
+**Mako Template**:
 
 To handle flash messages when using Mako, insert the following into your
 templates:
@@ -25,7 +25,13 @@ Insert this line where you would like the Flash Messages to be displayed:
 
     ${apex_flash()}
 
-Jinja Templates:
+Login 'bar':
+
+::
+
+    <%include file="apex:templates/login_template.mako" />
+
+**Jinja Templates**:
 
 (Currently not working due to import issue, need to copy 
 flash_template.jinja2 to your templates directory)
