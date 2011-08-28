@@ -87,7 +87,7 @@ are made on messages:
 * %_url_% - URL of the Reset Password form
 
 apex.sender_email = 
-  OPTIONAL, defaults to nobody@example.com, 
+  OPTIONAL, defaults to nobody@example.com
 
 apex.email_validate = false
   OPTIONAL, require email address to be validated before activating account.
