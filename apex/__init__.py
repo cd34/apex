@@ -19,6 +19,7 @@ from apex.lib.libapex import groupfinder
 from apex.lib.libapex import RootFactory
 from apex.models import initialize_sql
 from apex.views import apex_callback
+from apex.views import activate
 from apex.views import change_password
 from apex.views import edit
 from apex.views import login
