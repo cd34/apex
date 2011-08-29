@@ -46,22 +46,42 @@ auth_provider = {
 }
 
 class EmailMessageText(object):
-    """ Default email message text
-    
-    In the message body, %_url_% is replaced with:
-
-::
-
-        route_url('apex_reset', request, user_id=user_id, hmac=hmac))
-
+    """ Default email message text class
     """
 
     def forgot(self):
+        """
+In the message body, %_url_% is replaced with:
+
+::
+
+    route_url('apex_reset', request, user_id=user_id, hmac=hmac))
+        """
         return {
                 'subject': _('Password reset request received'),
                 'body': _("""
 A request to reset your password has been received. Please go to 
 the following URL to change your password:
+
+%_url_%
+
+If you did not make this request, you can safely ignore it.
+"""),
+        }
+
+    def activate(self):
+        """
+In the message body, %_url_% is replaced with:
+
+::
+
+    route_url('apex_activate', request, user_id=user_id, hmac=hmac))
+        """
+        return {
+                'subject': _('Account activation. Please activate your account.'),
+                'body': _("""
+This site requires account validation. Please follow the link below to 
+activate your account:
 
 %_url_%
 
@@ -174,6 +194,17 @@ def apex_email_forgot(request, user_id, email, hmac):
 
     message_body = message_text['body'].replace('%_url_%', \
         route_url('apex_reset', request, user_id=user_id, hmac=hmac))
+        
+    apex_email(request, email, message_text['subject'], message_body)
+
+def apex_email_activate(request, user_id, email, hmac):
+    message_class_name = get_module(apex_settings('email_message_text', \
+                             'apex.lib.libapex.EmailMessageText'))
+    message_class = message_class_name()
+    message_text = getattr(message_class, 'activate')()
+
+    message_body = message_text['body'].replace('%_url_%', \
+        route_url('apex_activate', request, user_id=user_id, hmac=hmac))
         
     apex_email(request, email, message_text['subject'], message_body)
 

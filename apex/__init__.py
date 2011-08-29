@@ -103,6 +103,10 @@ def includeme(config):
     config.add_view(reset_password, route_name='apex_reset', \
                     renderer=render_template)
     
+    config.add_route('apex_activate', '/activate/:user_id/:hmac')
+    config.add_view(activate, route_name='apex_activate', \
+                    renderer=render_template)
+    
     config.add_route('apex_callback', '/apex_callback')
     config.add_view(apex_callback, route_name='apex_callback')
 

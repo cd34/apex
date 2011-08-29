@@ -182,6 +182,29 @@ def reset_password(request):
                                                     request))
     return {'title': title, 'form': form, 'action': 'reset'}
 
+def activate(request):
+    """ 
+    """
+    user_id = request.matchdict.get('user_id')
+    user = AuthUser.get_by_id(user_id)
+    submitted_hmac = request.matchdict.get('hmac')
+    current_time = time.time()
+    time_key = int(base64.b64decode(submitted_hmac[10:]))
+    if current_time < time_key:
+        hmac_key = hmac.new('%s:%s:%d' % (str(user.id), \
+                            apex_settings('auth_secret'), time_key), \
+                            user.email).hexdigest()[0:10]
+        if hmac_key == submitted_hmac[0:10]:
+            user.active = 'Y'
+            DBSession.merge(user)
+            DBSession.flush()
+            flash(_('Account activated. Please log in.'))
+            return HTTPFound(location=route_url('apex_login', \
+                                                request))
+    flash(_('Invalid request, please try again'))
+    return HTTPFound(location=route_url(apex_settings('came_from_route'), \
+                                        request))
+
 def register(request):
     """ register(request):
     no return value, called with route_url('apex_register', request)
