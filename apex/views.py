@@ -342,6 +342,7 @@ def forbidden(request):
     to determine why the Forbidden exception was called.
 
     **THIS WILL BREAK EVENTUALLY**
+    **THIS DID BREAK WITH Pyramid 1.2a3**
     """
     if request.environ.has_key('bfg.routes.route'):
         flash(_('Not logged in, please log in'), 'error')
@@ -349,7 +350,8 @@ def forbidden(request):
                         (route_url('apex_login', request),
                         current_route_url(request)))
     else:
-        return Response(request.environ['repoze.bfg.message'])
+        return Response(request.environ.get('repoze.bfg.message', \
+                        'Unknown error message'))
 
 def edit(request):
     """ edit(request)
