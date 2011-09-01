@@ -84,7 +84,7 @@ class AuthUser(Base):
     username = Column(Unicode(80), default=u'', index=True)
     _password = Column('password', Unicode(80), default=u'')
     email = Column(Unicode(80), default=u'', index=True)
-    active = Column(types.Enum(u'Y',u'N',u'D'), default=u'Y')
+    active = Column(types.Enum(u'Y',u'N',u'D', name=u"active"), default=u'Y')
 
     groups = relationship('AuthGroup', secondary=user_group_table, \
                       backref='auth_users')
@@ -222,7 +222,7 @@ class AuthUserLog(Base):
     user_id = Column(types.Integer, ForeignKey(AuthUser.id), index=True)
     time = Column(types.DateTime(), default=func.now())
     ip_addr = Column(Unicode(39), nullable=False)
-    event = Column(types.Enum(u'L',u'R',u'P',u'F'), default=u'L')
+    event = Column(types.Enum(u'L',u'R',u'P',u'F', name=u"event"), default=u'L')
 
 def populate(settings):
     session = DBSession()
