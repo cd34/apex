@@ -11,6 +11,8 @@ from velruse.store.sqlstore import KeyStorage
 
 from sqlalchemy.orm.exc import NoResultFound
 
+from wtforms import HiddenField
+
 from pyramid.httpexceptions import HTTPFound
 from pyramid.i18n import TranslationString as _
 from pyramid.security import Allow
@@ -270,13 +272,16 @@ def generate_velruse_forms(request, came_from):
                     configs.remove(provider.strip())
         for provider in configs:
             if provider_forms.has_key(provider):
-                velruse_forms.append(provider_forms[provider](
+                form = provider_forms[provider](
                     end_point='%s?csrf_token=%s&came_from=%s' % \
                      (request.route_url('apex_callback'), \
                       request.session.get_csrf_token(),
                       came_from), \
-                     csrf_token = request.session.get_csrf_token()
-                ))
+                     csrf_token = request.session.get_csrf_token(),
+                )
+                if provider == 'facebook':
+                    form.scope.data = apex_settings('velruse_facebook_scope')
+                velruse_forms.append(form)
     return velruse_forms
 
 def get_module(package):

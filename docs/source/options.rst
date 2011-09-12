@@ -94,3 +94,12 @@ apex.email_validate = false
 
 apex.email_message_text = apex.lib.libapex.EmailMessageText
   OPTIONAL, dotted class notation containing replacement message text
+
+**Velruse Options**
+
+These options allow you to control the scope/oauth_scope requested from the
+provider.
+
+apex.velruse_facebook_scope = 
+  OPTIONAL, string representing additional permissions to be requested 
+  upon login. http://developers.facebook.com/docs/reference/api/permissions/

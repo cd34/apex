@@ -141,6 +141,7 @@ class GoogleLogin(OAuthForm):
 class FacebookLogin(OAuthForm):
     provider_name = 'facebook'
     provider_proper_name = 'Facebook'
+    scope = HiddenField('')
     
 class YahooLogin(OAuthForm):
     provider_name = 'yahoo'
