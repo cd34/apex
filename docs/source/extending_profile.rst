@@ -48,7 +48,7 @@ If you are using OpenID providers:
 
 ::
 
-    apex.create_openid_after = sflh.form.openid_after
+    apex.create_openid_after = project.form.openid_after
 
 **project/models/__init__.py**
 
