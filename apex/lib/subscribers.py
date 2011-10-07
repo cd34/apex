@@ -15,7 +15,10 @@ def user(request):
     return user
 
 def csrf_validation(event):
-    """ CSRF token exposed to templates
+    """ CSRF token validation Subscriber
+
+        As of Pyramid 1.2a3, passing messages through HTTPForbidden broke,
+        and don't appear to be exposed to exception handlers.
     """
     if event.request.method == 'POST':
         token = event.request.POST.get('csrf_token') or event.request.GET.get('csrf_token')
