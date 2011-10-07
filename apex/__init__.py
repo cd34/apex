@@ -67,7 +67,7 @@ def includeme(config):
         config.add_settings({'mako.directories': ['apex:templates']})
     
     config.add_subscriber('apex.lib.subscribers.csrf_validation', \
-                          'pyramid.events.NewRequest')
+                          'pyramid.events.ContextFound')
     config.add_subscriber('apex.lib.subscribers.add_renderer_globals', \
                           'pyramid.events.BeforeRender')
     config.add_subscriber('apex.lib.subscribers.add_user_context', \
