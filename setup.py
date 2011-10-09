@@ -1,4 +1,5 @@
-from setuptools import setup, find_packages
+from setuptools import find_packages
+from setuptools import setup
 
 version = '0.9.0'
 
@@ -15,7 +16,7 @@ tests_require = install_requires + ['Sphinx', 'docutils',
                                     'WebTest', 'virtualenv', 'nose']
 
 setup(
-    version = version,
+    version=version,
     name='Apex',
     long_description='Pyramid starter project to add Velruse, Flash Messages, CSRF, ReCaptcha and Sessions',
     install_requires=install_requires,
@@ -24,4 +25,8 @@ setup(
     zip_safe=True,
     tests_require=tests_require,
     test_suite="apex.tests",
+    entry_points = """\
+        [paste.paster_create_template]
+        apex_routesalchemy=apex.scaffolds:ApexRoutesAlchemyTemplate
+    """
 )
