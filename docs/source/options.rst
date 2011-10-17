@@ -79,6 +79,10 @@ apex.use_apex_edit = false
   OPTIONAL, use apex's model form profile edit function. This is a quick,
   simple function.
 
+apex.no_csrf = 
+  OPTIONAL, a colon separated list of route names that should NOT be subject
+  to CSRF tests.
+
 **Email Settings**
 
 Email Messages that Apex sends can be customized. The following replacements

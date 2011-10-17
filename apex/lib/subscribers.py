@@ -4,6 +4,7 @@ from pyramid.threadlocal import get_current_request
 from pyramid.security import authenticated_userid
 
 from apex.lib.flash import flash
+from apex.lib.libapex import apex_settings
 from apex.models import AuthUser
 
 def user(request):
@@ -19,10 +20,34 @@ def csrf_validation(event):
 
         As of Pyramid 1.2a3, passing messages through HTTPForbidden broke,
         and don't appear to be exposed to exception handlers.
+
+        It appears that we cannot decorate a view and have it affect an event
+        until after the event has fired, so, temporarily we're going to 
+        have to use a value in the config to specify a list of paths that
+        should not have CSRF validation.
+
+        Ideally, we'll be able to do
+
+        ::
+            @no_csrf
+            @view_config(route_name='test')
+            def test(request):
+
+        which would prevent CSRF tracking on that view. With the event hooks,
+        our decorator is not read until AFTER the event, which makes this
+        method fail at this point.
+
+        Temporarily, we'll use a field in the development.ini:
+
+        apex.no_csrf = routename1:routename2
+
     """
     if event.request.method == 'POST':
         token = event.request.POST.get('csrf_token') or event.request.GET.get('csrf_token')
-        if token is None or token != event.request.session.get_csrf_token():
+        no_csrf = apex_settings('no_csrf').split(':')
+        
+        if (token is None or token != event.request.session.get_csrf_token()) \
+            and event.request.matched_route.name not in no_csrf:
             raise HTTPForbidden(_('CSRF token is missing or invalid'))
 
 def add_renderer_globals(event):
