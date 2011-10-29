@@ -30,6 +30,14 @@ from apex.views import openid_required
 from apex.views import register
 from apex.views import reset_password
 
+"""
+    Allows flash messages to be called as:
+::
+    from apex import flash
+
+"""
+from apex.lib.flash import flash
+
 def includeme(config):
     settings = config.registry.settings
 

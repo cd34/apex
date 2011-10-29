@@ -41,6 +41,10 @@ apex.provider_exclude = openid
 apex.apex_template = project:templates/auth.mako
   OPTIONAL, an optional template for rendering the authentication forms
 
+apex.form_template = project:templates/form.mako
+  OPTIONAL, an optional template for changing the default template used when
+  rendering forms
+
 apex.register_form_class = project.models.form_name
   OPTIONAL, requires DOTTED notation, specifies overloaded form for
   registration
