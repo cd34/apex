@@ -4,6 +4,7 @@ from wtforms import Form
 from wtforms import validators
 
 from pyramid.renderers import render
+from pyramid.threadlocal import get_current_registry
 
 class ExtendedForm(Form):
     """ Base Model used to wrap WTForms for local use
@@ -42,9 +43,14 @@ class ExtendedForm(Form):
     def render(self, **kwargs):
         action = kwargs.pop('action', '')
         submit_text = kwargs.pop('submit_text', 'Submit')
-        template = kwargs.pop('template', 'tableform')
+        template = kwargs.pop('template', False)
 
-        return render('apex:templates/forms/%s.mako' % template, {
+        if not template:
+            settings = get_current_registry().settings
+            template = settings.get('apex.form_template', \
+                'apex:templates/forms/tableform.mako')
+
+        return render(template, {
             'form': self,
             'action': action,
             'submit_text': submit_text,
