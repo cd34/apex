@@ -108,11 +108,10 @@ class AuthUser(Base):
                        _set_password))
 
     def in_group(self, group):
-        for g in self.groups:
-            if g.name == group:
-                return True
-            else:
-                return False
+        """
+        Returns True or False if the user is or isn't in the group.
+        """
+        return group in [g.name for g in self.groups]
 
     @classmethod
     def get_by_id(cls, id):
