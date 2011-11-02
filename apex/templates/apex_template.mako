@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-<title>Pyramid Apex</title>
+<title>Apex</title>
 <%namespace file="apex:templates/flash_template.mako" import="*"/>
 
 <link rel="stylesheet" href="${request.static_url('apex:static/css/apex_forms.css')}" type="text/css" media="screen" charset="utf-8" />
