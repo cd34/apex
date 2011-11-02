@@ -180,8 +180,7 @@ class AuthUser(Base):
         else:
             return False
 
-    @classmethod   
-    def get_profile(cls, request=None):
+    def get_profile(self, request=None):
         """
         Returns AuthUser.profile object, creates record if it doesn't exist.
 
@@ -189,7 +188,8 @@ class AuthUser(Base):
 
            from apex.models import AuthUser
 
-           user = AuthUser.get_profile(request)
+           user = AuthUser.get_by_id(1)
+           profile = user.get_profile(request)
 
         in **development.ini**
 
@@ -200,12 +200,11 @@ class AuthUser(Base):
         if not request:
             request = get_current_request()
 
-        if authenticated_userid(request):
-            auth_profile = request.registry.settings.get('apex.auth_profile')
-            if auth_profile:
-                resolver = DottedNameResolver(auth_profile.split('.')[0])
-                profile_cls = resolver.resolve(auth_profile)
-                return get_or_create(DBSession, profile_cls, user_id=authenticated_userid(request))
+        auth_profile = request.registry.settings.get('apex.auth_profile')
+        if auth_profile:
+            resolver = DottedNameResolver(auth_profile.split('.')[0])
+            profile_cls = resolver.resolve(auth_profile)
+            return get_or_create(DBSession, profile_cls, user_id=self.id)
 
 class AuthUserLog(Base):
     """
