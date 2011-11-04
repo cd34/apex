@@ -1,7 +1,7 @@
 from cryptacular.bcrypt import BCRYPTPasswordManager
 import transaction
 
-from pyramid.threadlocal import get_current_registry
+from pyramid.threadlocal import get_current_request
 from pyramid.util import DottedNameResolver
 
 from sqlalchemy import Column
@@ -194,9 +194,9 @@ class AuthUser(Base):
            apex.auth_profile = 
         """
         if not request:
-            registry = get_current_registry()
+            request = get_current_request()
 
-        auth_profile = registry.settings.get('apex.auth_profile')
+        auth_profile = request.registry.settings.get('apex.auth_profile')
         if auth_profile:
             resolver = DottedNameResolver(auth_profile.split('.')[0])
             profile_cls = resolver.resolve(auth_profile)
