@@ -1,8 +1,6 @@
 from cryptacular.bcrypt import BCRYPTPasswordManager
 import transaction
 
-from pyramid.security import authenticated_userid
-from pyramid.threadlocal import get_current_request
 from pyramid.threadlocal import get_current_registry
 from pyramid.util import DottedNameResolver
 
@@ -19,7 +17,6 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import synonym
-from sqlalchemy.sql import functions
 from sqlalchemy.sql.expression import func
 
 from velruse.store.sqlstore import SQLBase
@@ -197,9 +194,9 @@ class AuthUser(Base):
            apex.auth_profile = 
         """
         if not request:
-            request = get_current_request()
+            registry = get_current_registry()
 
-        auth_profile = request.registry.settings.get('apex.auth_profile')
+        auth_profile = registry.settings.get('apex.auth_profile')
         if auth_profile:
             resolver = DottedNameResolver(auth_profile.split('.')[0])
             profile_cls = resolver.resolve(auth_profile)
