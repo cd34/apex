@@ -16,6 +16,7 @@ from apex.exceptions import ApexSessionSecret
 from apex.interfaces import IApex
 from apex.interfaces import ApexImplementation
 from apex.lib.libapex import groupfinder
+from apex.lib.libapex import RequestFactory
 from apex.lib.libapex import RootFactory
 from apex.models import initialize_sql
 from apex.views import apex_callback
@@ -67,6 +68,7 @@ def includeme(config):
 
     cache = RootFactory.__acl__ 
     config.set_root_factory(RootFactory)
+    config.set_request_factory(RequestFactory)
 
     if not config.registry.queryUtility(IMailer):
         config.include('pyramid_mailer')
@@ -78,8 +80,6 @@ def includeme(config):
                           'pyramid.events.ContextFound')
     config.add_subscriber('apex.lib.subscribers.add_renderer_globals', \
                           'pyramid.events.BeforeRender')
-    config.add_subscriber('apex.lib.subscribers.add_user_context', \
-                          'pyramid.events.ContextFound')
 
     config.add_static_view('apex/static', 'apex:static')
 

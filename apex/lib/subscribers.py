@@ -1,19 +1,9 @@
 from pyramid.httpexceptions import HTTPForbidden
 from pyramid.i18n import TranslationString as _
 from pyramid.threadlocal import get_current_request
-from pyramid.security import authenticated_userid
 
 from apex.lib.flash import flash
 from apex.lib.libapex import apex_settings
-from apex.models import AuthUser
-
-def user(request):
-    """ user object exposed to templates
-    """
-    user = None
-    if authenticated_userid(request):
-        user = AuthUser.get_by_id(authenticated_userid(request))
-    return user
 
 def csrf_validation(event):
     """ CSRF token validation Subscriber
@@ -70,10 +60,3 @@ def add_renderer_globals(event):
         'flash': flash,
     }
     event.update(globs)
-
-def add_user_context(event):
-    """ add user context to request object
-    """
-    request = event.request
-    context = request.context
-    request.user = user(request)
