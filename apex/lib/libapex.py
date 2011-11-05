@@ -11,13 +11,16 @@ from velruse.store.sqlstore import KeyStorage
 
 from sqlalchemy.orm.exc import NoResultFound
 
+from pyramid.decorator import reify
 from pyramid.httpexceptions import HTTPFound
 from pyramid.i18n import TranslationString as _
 from pyramid.security import Allow
+from pyramid.security import authenticated_userid
 from pyramid.security import Everyone
 from pyramid.security import Authenticated
 from pyramid.security import remember
 from pyramid.settings import asbool
+from pyramid.request import Request
 from pyramid.threadlocal import get_current_registry
 from pyramid.url import route_url
 from pyramid.util import DottedNameResolver
@@ -25,16 +28,16 @@ from pyramid.util import DottedNameResolver
 from pyramid_mailer import get_mailer
 from pyramid_mailer.message import Message
 
-from apex.models import DBSession
-from apex.models import AuthUser
-from apex.models import AuthGroup
-from apex.models import AuthUserLog
 from apex.forms import OpenIdLogin
 from apex.forms import GoogleLogin
 from apex.forms import FacebookLogin
 from apex.forms import YahooLogin
 from apex.forms import WindowsLiveLogin
 from apex.forms import TwitterLogin
+from apex.models import DBSession
+from apex.models import AuthUser
+from apex.models import AuthGroup
+from apex.models import AuthUserLog
 
 auth_provider = {
     'G':'Google',
@@ -299,3 +302,16 @@ def apex_remember(request, user_id):
         DBSession.add(record)
         DBSession.flush()
     return remember(request, user_id)
+
+class RequestFactory(Request):
+    """ Custom Request factory, that adds the user context
+        to request.
+        
+        http://docs.pylonsproject.org/projects/pyramid_cookbook/dev/authentication.html
+    """
+    @reify
+    def user(self):
+        user = None
+        if authenticated_userid(self):
+            user = AuthUser.get_by_id(authenticated_userid(self))
+        return user
