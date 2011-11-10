@@ -1,5 +1,7 @@
 from pyramid_mailer.interfaces import IMailer
 
+from apex.i18n import MessageFactory
+
 from sqlalchemy import engine_from_config
 
 from pyramid.interfaces import IAuthenticationPolicy
@@ -37,6 +39,8 @@ from apex.views import reset_password
     from apex import flash
 
 """
+
+
 from apex.lib.flash import flash
 
 def includeme(config):
@@ -45,11 +49,12 @@ def includeme(config):
     initialize_sql(engine_from_config(settings, 'sqlalchemy.'), settings)
 
     config.registry.registerUtility(ApexImplementation, IApex)
+    config.add_translation_dirs('apex:locale/')
 
     if not config.registry.queryUtility(ISessionFactory):
         if not settings.has_key('apex.session_secret'):
             raise ApexSessionSecret()
-        
+
         config.set_session_factory( \
                UnencryptedCookieSessionFactoryConfig( \
                settings.get('apex.session_secret')))
@@ -66,7 +71,7 @@ def includeme(config):
         authz_policy = ACLAuthorizationPolicy()
         config.set_authorization_policy(authz_policy)
 
-    cache = RootFactory.__acl__ 
+    cache = RootFactory.__acl__
     config.set_root_factory(RootFactory)
     config.set_request_factory(RequestFactory)
 
@@ -75,47 +80,48 @@ def includeme(config):
 
     if not settings.get('mako.directories'):
         config.add_settings({'mako.directories': ['apex:templates']})
-    
-    config.add_subscriber('apex.lib.subscribers.csrf_validation', \
+
+    config.add_subscriber('apex.lib.subscribers.csrf_validation',
                           'pyramid.events.ContextFound')
-    config.add_subscriber('apex.lib.subscribers.add_renderer_globals', \
+    config.add_subscriber('apex.lib.subscribers.add_renderer_globals',
                           'pyramid.events.BeforeRender')
 
     config.add_static_view('apex/static', 'apex:static')
 
     config.add_view(forbidden, context=Forbidden)
 
-    render_template = settings.get('apex.apex_template', \
-                            'apex:templates/apex_template.mako')
+    render_template = settings['apex.apex_render_template'
+                              ] = settings.get('apex.apex_template',
+                                               'apex:templates/apex_template.mako')
 
     config.add_route('apex_login', '/login')
-    config.add_view(login, route_name='apex_login', \
+    config.add_view(login, route_name='apex_login',
                     renderer=render_template)
-    
+
     config.add_route('apex_logout', '/logout')
-    config.add_view(logout, route_name='apex_logout', \
+    config.add_view(logout, route_name='apex_logout',
                     renderer=render_template)
 
     config.add_route('apex_register', '/register')
-    config.add_view(register, route_name='apex_register', \
+    config.add_view(register, route_name='apex_register',
                     renderer=render_template)
 
     config.add_route('apex_password', '/password')
-    config.add_view(change_password, route_name='apex_password', \
+    config.add_view(change_password, route_name='apex_password',
                     renderer=render_template, permission='authenticated')
-    
+
     config.add_route('apex_forgot', '/forgot')
-    config.add_view(forgot_password, route_name='apex_forgot', \
+    config.add_view(forgot_password, route_name='apex_forgot',
                     renderer=render_template)
-    
+
     config.add_route('apex_reset', '/reset/:user_id/:hmac')
-    config.add_view(reset_password, route_name='apex_reset', \
+    config.add_view(reset_password, route_name='apex_reset',
                     renderer=render_template)
-    
+
     config.add_route('apex_activate', '/activate/:user_id/:hmac')
-    config.add_view(activate, route_name='apex_activate', \
+    config.add_view(activate, route_name='apex_activate',
                     renderer=render_template)
-    
+
     config.add_route('apex_callback', '/apex_callback')
     config.add_view(apex_callback, route_name='apex_callback')
 

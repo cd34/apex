@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html 
+  xmlns="http://www.w3.org/1999/xhtml" 
+  xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+  i18n:domain="Apex" 
+  xml:lang="fr">
+  <head>
+    <title>Apex</title>
+    <link rel="stylesheet" 
+    href="${request.static_url('apex:static/css/apex_forms.css')}" 
+    type="text/css" 
+    media="screen" 
+    charset="utf-8"></link>
+    <metal metal:use-macro="flash_t.macros['apex_head']"/>
+    <style type="text/css">
+      body { margin: 10px auto 10px auto; width: 400px; font-family: Verdana, sans;}
+    </style>
+  </head>
+  <body>
+    <h1 i18n:translate="">${title}</h1>
+    <tal:if tal:condition="form">
+      <tal:b i18n:translate="" tal:content="structure python:form.render()"/>
+      <tal:if tal:condition="velruse_forms">
+        <tal:r tal:repeat="provider_form velruse_forms">
+          <tal:b i18n:translate="" 
+            tal:content="structure python:provider_form.render(action='/velruse/%s/auth' % provider_form.provider_name, 
+                                                              submit_text=provider_form.provider_proper_name)"/>
+        </tal:r>
+      </tal:if>
+    </tal:if>
+    <a i18n:translate="" tal:condition="action != 'login'"    
+      href="${request.route_path('apex_login')}">Login</a>
+    <a i18n:translate="" tal:condition="action != 'register'" 
+      href="${request.route_path('apex_register')}">Create an Account</a>
+    <a i18n:translate="" tal:condition="action != 'forgot'"   
+      href="${request.route_path('apex_forgot')}">Forgot my password</a>
+  </body>
+</html>

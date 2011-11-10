@@ -9,7 +9,7 @@ from wtforms.ext.sqlalchemy.orm import model_form
 from wtfrecaptcha.fields import RecaptchaField
 
 from pyramid.httpexceptions import HTTPFound
-from pyramid.i18n import TranslationString as _
+from apex import MessageFactory as _
 from pyramid.response import Response
 from pyramid.security import Allow
 from pyramid.security import Authenticated
@@ -48,7 +48,7 @@ def login(request):
 
     Function called from route_url('apex_login', request)
     """
-    title = _('Login')
+    title = _('You need to login')
     came_from = request.GET.get('came_from', \
                     route_url(apex_settings('came_from_route'), request))
 
@@ -106,7 +106,7 @@ def forgot_password(request):
     """ forgot_password(request):
     no return value, called with route_url('apex_forgot_password', request)
     """
-    title = _('Forgot My Password')
+    title = _('Forgot my password')
     
     if asbool(apex_settings('use_recaptcha_on_forgot')):
         if apex_settings('recaptcha_public_key') and apex_settings('recaptcha_private_key'):

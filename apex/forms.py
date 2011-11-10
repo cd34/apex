@@ -4,7 +4,7 @@ from wtforms import PasswordField
 from wtforms import TextField
 from wtforms import validators
 
-from pyramid.i18n import TranslationString as _
+from apex import MessageFactory as _
 from pyramid.security import authenticated_userid
 from pyramid.security import remember
 from pyramid.threadlocal import get_current_registry
@@ -44,13 +44,13 @@ class RegisterForm(ExtendedForm):
                filter(AuthGroup.name==settings['apex.default_user_group']).one()
             user.groups.append(group)
         DBSession.flush()
-        
+
         return user
-        
+
     def save(self):
         new_user = self.create_user(self.data['username'])
         self.after_signup(new_user)
-        
+
         return new_user
 
     def after_signup(self, user, **kwargs):
@@ -68,7 +68,7 @@ class ChangePasswordForm(ExtendedForm):
                              validators.EqualTo('password2', \
                              message=_('Passwords must match'))])
     password2 = PasswordField(_('Repeat New Password'), [validators.Required()])
-    
+
     def validate_old_password(form, field):
         request = get_current_request()
         if not AuthUser.check_password(id=authenticated_userid(request), \
@@ -78,9 +78,9 @@ class ChangePasswordForm(ExtendedForm):
 class LoginForm(ExtendedForm):
     username = TextField(_('Username'), validators=[validators.Required()])
     password = PasswordField(_('Password'), validators=[validators.Required()])
-    
-    def clean(self): 
-        errors = [] 
+
+    def clean(self):
+        errors = []
         if not AuthUser.check_password(username=self.data.get('username'), \
                                        password=self.data.get('password')):
             errors.append(_('Login Error -- please try again'))
@@ -110,8 +110,8 @@ class ForgotForm(ExtendedForm):
         if AuthUser.get_by_email(field.data) is None:
             raise validators.ValidationError(_('Sorry that email doesn\'t exist.'))
 
-    def clean(self): 
-        errors = [] 
+    def clean(self):
+        errors = []
         if not self.data.get('username') and not self.data.get('email'):
             errors.append(_('You need to specify either a Username or ' \
                             'Email address'))
@@ -122,7 +122,7 @@ class ResetPasswordForm(ExtendedForm):
                              validators.EqualTo('password2', \
                              message=_('Passwords must match'))])
     password2 = PasswordField(_('Repeat New Password'), [validators.Required()])
-    
+
 class OAuthForm(ExtendedForm):
     end_point = HiddenField('')
     csrf_token = HiddenField('')
@@ -142,15 +142,15 @@ class FacebookLogin(OAuthForm):
     provider_name = 'facebook'
     provider_proper_name = 'Facebook'
     scope = HiddenField('')
-    
+
 class YahooLogin(OAuthForm):
     provider_name = 'yahoo'
     provider_proper_name = 'Yahoo'
-    
+
 class TwitterLogin(OAuthForm):
     provider_name = 'twitter'
     provider_proper_name = 'Twitter'
-    
+
 class WindowsLiveLogin(OAuthForm):
     provider_name = 'live'
     provider_proper_name = 'Microsoft Live'

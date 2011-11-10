@@ -1,5 +1,5 @@
 from pyramid.httpexceptions import HTTPFound
-from pyramid.i18n import TranslationString as _
+from apex import MessageFactory as _
 from pyramid.security import authenticated_userid
 from pyramid.url import route_url
 
@@ -15,4 +15,4 @@ def login_required(wrapped):
         if not authenticated_userid(request):
             flash(_('Not logged in, please log in'), 'error')
             return HTTPFound(location=route_url('apex_login', request))
-    return wrapper 
+    return wrapper
