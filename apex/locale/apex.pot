@@ -1,0 +1,191 @@
+# Translations template for Apex.
+# Copyright (C) 2011 ORGANIZATION
+# This file is distributed under the same license as the Apex project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2011.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Apex 0.9.0\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2011-11-10 13:53+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.6\n"
+
+#: apex/decorators.py:16 apex/views.py:348
+msgid "Not logged in, please log in"
+msgstr ""
+
+#: apex/forms.py:21 apex/forms.py:79 apex/forms.py:90
+msgid "Username"
+msgstr ""
+
+#: apex/forms.py:23 apex/forms.py:80
+msgid "Password"
+msgstr ""
+
+#: apex/forms.py:25 apex/forms.py:69 apex/forms.py:123
+msgid "Passwords must match"
+msgstr ""
+
+#: apex/forms.py:26
+msgid "Repeat Password"
+msgstr ""
+
+#: apex/forms.py:27 apex/forms.py:92
+msgid "Email Address"
+msgstr ""
+
+#: apex/forms.py:32
+msgid "Sorry that username already exists."
+msgstr ""
+
+#: apex/forms.py:66
+msgid "Old Password"
+msgstr ""
+
+#: apex/forms.py:67 apex/forms.py:121
+msgid "New Password"
+msgstr ""
+
+#: apex/forms.py:70 apex/forms.py:124
+msgid "Repeat New Password"
+msgstr ""
+
+#: apex/forms.py:76
+msgid "Your old password doesn't match"
+msgstr ""
+
+#: apex/forms.py:86
+msgid "Login Error -- please try again"
+msgstr ""
+
+#: apex/forms.py:95
+msgid ""
+"If your username and email weren't found, you may have logged in with a login"
+" provider and didn't set your email address."
+msgstr ""
+
+#: apex/forms.py:107
+msgid "Sorry that username doesn't exist."
+msgstr ""
+
+#: apex/forms.py:111
+msgid "Sorry that email doesn't exist."
+msgstr ""
+
+#: apex/forms.py:116
+msgid "You need to specify either a Username or Email address"
+msgstr ""
+
+#: apex/forms.py:134
+msgid "OpenID Identifier"
+msgstr ""
+
+#: apex/views.py:51
+msgid "You need to login"
+msgstr ""
+
+#: apex/views.py:90
+msgid "Change your Password"
+msgstr ""
+
+#: apex/views.py:109 apex/templates/apex_template.pt:36
+msgid "Forgot my password"
+msgstr ""
+
+#: apex/views.py:142
+msgid "Password Reset email sent."
+msgstr ""
+
+#: apex/views.py:145
+msgid "An error occurred, please contact the support team."
+msgstr ""
+
+#: apex/views.py:152
+msgid "Reset My Password"
+msgstr ""
+
+#: apex/views.py:176
+msgid "Password Changed. Please log in."
+msgstr ""
+
+#: apex/views.py:180 apex/views.py:204
+msgid "Invalid request, please try again"
+msgstr ""
+
+#: apex/views.py:201
+msgid "Account activated. Please log in."
+msgstr ""
+
+#: apex/views.py:212
+msgid "Register"
+msgstr ""
+
+#: apex/views.py:288
+msgid "Successfully Logged in, welcome!"
+msgstr ""
+
+#: apex/views.py:301
+msgid "OpenID Registration"
+msgstr ""
+
+#: apex/views.py:365
+msgid "Edit"
+msgstr ""
+
+#: apex/views.py:379
+msgid "Profile Updated"
+msgstr ""
+
+#: apex/lib/form.py:101
+msgid "This field is required."
+msgstr ""
+
+#: apex/lib/libapex.py:61
+msgid "Password reset request received"
+msgstr ""
+
+#: apex/lib/libapex.py:62
+msgid ""
+"\n"
+"A request to reset your password has been received. Please go to \n"
+"the following URL to change your password:\n"
+"\n"
+"%_url_%\n"
+"\n"
+"If you did not make this request, you can safely ignore it.\n"
+msgstr ""
+
+#: apex/lib/libapex.py:81
+msgid "Account activation. Please activate your account."
+msgstr ""
+
+#: apex/lib/libapex.py:82
+msgid ""
+"\n"
+"This site requires account validation. Please follow the link below to \n"
+"activate your account:\n"
+"\n"
+"%_url_%\n"
+"\n"
+"If you did not make this request, you can safely ignore it.\n"
+msgstr ""
+
+#: apex/lib/subscribers.py:54
+msgid "CSRF token is missing or invalid"
+msgstr ""
+
+#: apex/templates/apex_template.pt:32
+msgid "Login"
+msgstr ""
+
+#: apex/templates/apex_template.pt:34
+msgid "Create an Account"
+msgstr ""
+
