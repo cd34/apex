@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Apex 0.9.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-11-10 13:53+0100\n"
+"POT-Creation-Date: 2011-11-16 12:36+0100\n"
 "PO-Revision-Date: 2011-11-10 13:52+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: fr <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
-#: apex/decorators.py:16 apex/views.py:348
+#: apex/decorators.py:16 apex/views.py:354
 msgid "Not logged in, please log in"
 msgstr "Vous n'êtes pas identifiés, s'il vous plait, logguez vous"
 
@@ -90,74 +90,80 @@ msgstr "Vous devez saisir soit un utilisateur soit un email."
 msgid "OpenID Identifier"
 msgstr "Identifiant OpenID"
 
-#: apex/views.py:51
+#: apex/views.py:59
 msgid "You need to login"
 msgstr "Vous devez vous identifier"
 
-#: apex/views.py:90
+#: apex/views.py:97
 msgid "Change your Password"
 msgstr "Changer votre mot de passe"
 
-#: apex/views.py:109 apex/templates/apex_template.pt:36
+#: apex/views.py:115 apex/templates/apex_template.pt:40
 msgid "Forgot my password"
 msgstr "J'ai oublié mon mot de passe"
 
-#: apex/views.py:142
+#: apex/views.py:148
 msgid "Password Reset email sent."
 msgstr "Demande de réinitialisation de mot de passe envoyée"
 
-#: apex/views.py:145
+#: apex/views.py:151
 msgid "An error occurred, please contact the support team."
 msgstr "Une erreur est survenue, veuillez contacter le support."
 
-#: apex/views.py:152
+#: apex/views.py:158
 msgid "Reset My Password"
 msgstr "Réinitialiser mon mot de passe"
 
-#: apex/views.py:176
+#: apex/views.py:182
 msgid "Password Changed. Please log in."
 msgstr "Mot de passe changé, veuillez vous identifier"
 
-#: apex/views.py:180 apex/views.py:204
+#: apex/views.py:186 apex/views.py:210
 msgid "Invalid request, please try again"
 msgstr "Requète invalide, réésayez encore"
 
-#: apex/views.py:201
+#: apex/views.py:207
 msgid "Account activated. Please log in."
 msgstr "Compte activé, Veuillez vous identifier."
 
-#: apex/views.py:212
+#: apex/views.py:218
 msgid "Register"
 msgstr "S'enregistrer"
 
-#: apex/views.py:288
+#: apex/views.py:294
 msgid "Successfully Logged in, welcome!"
 msgstr "Identification réussie, bienvenue !"
 
-#: apex/views.py:301
+#: apex/views.py:307
 msgid "OpenID Registration"
 msgstr "Identification OpenID"
 
-#: apex/views.py:365
+#: apex/views.py:371
 msgid "Edit"
 msgstr "Editer"
 
-#: apex/views.py:379
+#: apex/views.py:385
 msgid "Profile Updated"
 msgstr "Profil mis à jour"
+
+#: apex/lib/db.py:23
+#, python-format
+msgid "No %s matches the given query."
+msgstr ""
 
 #: apex/lib/form.py:101
 msgid "This field is required."
 msgstr "Ce champs est requis"
 
-#: apex/lib/libapex.py:61
+#: apex/lib/libapex.py:64
 msgid "Password reset request received"
 msgstr "Demande de réinitialisation de mot de passe reçue"
 
-#: apex/lib/libapex.py:62
+#: apex/lib/libapex.py:65
+#, fuzzy
 msgid ""
 "\n"
-"A request to reset your password has been received. Please go to \n"
+"A request to reset your password has been received. Please go to\n"
 "the following URL to change your password:\n"
 "\n"
 "%_url_%\n"
@@ -174,14 +180,15 @@ msgstr ""
 "Si vous n'en avez pas fait personnellment la demande, vous pouvez ignoer "
 "ce message.\n"
 
-#: apex/lib/libapex.py:81
+#: apex/lib/libapex.py:84
 msgid "Account activation. Please activate your account."
 msgstr "Activation de compte. Veuillez activer votre  compte."
 
-#: apex/lib/libapex.py:82
+#: apex/lib/libapex.py:85
+#, fuzzy
 msgid ""
 "\n"
-"This site requires account validation. Please follow the link below to \n"
+"This site requires account validation. Please follow the link below to\n"
 "activate your account:\n"
 "\n"
 "%_url_%\n"
@@ -198,15 +205,15 @@ msgstr ""
 "Si vous n'en avez pas fait personnellment la demande, vous pouvez ignoer "
 "ce message.\n"
 
-#: apex/lib/subscribers.py:54
+#: apex/lib/subscribers.py:43
 msgid "CSRF token is missing or invalid"
 msgstr "Le jeton CSRF est manquant ou invalid"
 
-#: apex/templates/apex_template.pt:32
+#: apex/templates/apex_template.pt:36
 msgid "Login"
 msgstr "S'identifier"
 
-#: apex/templates/apex_template.pt:34
+#: apex/templates/apex_template.pt:38
 msgid "Create an Account"
 msgstr "Créer un compte"
 

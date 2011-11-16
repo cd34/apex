@@ -1,13 +1,16 @@
 <tal:b
+  metal:define-macro="main"
   xmlns:i18n="http://xml.zope.org/namespaces/i18n"
-  i18n:domain="Apex">                          
+  i18n:domain="Apex">
   <tal:if tal:condition="form.errors.has_key('whole_form')">
     <tal:r  tal:repeat="error form.errors.get('whole_form')">
       <p class="field_error">${error}</p>
     </tal:r>
   </tal:if>
-  <form id="${form.__class__.__name__}" action="${action}" method="POST" accept-charset="utf-8"
-    tal:attributes="enctype python:form.is_multipart and 'multipart/form-data' or ''">
+  <form id="${form.__class__.__name__}"
+    method="POST" accept-charset="utf-8"
+    tal:attributes="action action;
+    enctype python:form.is_multipart and 'multipart/form-data' or ''">
     <table border="0" cellspacing="0" cellpadding="2">
       <tal:r tal:repeat="item enumerate(form)">
         <tal:d tal:define="loop item[0];field item[1]">
@@ -31,5 +34,6 @@
       <tal:block tal:content="structure csrf_token_field"/>
     </table>
     <input type="submit" name="submit" value="${submit_text}"/>
+    <input type="hidden" name="came_from" value="${request.url}" tal:condition="args.get('include_came_from', False)"/>
   </form>
 </tal:b>
