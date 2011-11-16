@@ -42,7 +42,6 @@ def csrf_validation(event):
             if event.request.matched_route and event.request.matched_route.name not in no_csrf:
                 raise HTTPForbidden(_('CSRF token is missing or invalid'))
 
-
 def add_renderer_globals(event):
     """ add globals to templates
 
