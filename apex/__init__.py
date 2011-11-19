@@ -13,7 +13,6 @@ from pyramid.exceptions import Forbidden
 
 from apex.exceptions import ApexAuthSecret
 from apex.exceptions import ApexSessionSecret
-from apex.directives import add_apex_static
 from apex.interfaces import IApex
 from apex.interfaces import ApexImplementation
 from apex.lib.libapex import groupfinder
