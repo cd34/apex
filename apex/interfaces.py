@@ -6,7 +6,7 @@ class IApex(Interface):
     applications
     """
     pass
-    
+
 class ApexImplementation(object):
     """ Class so that we can tell if Apex is installed from other 
     applications
