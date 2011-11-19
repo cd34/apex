@@ -6,6 +6,8 @@ from wtforms import validators
 from pyramid.renderers import render
 from pyramid.threadlocal import get_current_registry
 
+from apex.lib.db import merge_session_with_post
+
 class ExtendedForm(Form):
     """ Base Model used to wrap WTForms for local use
     Global Validator, Renderer Function, determines whether
@@ -85,3 +87,16 @@ class FileRequired(validators.Required):
                 self.message = field.gettext(u'This field is required.') 
             field.errors[:] = [] 
             raise validators.StopValidation(self.message)
+
+class ModelForm(ExtendedForm):
+    """ Simple form that adds a save method to forms for saving 
+        forms that use WTForms' model_form function.
+    """
+    def save(self, session, model, commit=True):
+        record = model()
+        record = merge_session_with_post(record, self.data.items())
+        if commit:
+            session.add(record)
+            session.flush()
+
+        return record

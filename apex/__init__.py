@@ -13,6 +13,7 @@ from pyramid.exceptions import Forbidden
 
 from apex.exceptions import ApexAuthSecret
 from apex.exceptions import ApexSessionSecret
+from apex.directives import add_apex_static
 from apex.interfaces import IApex
 from apex.interfaces import ApexImplementation
 from apex.lib.libapex import groupfinder
@@ -68,7 +69,10 @@ def includeme(config):
 
     cache = RootFactory.__acl__ 
     config.set_root_factory(RootFactory)
-    config.set_request_factory(RequestFactory)
+    
+    use_request_factory = asbool(settings.get('apex.use_request_factory', True))
+    if use_request_factory:
+        config.set_request_factory(RequestFactory)
 
     if not config.registry.queryUtility(IMailer):
         config.include('pyramid_mailer')

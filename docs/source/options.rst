@@ -103,6 +103,9 @@ apex.email_validate = false
 apex.email_message_text = apex.lib.libapex.EmailMessageText
   OPTIONAL, dotted class notation containing replacement message text
 
+apex.use_request_factory = true
+  OPTIONAL, use apex's default request factory
+
 **Velruse Options**
 
 These options allow you to control the scope/oauth_scope requested from the
