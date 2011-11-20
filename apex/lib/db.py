@@ -14,7 +14,7 @@ http://stackoverflow.com/questions/2546207/does-sqlalchemy-have-an-equivalent-of
         session.add(obj)
         session.flush()
         return obj
-        
+
 def get_object_or_404(session, model, **kw):
     """ Django's get_object_or_404 function
     """
@@ -22,7 +22,7 @@ def get_object_or_404(session, model, **kw):
     if obj is None:
         raise HTTPNotFound(detail=_('No %s matches the given query.') % model.__name__)
     return obj
-  
+
 def merge_session_with_post(session, post):
     """ Basic function to merge data into an sql object.
         This function doesn't work with relations.
