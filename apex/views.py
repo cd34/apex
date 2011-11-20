@@ -9,7 +9,7 @@ from wtforms.ext.sqlalchemy.orm import model_form
 from wtfrecaptcha.fields import RecaptchaField
 
 from pyramid.httpexceptions import HTTPFound
-from pyramid.i18n import TranslationString as _
+from apex import MessageFactory as _
 from pyramid.response import Response
 from pyramid.security import Allow
 from pyramid.security import Authenticated
@@ -42,16 +42,22 @@ from apex.forms import ResetPasswordForm
 from apex.forms import LoginForm
 
 
+def get_came_from(request):
+    return request.GET.get('came_from', 
+                           request.POST.get(
+                               'came_from',  
+                               route_url(apex_settings('came_from_route'), request))
+                          ) 
+
+
 def login(request):
     """ login(request)
     No return value
 
     Function called from route_url('apex_login', request)
     """
-    title = _('Login')
-    came_from = request.GET.get('came_from', \
-                    route_url(apex_settings('came_from_route'), request))
-
+    title = _('You need to login')
+    came_from = get_came_from(request)
     if 'local' not in apex_settings('provider_exclude', []):
         if asbool(apex_settings('use_recaptcha_on_login')):
             if apex_settings('recaptcha_public_key') and apex_settings('recaptcha_private_key'):
@@ -59,11 +65,11 @@ def login(request):
                     public_key=apex_settings('recaptcha_public_key'),
                     private_key=apex_settings('recaptcha_private_key'),
                 )
-        form = LoginForm(request.POST, \
-                   captcha={'ip_address': request.environ['REMOTE_ADDR']})
+        form = LoginForm(request.POST,
+                         captcha={'ip_address': request.environ['REMOTE_ADDR']})
     else:
         form = None
-    
+
     velruse_forms = generate_velruse_forms(request, came_from)
 
     if request.method == 'POST' and form.validate():
@@ -73,6 +79,7 @@ def login(request):
             return HTTPFound(location=came_from, headers=headers)
 
     return {'title': title, 'form': form, 'velruse_forms': velruse_forms, \
+            'form_url': request.route_url('apex_login'),
             'action': 'login'}
 
 def logout(request):
@@ -80,17 +87,16 @@ def logout(request):
     no return value, called with route_url('apex_logout', request)
     """
     headers = forget(request)
-    return HTTPFound(location=route_url(apex_settings('came_from_route'), \
-                     request), headers=headers)
+    came_from = get_came_from(request)
+    return HTTPFound(location=came_from, headers=headers)
 
 def change_password(request):
     """ change_password(request):
     no return value, called with route_url('apex_change_password', request)
     """
     title = _('Change your Password')
-    
-    came_from = request.params.get('came_from', \
-                    route_url(apex_settings('came_from_route'), request))
+
+    came_from = get_came_from(request)
     form = ChangePasswordForm(request.POST)
 
     if request.method == 'POST' and form.validate():
@@ -101,13 +107,13 @@ def change_password(request):
         return HTTPFound(location=came_from)
 
     return {'title': title, 'form': form, 'action': 'changepass'}
-     
+
 def forgot_password(request):
     """ forgot_password(request):
     no return value, called with route_url('apex_forgot_password', request)
     """
-    title = _('Forgot My Password')
-    
+    title = _('Forgot my password')
+
     if asbool(apex_settings('use_recaptcha_on_forgot')):
         if apex_settings('recaptcha_public_key') and apex_settings('recaptcha_private_key'):
             ForgotForm.captcha = RecaptchaField(
@@ -150,7 +156,7 @@ def reset_password(request):
     no return value, called with route_url('apex_reset_password', request)
     """
     title = _('Reset My Password')
-    
+
     if asbool(apex_settings('use_recaptcha_on_reset')):
         if apex_settings('recaptcha_public_key') and apex_settings('recaptcha_private_key'):
             ResetPasswordForm.captcha = RecaptchaField(
@@ -183,7 +189,7 @@ def reset_password(request):
     return {'title': title, 'form': form, 'action': 'reset'}
 
 def activate(request):
-    """ 
+    """
     """
     user_id = request.matchdict.get('user_id')
     user = AuthUser.get_by_id(user_id)
@@ -237,7 +243,7 @@ def register(request):
 
         headers = apex_remember(request, user.id)
         return HTTPFound(location=came_from, headers=headers)
-        
+
     return {'title': title, 'form': form, 'velruse_forms': velruse_forms, \
             'action': 'register'}
 
@@ -356,7 +362,7 @@ def forbidden(request):
 def edit(request):
     """ edit(request)
         no return value, called with route_url('apex_edit', request)
-        
+
         This function will only work if you have set apex.auth_profile.
 
         This is a very simple edit function it works off your auth_profile

@@ -13,7 +13,6 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from pyramid.decorator import reify
 from pyramid.httpexceptions import HTTPFound
-from pyramid.i18n import TranslationString as _
 from pyramid.security import Allow
 from pyramid.security import authenticated_userid
 from pyramid.security import Everyone
@@ -28,6 +27,7 @@ from pyramid.util import DottedNameResolver
 from pyramid_mailer import get_mailer
 from pyramid_mailer.message import Message
 
+from apex import MessageFactory as _
 from apex.forms import OpenIdLogin
 from apex.forms import GoogleLogin
 from apex.forms import FacebookLogin
@@ -63,7 +63,7 @@ In the message body, %_url_% is replaced with:
         return {
                 'subject': _('Password reset request received'),
                 'body': _("""
-A request to reset your password has been received. Please go to 
+A request to reset your password has been received. Please go to
 the following URL to change your password:
 
 %_url_%
@@ -83,7 +83,7 @@ In the message body, %_url_% is replaced with:
         return {
                 'subject': _('Account activation. Please activate your account.'),
                 'body': _("""
-This site requires account validation. Please follow the link below to 
+This site requires account validation. Please follow the link below to
 activate your account:
 
 %_url_%
@@ -118,7 +118,7 @@ def apexid_from_url(provider, identifier):
         except KeyError:
             pass
     elif provider == 'Yahoo':
-        urlparts = urlparse.urlparse(identifier)        
+        urlparts = urlparse.urlparse(identifier)
         try:
             id = '$Y$%s#%s' % \
                  (urlparts.path.split('/')[2], urlparts.fragment)
@@ -142,7 +142,7 @@ def apexid_from_token(token):
     return None
 
 def groupfinder(userid, request):
-    """ Returns ACL formatted list of groups for the userid in the 
+    """ Returns ACL formatted list of groups for the userid in the
     current request
     """
     auth = AuthUser.get_by_id(userid)
@@ -172,7 +172,7 @@ provider_forms = {
     'twitter': TwitterLogin,
     'yahoo': YahooLogin,
     'live': WindowsLiveLogin,
-    'facebook': FacebookLogin, 
+    'facebook': FacebookLogin,
 }
 
 def apex_email(request, recipients, subject, body, sender=None):
@@ -197,7 +197,7 @@ def apex_email_forgot(request, user_id, email, hmac):
 
     message_body = message_text['body'].replace('%_url_%', \
         route_url('apex_reset', request, user_id=user_id, hmac=hmac))
-        
+
     apex_email(request, email, message_text['subject'], message_body)
 
 def apex_email_activate(request, user_id, email, hmac):
@@ -208,15 +208,15 @@ def apex_email_activate(request, user_id, email, hmac):
 
     message_body = message_text['body'].replace('%_url_%', \
         route_url('apex_activate', request, user_id=user_id, hmac=hmac))
-        
+
     apex_email(request, email, message_text['subject'], message_body)
 
 def apex_settings(key=None, default=None):
     """ Gets an apex setting if the key is set.
         If no key it set, returns all the apex settings.
-        
+
         Some settings have issue with a Nonetype value error,
-        you can set the default to fix this issue.        
+        you can set the default to fix this issue.
     """
     settings = get_current_registry().settings
 
@@ -255,7 +255,7 @@ def create_user(**kwargs):
 
     for key, value in kwargs.items():
         setattr(user, key, value)
-    
+
     DBSession.add(user)
     DBSession.flush()
     return user
@@ -306,7 +306,7 @@ def apex_remember(request, user_id):
 class RequestFactory(Request):
     """ Custom Request factory, that adds the user context
         to request.
-        
+
         http://docs.pylonsproject.org/projects/pyramid_cookbook/dev/authentication.html
     """
     @reify

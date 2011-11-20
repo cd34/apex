@@ -3,8 +3,18 @@ import cgi
 from wtforms import Form
 from wtforms import validators
 
+from pyramid.i18n import get_localizer
 from pyramid.renderers import render
 from pyramid.threadlocal import get_current_registry
+from pyramid.threadlocal import get_current_request
+
+class Translator:
+        def __init__(self, localizer):
+            self.t = localizer
+        def gettext(self, string):
+            return self.t.translate(string)
+        def ngettext(self, single, plural, string):
+            return self.t.pluralize(single, plural, string)
 
 from apex.lib.db import merge_session_with_post
 
@@ -17,6 +27,7 @@ class ExtendedForm(Form):
     """
 
     def __init__(self, formdata=None, obj=None, prefix='', **kwargs):
+        self.request = kwargs.pop('request', get_current_request())
         super(Form, self).__init__(self._unbound_fields, prefix=prefix)
 
         self.is_multipart = False
@@ -28,6 +39,11 @@ class ExtendedForm(Form):
             setattr(self, name, field)
 
         self.process(formdata, obj, **kwargs)
+
+    def _get_translations(self): 
+        if self.request:
+            localizer = get_localizer(self.request)
+            return Translator(localizer)
 
     def clean(self): 
         """Override me to validate a whole form.""" 
@@ -57,7 +73,7 @@ class ExtendedForm(Form):
             'action': action,
             'submit_text': submit_text,
             'args': kwargs,
-        })
+        }, request=self.request)
 
 class StyledWidget(object): 
     """ Allows a user to pass style to specific form field
