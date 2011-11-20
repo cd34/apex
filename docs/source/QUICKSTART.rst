@@ -8,6 +8,13 @@ the Root Factory. You'll need to install Pyramid from Github:
 
     easy_install -U https://github.com/Pylons/pyramid/tarball/master
 
+To use translations, you'll need to use the following version of wtforms
+until it is pulled into the master
+
+    easy_install -U https://bitbucket.org/kiorky/wtforms/get/77a9e3f0e0cd.tar.bz2
+
+    https://bitbucket.org/kiorky/wtforms
+
 Initial Setup of Pyramid-Apex
 
 ::
