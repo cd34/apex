@@ -1,9 +1,12 @@
 from pyramid.httpexceptions import HTTPForbidden
-from pyramid.i18n import TranslationString as _
 from pyramid.threadlocal import get_current_request
+from pyramid.threadlocal import get_current_registry
+from pyramid.renderers import get_renderer
 
 from apex.lib.flash import flash
 from apex.lib.libapex import apex_settings
+
+from apex.i18n import MessageFactory as _
 
 def csrf_validation(event):
     """ CSRF token validation Subscriber
@@ -12,7 +15,7 @@ def csrf_validation(event):
         and don't appear to be exposed to exception handlers.
 
         It appears that we cannot decorate a view and have it affect an event
-        until after the event has fired, so, temporarily we're going to 
+        until after the event has fired, so, temporarily we're going to
         have to use a value in the config to specify a list of paths that
         should not have CSRF validation.
 
@@ -35,7 +38,6 @@ def csrf_validation(event):
     if event.request.method == 'POST':
         token = event.request.POST.get('csrf_token') or event.request.GET.get('csrf_token')
         no_csrf = apex_settings('no_csrf', '').split(':')
-        
         if (token is None or token != event.request.session.get_csrf_token()):
             if event.request.matched_route and event.request.matched_route.name not in no_csrf:
                 raise HTTPForbidden(_('CSRF token is missing or invalid'))
@@ -49,6 +51,9 @@ def add_renderer_globals(event):
     """
 
     request = event.get('request')
+    settings = get_current_registry().settings
+    template = settings['apex.apex_render_template']
+
     if request is None:
         request = get_current_request()
 
@@ -59,4 +64,8 @@ def add_renderer_globals(event):
         'csrf_token_field': '<input type="hidden" name="csrf_token" value="%s" />' % csrf_token,
         'flash': flash,
     }
+
+
+    if template.endswith('.pt'):
+        globs['flash_t'] = get_renderer('apex:templates/flash_template.pt').implementation()
     event.update(globs)
