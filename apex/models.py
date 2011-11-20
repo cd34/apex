@@ -221,7 +221,7 @@ class AuthUserLog(Base):
 
 def populate(settings):
     session = DBSession()
-    
+
     default_groups = []
     if settings.has_key('apex.default_groups'):
         for name in settings['apex.default_groups'].split(','):

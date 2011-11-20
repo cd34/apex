@@ -3,7 +3,7 @@ from pyramid.threadlocal import get_current_request
 class Flash(object):
     """ There are 4 default queues, warning, notice, error and success
     """
-    
+
     queues = ['warning', 'notice', 'error', 'success']
     default_queue = 'notice'
         
