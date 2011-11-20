@@ -29,7 +29,7 @@ In the [app:example] section, add:
     apex.session_secret = CHANGEME
     apex.auth_secret = CHANGEME
     apex.came_from_route = home
-    apex.velruse_config = %(here)s/CONFIG.yaml
+    apex.velruse_url = http://localhost:port
     apex.recaptcha_public_key = xxxxxxxxxxxxxxxxxx
     apex.recaptcha_private_key = xxxxxxxxxxxxxxxxxx
 
@@ -50,14 +50,10 @@ For Velruse, we need to add the following:
 
     [app:velruse]
     use = egg:velruse
-    config_file = %(here)s/CONFIG.yaml
-    beaker.session.data_dir = %(here)s/data/sdata
-    beaker.session.lock_dir = %(here)s/data/slock
-    beaker.session.key = velruse
-    beaker.session.secret = somesecret
-    beaker.session.type = cookie
-    beaker.session.validate_key = STRONG_KEY_HERE
-    beaker.session.cookie_domain = .domain.com
+    velruse.providers=
+        velruse.providers.someprovider
+    velruse.providers.someprovider.consumer_key = xxxx
+    velruse.providers.someprovider.consumer_secret = xxxx
 
 Comment or remove the following settings:
 
@@ -95,18 +91,6 @@ backing store, so, we've opted to use Type: SQL. You can use any store as
 long as the backend can be read without calling /velruse/authinfo. The
 Memory Store requires the additional urllib2 call.
 
-**CONFIG.yaml**
-
-::
-
-    Store:
-        Type: SQL
-        DB: mysql://username:password@localhost/database?use_unicode=1&charset=utf8
-    OpenID:
-        Realm: http://domain.com
-        Endpoint Regex: http://domain.com
-    OpenID Store:
-        Type: openid.store.memstore:MemoryStore
 
 In **example/__init__.py**, before the return config.make_wsgi_app(), put:
 

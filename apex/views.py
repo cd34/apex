@@ -43,11 +43,11 @@ from apex.forms import LoginForm
 
 
 def get_came_from(request):
-    return request.GET.get('came_from', 
+    return request.GET.get('came_from',
                            request.POST.get(
-                               'came_from',  
+                               'came_from',
                                route_url(apex_settings('came_from_route'), request))
-                          ) 
+                          )
 
 
 def login(request):
@@ -71,6 +71,9 @@ def login(request):
         form = None
 
     velruse_forms = generate_velruse_forms(request, came_from)
+    for vform in velruse_forms:
+        if getattr(vform, 'velruse_login', None):
+            vform.action = vform.velruse_login
 
     if request.method == 'POST' and form.validate():
         user = AuthUser.get_by_username(form.data.get('username'))
@@ -78,7 +81,9 @@ def login(request):
             headers = apex_remember(request, user.id)
             return HTTPFound(location=came_from, headers=headers)
 
-    return {'title': title, 'form': form, 'velruse_forms': velruse_forms, \
+    return {'title': title,
+            'form': form,
+            'velruse_forms': velruse_forms,
             'form_url': request.route_url('apex_login'),
             'action': 'login'}
 
@@ -263,9 +268,11 @@ def apex_callback(request):
             if not user:
                 user = AuthUser(
                     login=auth['apexid'],
+                    username=auth['name'],
                 )
-                if auth['profile'].has_key('verifiedEmail'):
-                    user.email = auth['profile']['verifiedEmail']
+                if 'emails' in  auth['profile']:
+                    if auth['profile']['emails']:
+                        user.email = auth['profile']['emails'][0]['value']
                 DBSession.add(user)
                 if apex_settings('default_user_group'):
                     for name in apex_settings('default_user_group'). \
@@ -350,6 +357,7 @@ def forbidden(request):
     **THIS WILL BREAK EVENTUALLY**
     **THIS DID BREAK WITH Pyramid 1.2a3**
     """
+    import pdb;pdb.set_trace()  ## Breakpoint ##
     if request.environ.has_key('bfg.routes.route'):
         flash(_('Not logged in, please log in'), 'error')
         return HTTPFound(location='%s?came_from=%s' %
@@ -368,6 +376,7 @@ def edit(request):
         This is a very simple edit function it works off your auth_profile
         class, all columns inside your auth_profile class will be rendered.
     """
+    import pdb;pdb.set_trace()  ## Breakpoint ##
     title = _('Edit')
 
     ProfileForm = model_form(

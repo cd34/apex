@@ -17,7 +17,7 @@
   </head>
   <body  metal:define-macro="body">
     <div class="login-box"
-      tal:define="action request.route_url('apex_%s' % action)|form_url|action|string:; 
+      tal:define="action request.route_url('apex_%s' % action)|form_url|action|string:;
       include_came_from include_came_from|nothing;
       self_register  self_register|nothing;">
       <tal:if tal:condition="title|nothing">
@@ -29,8 +29,9 @@
       <tal:if tal:condition="velruse_forms">
         <tal:r tal:repeat="provider_form velruse_forms">
           <tal:b i18n:translate=""
-            tal:content="structure python:provider_form.render(action='/velruse/%s/auth' % provider_form.provider_name,
-            submit_text=provider_form.provider_proper_name)"/>
+            tal:content="structure python:provider_form.render(
+                                         action='/velruse/%s/login' % provider_form.provider_name,
+                                         submit_text=provider_form.provider_proper_name)"/>
         </tal:r>
       </tal:if>
       <a i18n:translate="" tal:condition="action != 'login'"

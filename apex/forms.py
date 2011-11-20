@@ -155,5 +155,9 @@ class WindowsLiveLogin(OAuthForm):
     provider_name = 'live'
     provider_proper_name = 'Microsoft Live'
 
+class GithubLogin(OAuthForm):
+    provider_name = 'github'
+    provider_proper_name = 'Github'
+ 
 class OpenIDRequiredForm(ExtendedForm):
     pass

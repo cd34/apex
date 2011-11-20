@@ -7,9 +7,11 @@
       <p class="field_error">${error}</p>
     </tal:r>
   </tal:if>
-  <form id="${form.__class__.__name__}"
-    method="POST" accept-charset="utf-8"
-    tal:attributes="action action;
+  <form
+    id="${form.__class__.__name__}"
+    method="POST"
+    accept-charset="utf-8"
+    tal:attributes="action python:getattr(form, 'action', action);
     enctype python:form.is_multipart and 'multipart/form-data' or ''">
     <table border="0" cellspacing="0" cellpadding="2">
       <tal:r tal:repeat="item enumerate(form)">
