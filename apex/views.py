@@ -258,21 +258,32 @@ def apex_callback(request):
 
     This is the URL that Velruse returns an OpenID request to
     """
-    redir = request.GET.get('came_from', \
+    redir = request.GET.get('came_from',
                 route_url(apex_settings('came_from_route'), request))
     headers = []
     if 'token' in request.POST:
         auth = apexid_from_token(request.POST['token'])
         if auth:
-            user = AuthUser.get_by_login(auth['apexid'])
+            user, email = None, ''
+            if 'emails' in  auth['profile']:
+                if auth['profile']['emails']:
+                    email = auth['profile']['emails'][0]['value']
+            else:
+                email = auth['profile'].get('verifiedEmail', '').strip()
+            # first try by email
+            if email:
+                user = AuthUser.get_by_email(email)
+            # then by id
+            if user is None:
+                user = AuthUser.get_by_login(auth['apexid'])
             if not user:
                 user = AuthUser(
                     login=auth['apexid'],
                     username=auth['name'],
                 )
-                if 'emails' in  auth['profile']:
-                    if auth['profile']['emails']:
-                        user.email = auth['profile']['emails'][0]['value']
+
+                if email:
+                    user.email = email
                 DBSession.add(user)
                 if apex_settings('default_user_group'):
                     for name in apex_settings('default_user_group'). \
@@ -376,7 +387,6 @@ def edit(request):
         This is a very simple edit function it works off your auth_profile
         class, all columns inside your auth_profile class will be rendered.
     """
-    import pdb;pdb.set_trace()  ## Breakpoint ##
     title = _('Edit')
 
     ProfileForm = model_form(
