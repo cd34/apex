@@ -119,7 +119,7 @@ def apexid_from_token(token):
         auth['name'] = name
         if not name or ('twitter' in pr['accounts'][0]['domain']):
             if not name:
-                auth['name'] =  pr['accounts'][0]['userid'] 
+                auth['name'] =  pr['accounts'][0]['userid']
             name = pr['accounts'][0]['userid']
         id = apexid_from_url(pr['accounts'], name)
         auth['apexid'] = id
