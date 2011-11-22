@@ -141,14 +141,13 @@ def apexid_from_token(token):
         return auth
     return None
 
-def groupfinder(request, userid):
+def groupfinder(userid, request):
     """ Returns ACL formatted list of groups for the userid in the
     current request
     """
-    auth = request.user
-    if auth is not None:
+    auth = AuthUser.get_by_id(userid)
+    if auth:
         return [('group:%s' % group.name) for group in auth.groups]
-    return None
 
 class RootFactory(object):
     """ Defines the default ACLs, groups populated from SQLAlchemy.
