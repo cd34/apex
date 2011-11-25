@@ -6,6 +6,7 @@ except ImportError:
 import urlparse
 import logging
 import urllib2
+from urllib import urlencode
 
 import velruse.store.sqlstore
 from velruse.store.sqlstore import KeyStorage
@@ -14,11 +15,13 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from pyramid.decorator import reify
 from pyramid.httpexceptions import HTTPFound
-from pyramid.security import Allow
-from pyramid.security import authenticated_userid
-from pyramid.security import Everyone
-from pyramid.security import Authenticated
-from pyramid.security import remember
+from pyramid.security import (
+    Allow,
+    authenticated_userid,
+    Everyone,
+    Authenticated,
+    remember,
+)
 from pyramid.settings import asbool
 from pyramid.request import Request
 from pyramid.threadlocal import get_current_registry
@@ -29,23 +32,25 @@ from pyramid_mailer import get_mailer
 from pyramid_mailer.message import Message
 
 from apex import MessageFactory as _
-from apex.forms import OpenIdLogin
-from apex.forms import GoogleLogin
-from apex.forms import FacebookLogin
-from apex.forms import GithubLogin
-from apex.forms import YahooLogin
-from apex.forms import WindowsLiveLogin
-from apex.forms import TwitterLogin
-from apex.models import DBSession
-from apex.models import AuthUser
-from apex.models import AuthGroup
-from apex.models import AuthUserLog
+from apex.forms import (
+    OpenIdLogin,
+    GoogleLogin,
+    FacebookLogin,
+    GithubLogin,
+    YahooLogin,
+    WindowsLiveLogin,
+    TwitterLogin,
+)
+from apex.models import (
+    DBSession, AuthUser, AuthGroup, AuthUserLog
+)
 
 auth_provider = {
     'G':'Google',
     'H':'Github',
     'F':'Facebook',
     'T':'Twitter',
+    'L':'LDAP',
     'Y':'Yahoo',
     'O':'OpenID',
     'M':'Microsoft Live',
@@ -107,12 +112,22 @@ def apexid_from_url(provider, identifier):
         id = "%s > %s" % (provider, id)
     return id
 
+def query_velruse_host(query):
+    vurl = apex_settings('velruse_url')
+    auth_url = '%s/%s' %( vurl, query)
+    req = urllib2.Request(auth_url, None, {'user-agent':'auth/apex'})
+    configs = json.loads(urllib2.urlopen(req).read())
+    return configs 
+
+
+def get_velruse_token(token):
+    return query_velruse_host('auth_info?%s' % urlencode({'format':'json', 'token':token}))
+
 def apexid_from_token(token):
     """ Returns the apex id from the OpenID Token
     """
     dbsession = DBSession()
-    auth = json.loads(dbsession.query(KeyStorage.value). \
-                      filter(KeyStorage.key==token).one()[0])
+    auth = get_velruse_token(token)
     if 'profile' in auth:
         pr = auth['profile']
         name = pr.get('displayName', '')
@@ -246,19 +261,9 @@ def create_user(**kwargs):
     DBSession.flush()
     return user
 
-def query_velruse_host(query):
-    vurl = apex_settings('velruse_url')
-    auth_url = '%s/%s' %( vurl, query)
-    req = urllib2.Request(auth_url, None, {'user-agent':'auth/apex'})
-    configs = json.loads(urllib2.urlopen(req).read())
-    return configs
 
-def generate_velruse_forms(request, came_from):
-    """ Generates variable form based on OpenID providers
-    offered by the velruse backend.
-    XXX: If the method is too heavy, please cache it a while.
-    """
-    velruse_forms = []
+
+def get_providers():
     logger = logging.getLogger('apex.generate_velruse_forms')
     configs = {}
     try:
@@ -268,18 +273,29 @@ def generate_velruse_forms(request, came_from):
     if apex_settings('provider_exclude'):
         for provider in apex_settings('provider_exclude').split(','):
             if provider.strip() in configs:
-                configs.remove(provider.strip())
+                configs.remove(provider.strip()) 
+    return configs
+
+def generate_velruse_forms(request, came_from):
+    """ Generates variable form based on OpenID providers
+    offered by the velruse backend.
+    XXX: If the method is too heavy, please cache it a while.
+    """
+    velruse_forms = []
+    configs = get_providers()
     for vprovider in configs:
         provider = vprovider.replace(
             'velruse.', '').replace('providers.', '')
+        if 'ldap' in provider:
+            continue
         infos = configs[vprovider]
         if provider_forms.has_key(provider):
             form = provider_forms[provider](
-                end_point='%s?csrf_token=%s&came_from=%s' % \
-                 (request.route_url('apex_callback'), \
-                  request.session.get_csrf_token(),
-                  came_from), \
-                 csrf_token = request.session.get_csrf_token(),
+                end_point='%s?csrf_token=%s&came_from=%s' % (
+                    request.route_url('apex_callback'), 
+                    request.session.get_csrf_token(),
+                    came_from), 
+                csrf_token = request.session.get_csrf_token(),
             )
             keys = ['process', 'login']
             for key in keys:

@@ -2,6 +2,8 @@ import base64
 import hmac
 import time
 
+from urllib import urlencode
+
 from wtforms import TextField
 from wtforms import validators
 from wtforms.ext.sqlalchemy.orm import model_form
@@ -23,14 +25,18 @@ from pyramid.url import route_url
 from pyramid_mailer.message import Message
 
 from apex.lib.db import merge_session_with_post
-from apex.lib.libapex import apex_settings
-from apex.lib.libapex import apexid_from_token
-from apex.lib.libapex import apex_email_forgot
-from apex.lib.libapex import apex_remember
-from apex.lib.libapex import auth_provider
-from apex.lib.libapex import generate_velruse_forms
-from apex.lib.libapex import get_module
-from apex.lib.libapex import provider_forms
+from apex.lib.libapex import (
+    apex_settings,
+    get_velruse_token,
+    get_providers,
+    apexid_from_token,
+    apex_email_forgot,
+    apex_remember,
+    auth_provider,
+    generate_velruse_forms,
+    get_module,
+    provider_forms,
+)
 from apex.lib.flash import flash
 from apex.lib.form import ExtendedForm
 from apex.models import AuthGroup
@@ -50,6 +56,28 @@ def get_came_from(request):
                           )
 
 
+AUTOSUBMITED_VELRUSE_LDAP_FORM = """\
+<html>
+    <head>
+        <title>LDAP transaction in progress</title>
+    </head>
+    <body onload="document.forms[0].submit();">
+        <form action="%s" method="post" accept-charset="UTF-8"
+         enctype="application/x-www-form-urlencoded">
+        <input type="hidden" name="end_point" value="%s" />
+        <input type="hidden" name="ldap_username" value="%s" />
+        <input type="hidden" name="ldap_password" value="%s" />
+        <input type="submit" value="Continue"/></form>
+        <script>
+            var elements = document.forms[0].elements;
+            for (var i = 0; i < elements.length; i++) {
+                elements[i].style.display = "none";
+            }
+        </script>
+    </body>
+</html>
+"""          
+
 def login(request):
     """ login(request)
     No return value
@@ -58,6 +86,8 @@ def login(request):
     """
     title = _('You need to login')
     came_from = get_came_from(request)
+    velruse_forms = generate_velruse_forms(request, came_from)
+    providers = get_providers()
     if 'local' not in apex_settings('provider_exclude', []):
         if asbool(apex_settings('use_recaptcha_on_login')):
             if apex_settings('recaptcha_public_key') and apex_settings('recaptcha_private_key'):
@@ -70,16 +100,38 @@ def login(request):
     else:
         form = None
 
-    velruse_forms = generate_velruse_forms(request, came_from)
     for vform in velruse_forms:
         if getattr(vform, 'velruse_login', None):
             vform.action = vform.velruse_login
 
-    if request.method == 'POST' and form.validate():
-        user = AuthUser.get_by_username(form.data.get('username'))
-        if user:
+    # allow to include this as a portlet inside other pages
+    if (request.method == 'POST'  
+        and (request.route_url('apex_login') in request.url)):
+        local_status = form.validate()
+        username = form.data.get('username')
+        password = form.data.get('password')
+        user = AuthUser.get_by_username(username)
+        if local_status and user:
             headers = apex_remember(request, user.id)
             return HTTPFound(location=came_from, headers=headers)
+        else:
+            end_point='%s?%s' % (
+                request.route_url('apex_callback'), 
+                urlencode(dict(
+                    csrf_token=request.session.get_csrf_token(),
+                    came_from=came_from,
+                ))
+            )    
+            # try ldap auth if present on velruse
+            # idea is to let the browser to the request with
+            # an autosubmitted form
+            if 'velruse.providers.ldapprovider' in providers:
+                response = AUTOSUBMITED_VELRUSE_LDAP_FORM%(
+                    providers['velruse.providers.ldapprovider']['login'],
+                    end_point, 
+                    username, 
+                    password)
+                return Response(response)
 
     return {'title': title,
             'form': form,
@@ -249,7 +301,9 @@ def register(request):
         headers = apex_remember(request, user.id)
         return HTTPFound(location=came_from, headers=headers)
 
-    return {'title': title, 'form': form, 'velruse_forms': velruse_forms, \
+    return {'title': title, 
+            'form': form, 
+            'velruse_forms': velruse_forms,
             'action': 'register'}
 
 def apex_callback(request):
@@ -261,9 +315,13 @@ def apex_callback(request):
     redir = request.GET.get('came_from',
                 route_url(apex_settings('came_from_route'), request))
     headers = []
+    login_failed = True
+    reason = _('Login failed!')
     if 'token' in request.POST:
-        auth = apexid_from_token(request.POST['token'])
+        token = request.POST['token']
+        auth = apexid_from_token(token)
         if auth:
+            login_failed = False
             user, email = None, ''
             if 'emails' in  auth['profile']:
                 if auth['profile']['emails']:
@@ -310,6 +368,18 @@ def apex_callback(request):
             redir = request.GET.get('came_from', \
                         route_url(apex_settings('came_from_route'), request))
             flash(_('Successfully Logged in, welcome!'), 'success')
+        else:
+            auth = get_velruse_token(token)
+            reasont = ''
+            if auth.get('code', None):
+                reasont += 'Code %s : ' % auth['code']
+            if auth.get('description', ''):
+                reasont += _(auth['description'])
+            if reasont:
+                reason = reasont
+            login_failed = True
+    if login_failed:
+        flash(reason)
     return HTTPFound(location=redir, headers=headers)
 
 def openid_required(request):
@@ -368,7 +438,6 @@ def forbidden(request):
     **THIS WILL BREAK EVENTUALLY**
     **THIS DID BREAK WITH Pyramid 1.2a3**
     """
-    import pdb;pdb.set_trace()  ## Breakpoint ##
     if request.environ.has_key('bfg.routes.route'):
         flash(_('Not logged in, please log in'), 'error')
         return HTTPFound(location='%s?came_from=%s' %

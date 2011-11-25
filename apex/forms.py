@@ -1,18 +1,20 @@
 from wtforms import Form
-from wtforms import HiddenField
-from wtforms import PasswordField
-from wtforms import TextField
-from wtforms import validators
+from wtforms import (
+    HiddenField,
+    PasswordField,
+    TextField,
+    validators,
+)
 
 from apex import MessageFactory as _
 from pyramid.security import authenticated_userid
 from pyramid.security import remember
-from pyramid.threadlocal import get_current_registry
-from pyramid.threadlocal import get_current_request
+from pyramid.threadlocal import (
+    get_current_registry,
+    get_current_request,
+)
 
-from apex.models import DBSession
-from apex.models import AuthGroup
-from apex.models import AuthUser
+from apex.models import DBSession, AuthGroup, AuthUser
 from apex.lib.form import ExtendedForm
 
 class RegisterForm(ExtendedForm):
@@ -158,6 +160,6 @@ class WindowsLiveLogin(OAuthForm):
 class GithubLogin(OAuthForm):
     provider_name = 'github'
     provider_proper_name = 'Github'
- 
+
 class OpenIDRequiredForm(ExtendedForm):
     pass
