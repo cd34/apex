@@ -324,8 +324,11 @@ def apex_callback(request):
             login_failed = False
             user, email = None, ''
             if 'emails' in  auth['profile']:
-                if auth['profile']['emails']:
+                emails = auth['profile']['emails']
+                if isinstance(emails[0], dict):
                     email = auth['profile']['emails'][0]['value']
+                else:
+                    email = auth['profile']['emails'][0]
             else:
                 email = auth['profile'].get('verifiedEmail', '').strip()
             # first try by email

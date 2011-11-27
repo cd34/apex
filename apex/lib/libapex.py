@@ -285,7 +285,9 @@ def generate_velruse_forms(request, came_from):
     configs = get_providers()
     for vprovider in configs:
         provider = vprovider.replace(
-            'velruse.', '').replace('providers.', '')
+            'velruse.', '').replace(
+                'providers.', '').replace(
+                    'openidconsumer', 'openid')
         if 'ldap' in provider:
             continue
         infos = configs[vprovider]
