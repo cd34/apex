@@ -20,6 +20,6 @@ def apex_settings(key=None, default=None):
         for k, v in settings.items():
             if k.startswith('apex.'):
                 apex_settings.append({k.split('.')[1]: v})
-        return apex_settings 
+        return apex_settings
 
 # vim:set et sts=4 ts=4 tw=80:

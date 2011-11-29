@@ -82,10 +82,12 @@ AUTOSUBMITED_VELRUSE_LDAP_FORM = """\
 
 
 def search_user(username):
-    user = AuthUser.get_by_username(username)
-    if not user and '@' in user:
+    user = None
+    if '@' in username:
         user = AuthUser.get_by_email(username)
-    else:
+    if not user:
+        user = AuthUser.get_by_username(username)
+    if not user:
         user = AuthUser.get_by_login(username)
     return user
 
@@ -95,12 +97,16 @@ def login(request):
 
     Function called from route_url('apex_login', request)
     """
+    if request.user:
+        if 'came_from' in request.params:
+            return HTTPFound(location=request.params['came_from'])
     title = _('You need to login')
     came_from = get_came_from(request)
     velruse_forms = generate_velruse_forms(request, came_from)
     providers = get_providers()
+    use_captcha = asbool(apex_settings('use_recaptcha_on_login'))
     if 'local' not in apex_settings('provider_exclude', []):
-        if asbool(apex_settings('use_recaptcha_on_login')):
+        if use_captcha:
             if apex_settings('recaptcha_public_key') and apex_settings('recaptcha_private_key'):
                 LoginForm.captcha = RecaptchaField(
                     public_key=apex_settings('recaptcha_public_key'),
@@ -127,23 +133,34 @@ def login(request):
                 headers = apex_remember(request, user.id)
                 return HTTPFound(location=came_from, headers=headers)
         else:
-            end_point='%s?%s' % (
-                request.route_url('apex_callback'),
-                urlencode(dict(
-                    csrf_token=request.session.get_csrf_token(),
-                    came_from=came_from,
-                ))
-            )
-            # try ldap auth if present on velruse
-            # idea is to let the browser to the request with
-            # an autosubmitted form
-            if 'velruse.providers.ldapprovider' in providers:
-                response = AUTOSUBMITED_VELRUSE_LDAP_FORM%(
-                    providers['velruse.providers.ldapprovider']['login'],
-                    end_point,
-                    username,
-                    password)
-                return Response(response)
+            stop = False
+            if use_captcha:
+                if 'captcha' in form.errors:
+                    stop = True
+                    form.came_from.data = came_from
+                    form.data['came_from'] = came_from
+            if not stop:
+                end_point='%s?%s' % (
+                    request.route_url('apex_callback'),
+                    urlencode(dict(
+                        csrf_token=request.session.get_csrf_token(),
+                        came_from=came_from,
+                    ))
+                )
+                # try ldap auth if present on velruse
+                # idea is to let the browser to the request with
+                # an autosubmitted form
+                if 'velruse.providers.ldapprovider' in providers:
+                    response = AUTOSUBMITED_VELRUSE_LDAP_FORM%(
+                        providers['velruse.providers.ldapprovider']['login'],
+                        end_point,
+                        username,
+                        password)
+                    return Response(response)
+
+    if not came_from:
+        came_from = request.url
+    form.came_from.data = came_from
 
     return {'title': title,
             'form': form,

@@ -16,7 +16,7 @@
     </style>
   </head>
   <body  metal:define-macro="body"
-    tal:define="test python:action.endswith"> 
+    tal:define="test python:action.endswith;velruse_forms velruse_forms|nothing">
     <div class="login-box"
       tal:define="action request.route_url('apex_%s' % action)|form_url|action|string:;
       include_came_from include_came_from|nothing;

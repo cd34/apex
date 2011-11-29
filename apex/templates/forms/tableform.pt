@@ -35,7 +35,13 @@
       </tal:r>
       <tal:block tal:content="structure csrf_token_field"/>
     </table>
+    <tal:comment tal:condition="nothing">
+      <tal:d tal:condition="args.get('include_came_from', False)"
+        tal:define="came_from python:form.came_from.data|request.url"
+        >
+        <input type="hidden" name="came_from" tal:attributes="value came_from"/>
+      </tal:d>
+    </tal:comment>
     <input type="submit" name="submit" value="${submit_text}"/>
-    <input type="hidden" name="came_from" value="${request.url}" tal:condition="args.get('include_came_from', False)"/>
   </form>
 </tal:b>

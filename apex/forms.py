@@ -86,6 +86,7 @@ class ChangePasswordForm(ExtendedForm):
 class LoginForm(ExtendedForm):
     username = TextField(_('Username'), validators=[validators.Required()])
     password = PasswordField(_('Password'), validators=[validators.Required()])
+    came_from = HiddenField('')
 
     def clean(self):
         errors = []
