@@ -27,8 +27,11 @@ In the [app:example] section, add:
 ::
 
     apex.session_secret = CHANGEME
+    # if you need to confirm by mail on account creation
+    apex.need_mail_verification = true
     apex.auth_secret = CHANGEME
     apex.came_from_route = home
+    # velruse host accessible both by the host and the clients.
     apex.velruse_url = http://localhost:port
     apex.recaptcha_public_key = xxxxxxxxxxxxxxxxxx
     apex.recaptcha_private_key = xxxxxxxxxxxxxxxxxx
