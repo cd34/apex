@@ -16,6 +16,7 @@ from pyramid.threadlocal import (
 
 from apex.models import DBSession, AuthGroup, AuthUser
 from apex.lib.form import ExtendedForm
+from apex.lib.settings import apex_settings
 
 class RegisterForm(ExtendedForm):
     """ Registration Form
@@ -28,6 +29,11 @@ class RegisterForm(ExtendedForm):
     password2 = PasswordField(_('Repeat Password'), [validators.Required()])
     email = TextField(_('Email Address'), [validators.Required(), \
                       validators.Email()])
+
+    def validate_email(form, field):
+        need_verif = apex_settings('need_mail_verification')
+        if need_verif and not field.data:
+            raise validators.ValidationError(_('Sorry but you need to input an email.'))
 
     def validate_username(form, field):
         if AuthUser.get_by_username(field.data) is not None:
@@ -52,7 +58,6 @@ class RegisterForm(ExtendedForm):
     def save(self):
         new_user = self.create_user(self.data['username'])
         self.after_signup(new_user)
-
         return new_user
 
     def after_signup(self, user, **kwargs):
@@ -61,6 +66,7 @@ class RegisterForm(ExtendedForm):
         extra actions after the form submission.
         """
         pass
+
 
 class ChangePasswordForm(ExtendedForm):
     """ Change Password Form

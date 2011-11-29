@@ -41,9 +41,15 @@ from apex.forms import (
     WindowsLiveLogin,
     TwitterLogin,
 )
+from apex.lib.settings import apex_settings
 from apex.models import (
     DBSession, AuthUser, AuthGroup, AuthUserLog
 )
+from pyramid.i18n import get_localizer
+
+def translate(request, string):
+    localizer = get_localizer(request) 
+    return localizer.translate(string) 
 
 auth_provider = {
     'G':'Google',
@@ -196,40 +202,25 @@ def apex_email_forgot(request, user_id, email, hmac):
     message_class = message_class_name()
     message_text = getattr(message_class, 'forgot')()
 
-    message_body = message_text['body'].replace('%_url_%', \
+    message_body = translate(request, message_text['body']).replace('%_url_%', \
         route_url('apex_reset', request, user_id=user_id, hmac=hmac))
 
-    apex_email(request, email, message_text['subject'], message_body)
+    apex_email(request, email, 
+               translate(request,  message_text['subject']), 
+               translate(request,  message_body))
+
 
 def apex_email_activate(request, user_id, email, hmac):
     message_class_name = get_module(apex_settings('email_message_text', \
                              'apex.lib.libapex.EmailMessageText'))
     message_class = message_class_name()
-    message_text = getattr(message_class, 'activate')()
-
-    message_body = message_text['body'].replace('%_url_%', \
+    message_text = getattr(message_class, 'activate')() 
+    message_body = translate(request, message_text['body']).replace('%_url_%', \
         route_url('apex_activate', request, user_id=user_id, hmac=hmac))
 
-    apex_email(request, email, message_text['subject'], message_body)
-
-def apex_settings(key=None, default=None):
-    """ Gets an apex setting if the key is set.
-        If no key it set, returns all the apex settings.
-
-        Some settings have issue with a Nonetype value error,
-        you can set the default to fix this issue.
-    """
-    settings = get_current_registry().settings
-
-    if key:
-        return settings.get('apex.%s' % key, default)
-    else:
-        apex_settings = []
-        for k, v in settings.items():
-            if k.startswith('apex.'):
-                apex_settings.append({k.split('.')[1]: v})
-
-        return apex_settings
+    apex_email(request, email, 
+               translate(request, message_text['subject']), 
+               translate(request, message_body))
 
 def create_user(**kwargs):
     """

@@ -25,17 +25,19 @@ from pyramid.url import route_url
 from pyramid_mailer.message import Message
 
 from apex.lib.db import merge_session_with_post
+from apex.lib.settings import apex_settings
 from apex.lib.libapex import (
-    apex_settings,
     get_velruse_token,
     get_providers,
     apexid_from_token,
     apex_email_forgot,
+    apex_email_activate,
     apex_remember,
     auth_provider,
     generate_velruse_forms,
     get_module,
     provider_forms,
+    apex_email,
 )
 from apex.lib.flash import flash
 from apex.lib.form import ExtendedForm
@@ -76,7 +78,16 @@ AUTOSUBMITED_VELRUSE_LDAP_FORM = """\
         </script>
     </body>
 </html>
-"""          
+"""
+
+
+def search_user(username):
+    user = AuthUser.get_by_username(username)
+    if not user and '@' in user:
+        user = AuthUser.get_by_email(username)
+    else:
+        user = AuthUser.get_by_login(username)
+    return user
 
 def login(request):
     """ login(request)
@@ -105,31 +116,32 @@ def login(request):
             vform.action = vform.velruse_login
 
     # allow to include this as a portlet inside other pages
-    if (request.method == 'POST'  
+    if (request.method == 'POST'
         and (request.route_url('apex_login') in request.url)):
         local_status = form.validate()
         username = form.data.get('username')
         password = form.data.get('password')
-        user = AuthUser.get_by_username(username)
+        user = search_user(username)
         if local_status and user:
-            headers = apex_remember(request, user.id)
-            return HTTPFound(location=came_from, headers=headers)
+            if user.active == 'Y':
+                headers = apex_remember(request, user.id)
+                return HTTPFound(location=came_from, headers=headers)
         else:
             end_point='%s?%s' % (
-                request.route_url('apex_callback'), 
+                request.route_url('apex_callback'),
                 urlencode(dict(
                     csrf_token=request.session.get_csrf_token(),
                     came_from=came_from,
                 ))
-            )    
+            )
             # try ldap auth if present on velruse
             # idea is to let the browser to the request with
             # an autosubmitted form
             if 'velruse.providers.ldapprovider' in providers:
                 response = AUTOSUBMITED_VELRUSE_LDAP_FORM%(
                     providers['velruse.providers.ldapprovider']['login'],
-                    end_point, 
-                    username, 
+                    end_point,
+                    username,
                     password)
                 return Response(response)
 
@@ -254,18 +266,18 @@ def activate(request):
     current_time = time.time()
     time_key = int(base64.b64decode(submitted_hmac[10:]))
     if current_time < time_key:
-        hmac_key = hmac.new('%s:%s:%d' % (str(user.id), \
-                            apex_settings('auth_secret'), time_key), \
+        hmac_key = hmac.new('%s:%s:%d' % (str(user.id),
+                            apex_settings('auth_secret'), time_key),
                             user.email).hexdigest()[0:10]
         if hmac_key == submitted_hmac[0:10]:
             user.active = 'Y'
             DBSession.merge(user)
             DBSession.flush()
             flash(_('Account activated. Please log in.'))
-            return HTTPFound(location=route_url('apex_login', \
+            return HTTPFound(location=route_url('apex_login',
                                                 request))
     flash(_('Invalid request, please try again'))
-    return HTTPFound(location=route_url(apex_settings('came_from_route'), \
+    return HTTPFound(location=route_url(apex_settings('came_from_route'),
                                         request))
 
 def register(request):
@@ -297,12 +309,35 @@ def register(request):
 
     if request.method == 'POST' and form.validate():
         user = form.save()
+        need_verif = apex_settings('need_mail_verification')
+        response = HTTPFound(location=came_from)
+        if need_verif:
+            def begin_activation_email_process(user):
+                timestamp = time.time()+3600
+                hmac_key = hmac.new('%s:%s:%d' % (
+                    str(user.id),
+                    apex_settings('auth_secret'),
+                    timestamp),
+                    user.email).hexdigest()[0:10]
+                time_key = base64.urlsafe_b64encode('%d' % timestamp)
+                email_hash = '%s%s' % (hmac_key, time_key)
+                apex_email_activate(request, user.id, user.email, email_hash)
+            begin_activation_email_process(user)
+            DBSession.add(user)
+            user.active = 'N'
+            DBSession.flush()
+            flash(_('User sucessfully created, '
+                    'please verify your account by clicking '
+                    'on the link in the mail you just received from us !'), 'success')
 
-        headers = apex_remember(request, user.id)
-        return HTTPFound(location=came_from, headers=headers)
+            response = HTTPFound(location=came_from)
+        else:
+            headers = apex_remember(request, user.id)
+            response = HTTPFound(location=came_from, headers=headers)
+        return response
 
-    return {'title': title, 
-            'form': form, 
+    return {'title': title,
+            'form': form,
             'velruse_forms': velruse_forms,
             'action': 'register'}
 
@@ -336,13 +371,12 @@ def apex_callback(request):
                 user = AuthUser.get_by_email(email)
             # then by id
             if user is None:
-                user = AuthUser.get_by_login(auth['apexid'])
+                user = search_user(auth['apexid'])
             if not user:
                 user = AuthUser(
                     login=auth['apexid'],
                     username=auth['name'],
                 )
-
                 if email:
                     user.email = email
                 DBSession.add(user)

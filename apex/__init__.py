@@ -20,6 +20,7 @@ from apex.interfaces import ApexImplementation
 from apex.lib.libapex import groupfinder
 from apex.lib.libapex import RequestFactory
 from apex.lib.libapex import RootFactory
+from apex.lib.libapex import apex_settings
 from apex.models import initialize_sql
 from apex.views import apex_callback
 from apex.views import activate
@@ -75,8 +76,14 @@ def includeme(config):
     config.set_root_factory(RootFactory)
     config.set_request_factory(RequestFactory)
 
-    if not config.registry.queryUtility(IMailer):
+    mailer = config.registry.queryUtility(IMailer)
+    if not mailer:
         config.include('pyramid_mailer')
+        mailer = config.registry.queryUtility(IMailer)
+    if mailer:
+        if (not config.registry.settings.has_key('apex.sender_email')):
+            if mailer.default_sender:
+                config.registry.settings['apex.sender_email'] = mailer.default_sender
 
     if not settings.get('mako.directories'):
         config.add_settings({'mako.directories': ['apex:templates']})
