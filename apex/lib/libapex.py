@@ -24,7 +24,7 @@ from pyramid.security import (
 )
 from pyramid.settings import asbool
 from pyramid.request import Request
-from pyramid.threadlocal import get_current_registry
+from pyramid.threadlocal import get_current_registry, get_current_request
 from pyramid.url import route_url
 from pyramid.util import DottedNameResolver
 
@@ -43,13 +43,13 @@ from apex.forms import (
 )
 from apex.lib.settings import apex_settings
 from apex.models import (
-    DBSession, AuthUser, AuthGroup, AuthUserLog
+    DBSession, AuthUser, AuthGroup, AuthUserLog,
 )
 from pyramid.i18n import get_localizer
 
 def translate(request, string):
-    localizer = get_localizer(request) 
-    return localizer.translate(string) 
+    localizer = get_localizer(request)
+    return localizer.translate(string)
 
 auth_provider = {
     'G':'Google',
@@ -123,7 +123,7 @@ def query_velruse_host(query):
     auth_url = '%s/%s' %( vurl, query)
     req = urllib2.Request(auth_url, None, {'user-agent':'auth/apex'})
     configs = json.loads(urllib2.urlopen(req).read())
-    return configs 
+    return configs
 
 
 def get_velruse_token(token):
@@ -205,8 +205,8 @@ def apex_email_forgot(request, user_id, email, hmac):
     message_body = translate(request, message_text['body']).replace('%_url_%', \
         route_url('apex_reset', request, user_id=user_id, hmac=hmac))
 
-    apex_email(request, email, 
-               translate(request,  message_text['subject']), 
+    apex_email(request, email,
+               translate(request,  message_text['subject']),
                translate(request,  message_body))
 
 
@@ -214,44 +214,13 @@ def apex_email_activate(request, user_id, email, hmac):
     message_class_name = get_module(apex_settings('email_message_text', \
                              'apex.lib.libapex.EmailMessageText'))
     message_class = message_class_name()
-    message_text = getattr(message_class, 'activate')() 
+    message_text = getattr(message_class, 'activate')()
     message_body = translate(request, message_text['body']).replace('%_url_%', \
         route_url('apex_activate', request, user_id=user_id, hmac=hmac))
 
-    apex_email(request, email, 
-               translate(request, message_text['subject']), 
+    apex_email(request, email,
+               translate(request, message_text['subject']),
                translate(request, message_body))
-
-def create_user(**kwargs):
-    """
-::
-
-    from apex.lib.libapex import create_user
-
-    create_user(username='test', password='my_password', active='Y', group='group')
-
-    Returns: AuthUser object
-    """
-    user = AuthUser()
-
-    if 'group' in kwargs:
-        try:
-            group = DBSession.query(AuthGroup). \
-            filter(AuthGroup.name==kwargs['group']).one()
-
-            user.groups.append(group)
-        except NoResultFound:
-            pass
-
-        del kwargs['group']
-
-    for key, value in kwargs.items():
-        setattr(user, key, value)
-
-    DBSession.add(user)
-    DBSession.flush()
-    return user
-
 
 
 def get_providers():
@@ -264,7 +233,7 @@ def get_providers():
     if apex_settings('provider_exclude'):
         for provider in apex_settings('provider_exclude').split(','):
             if provider.strip() in configs:
-                configs.remove(provider.strip()) 
+                configs.remove(provider.strip())
     return configs
 
 def generate_velruse_forms(request, came_from):
@@ -285,9 +254,9 @@ def generate_velruse_forms(request, came_from):
         if provider_forms.has_key(provider):
             form = provider_forms[provider](
                 end_point='%s?csrf_token=%s&came_from=%s' % (
-                    request.route_url('apex_callback'), 
+                    request.route_url('apex_callback'),
                     request.session.get_csrf_token(),
-                    came_from), 
+                    came_from),
                 csrf_token = request.session.get_csrf_token(),
             )
             keys = ['process', 'login']

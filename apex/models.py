@@ -1,7 +1,7 @@
 from cryptacular.bcrypt import BCRYPTPasswordManager
 import transaction
 
-from pyramid.threadlocal import get_current_request
+from pyramid.threadlocal import get_current_request, get_current_registry
 from pyramid.util import DottedNameResolver
 
 from sqlalchemy import Column
@@ -24,6 +24,7 @@ from velruse.store.sqlstore import SQLBase
 from zope.sqlalchemy import ZopeTransactionExtension 
 
 from apex.lib.db import get_or_create
+from apex.events import UserCreatedEvent
 
 DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 Base = declarative_base()
@@ -247,3 +248,37 @@ def initialize_sql(engine, settings):
         populate(settings)
     except IntegrityError:
         transaction.abort()
+
+def create_user(**kwargs):
+    """
+::
+
+    from apex.lib.libapex import create_user
+    create_user(username='test', password='my_password', active='Y', group='group')
+    Returns: AuthUser object
+    """
+    user = AuthUser()
+    request = get_current_request()
+    registry = get_current_registry()
+    settings = registry.settings
+    if settings.has_key('apex.default_user_group'):
+        group = DBSession.query(AuthGroup). \
+           filter(AuthGroup.name==settings['apex.default_user_group']).one()
+        user.groups.append(group)
+    DBSession.flush()
+    if 'group' in kwargs:
+        try:
+            group = DBSession.query(AuthGroup). \
+            filter(AuthGroup.name==kwargs['group']).one()
+            user.groups.append(group)
+        except NoResultFound:
+            pass
+        del kwargs['group']
+    for key, value in kwargs.items():
+        setattr(user, key, value)
+    DBSession.add(user)
+    DBSession.flush()
+    registry.notify(UserCreatedEvent(request, user))
+    return user
+
+

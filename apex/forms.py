@@ -17,6 +17,7 @@ from pyramid.threadlocal import (
 from apex.models import DBSession, AuthGroup, AuthUser
 from apex.lib.form import ExtendedForm
 from apex.lib.settings import apex_settings
+from apex.models import create_user
 
 class RegisterForm(ExtendedForm):
     """ Registration Form
@@ -39,24 +40,13 @@ class RegisterForm(ExtendedForm):
         if AuthUser.get_by_username(field.data) is not None:
             raise validators.ValidationError(_('Sorry that username already exists.'))
 
-    def create_user(self, username):
-        user = AuthUser(
-            username=username,
-            password=self.data.get('password', ''),
-            email=self.data['email'],
-        )
-        DBSession.add(user)
-        settings = get_current_registry().settings
-        if settings.has_key('apex.default_user_group'):
-            group = DBSession.query(AuthGroup). \
-               filter(AuthGroup.name==settings['apex.default_user_group']).one()
-            user.groups.append(group)
-        DBSession.flush()
-
-        return user
-
     def save(self):
-        new_user = self.create_user(self.data['username'])
+        infos = {'password': self.data.get('password', ''),
+                 'email': self.data.get('email', ''),
+                 'username': self.data.get('username', ''),
+                 'login': self.data.get('username', ''),
+                }
+        new_user = create_user(**infos)
         self.after_signup(new_user)
         return new_user
 

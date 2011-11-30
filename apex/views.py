@@ -39,6 +39,7 @@ from apex.lib.libapex import (
     provider_forms,
     apex_email,
 )
+from apex.models import create_user
 from apex.lib.flash import flash
 from apex.lib.form import ExtendedForm
 from apex.models import AuthGroup
@@ -100,14 +101,14 @@ def begin_activation_email_process(request, user):
         user.email).hexdigest()[0:10]
     time_key = base64.urlsafe_b64encode('%d' % timestamp)
     email_hash = '%s%s' % (hmac_key, time_key)
-    apex_email_activate(request, user.id, user.email, email_hash) 
+    apex_email_activate(request, user.id, user.email, email_hash)
 
 def useradd(request):
     """ useradd(request)
     No return value
 
     Function called from route_url('apex_useradd', request)
-    """ 
+    """
     title = _('Create an user')
     velruse_forms = []
 
@@ -430,23 +431,13 @@ def apex_callback(request):
             if user is None:
                 user = search_user(auth['apexid'])
             if not user:
-                user = AuthUser(
-                    login=auth['apexid'],
-                    username=auth['name'],
-                )
+                user_infos = {'login': auth['apexid'], 'username': auth['name']}
                 if email:
-                    user.email = email
-                DBSession.add(user)
-                if apex_settings('default_user_group'):
-                    for name in apex_settings('default_user_group'). \
-                                              split(','):
-                        group = DBSession.query(AuthGroup). \
-                           filter(AuthGroup.name==name.strip()).one()
-                        user.groups.append(group)
+                    user_infos['email'] = email
+                user = create_user(**user_infos)
                 if apex_settings('create_openid_after'):
                     openid_after = get_module(apex_settings('create_openid_after'))
                     request = openid_after().after_signup(request, user)
-                DBSession.flush()
             if apex_settings('openid_required'):
                 openid_required = False
                 for required in apex_settings('openid_required').split(','):
