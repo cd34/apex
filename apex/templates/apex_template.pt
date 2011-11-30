@@ -27,7 +27,7 @@
       <tal:if tal:condition="form">
         <tal:b i18n:translate="" tal:content="structure python:form.render(action=action,include_came_from=include_came_from)"/>
       </tal:if>
-      <tal:if tal:condition="velruse_forms and not test('register') and not test('forgot')">
+      <tal:if tal:condition="velruse_forms and not test('register') and not test('forgot') and not test('useradd')">
         <tal:r tal:repeat="provider_form velruse_forms">
           <tal:b i18n:translate=""
             tal:content="structure python:provider_form.render(
@@ -35,11 +35,11 @@
                                          submit_text=provider_form.provider_proper_name)"/>
         </tal:r>
       </tal:if>
-      <a i18n:translate="" tal:condition="not test('login') and not test('register')"
+      <a i18n:translate="" tal:condition="not test('login') and not test('register') and not test('useradd')"
         href="${request.route_path('apex_login')}">Login</a>
-      <a i18n:translate="" tal:condition="(not test('register')) and self_register"
+      <a i18n:translate="" tal:condition="(not test('register') and self_register) and not test('useradd')"
         href="${request.route_path('apex_register')}">Create an Account</a>
-      <a i18n:translate="" tal:condition="not test('forgot') and not test('register')"
+      <a i18n:translate="" tal:condition="not test('forgot') and not test('register') and not test('useradd')"
         href="${request.route_path('apex_forgot')}">Forgot my password</a>
     </div>
   </body>

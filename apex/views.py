@@ -91,6 +91,56 @@ def search_user(username):
         user = AuthUser.get_by_login(username)
     return user
 
+def begin_activation_email_process(request, user):
+    timestamp = time.time()+3600
+    hmac_key = hmac.new('%s:%s:%d' % (
+        str(user.id),
+        apex_settings('auth_secret'),
+        timestamp),
+        user.email).hexdigest()[0:10]
+    time_key = base64.urlsafe_b64encode('%d' % timestamp)
+    email_hash = '%s%s' % (hmac_key, time_key)
+    apex_email_activate(request, user.id, user.email, email_hash) 
+
+def useradd(request):
+    """ useradd(request)
+    No return value
+
+    Function called from route_url('apex_useradd', request)
+    """ 
+    title = _('Create an user')
+    velruse_forms = []
+
+    #This fixes the issue with RegisterForm throwing an UnboundLocalError
+    if apex_settings('useradd_form_class'):
+        UseraddForm = get_module(apex_settings('useradd_form_class'))
+    else:
+        from apex.forms import UseraddForm
+    if 'local' not in apex_settings('provider_exclude', []):
+        if asbool(apex_settings('use_recaptcha_on_register')):
+            if apex_settings('recaptcha_public_key') and apex_settings('recaptcha_private_key'):
+                UseraddForm.captcha = RecaptchaField(
+                    public_key=apex_settings('recaptcha_public_key'),
+                    private_key=apex_settings('recaptcha_private_key'),
+                )
+
+        form = UseraddForm(request.POST, captcha={'ip_address': request.environ['REMOTE_ADDR']})
+    else:
+        form = None
+    if request.method == 'POST' and form.validate():
+        user = form.save()
+        # on creation by an admin, the user must activate itself its account.
+        begin_activation_email_process(request, user)
+        DBSession.add(user)
+        user.active = 'N'
+        DBSession.flush()
+        flash(_('User sucessfully created, An email has been sent '
+                'to it\'s email to activate its account.'), 'success')
+    return {'title': title,
+            'form': form,
+            'velruse_forms': velruse_forms,
+            'action': 'useradd'}
+
 def login(request):
     """ login(request)
     No return value
@@ -329,17 +379,7 @@ def register(request):
         need_verif = apex_settings('need_mail_verification')
         response = HTTPFound(location=came_from)
         if need_verif:
-            def begin_activation_email_process(user):
-                timestamp = time.time()+3600
-                hmac_key = hmac.new('%s:%s:%d' % (
-                    str(user.id),
-                    apex_settings('auth_secret'),
-                    timestamp),
-                    user.email).hexdigest()[0:10]
-                time_key = base64.urlsafe_b64encode('%d' % timestamp)
-                email_hash = '%s%s' % (hmac_key, time_key)
-                apex_email_activate(request, user.id, user.email, email_hash)
-            begin_activation_email_process(user)
+            begin_activation_email_process(request, user)
             DBSession.add(user)
             user.active = 'N'
             DBSession.flush()

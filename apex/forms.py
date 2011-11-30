@@ -42,7 +42,7 @@ class RegisterForm(ExtendedForm):
     def create_user(self, username):
         user = AuthUser(
             username=username,
-            password=self.data['password'],
+            password=self.data.get('password', ''),
             email=self.data['email'],
         )
         DBSession.add(user)
@@ -67,6 +67,12 @@ class RegisterForm(ExtendedForm):
         """
         pass
 
+
+class UseraddForm(RegisterForm):
+    def __init__(self, *args, **kwargs):
+        RegisterForm.__init__(self, *args, **kwargs)
+        delattr(self, 'password2')
+        delattr(self, 'password')
 
 class ChangePasswordForm(ExtendedForm):
     """ Change Password Form
