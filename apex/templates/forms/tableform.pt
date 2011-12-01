@@ -7,9 +7,11 @@
       <p class="field_error">${error}</p>
     </tal:r>
   </tal:if>
-  <form id="${form.__class__.__name__}"
-    method="POST" accept-charset="utf-8"
-    tal:attributes="action action;
+  <form
+    id="${form.__class__.__name__}"
+    method="POST"
+    accept-charset="utf-8"
+    tal:attributes="action python:getattr(form, 'action', action);
     enctype python:form.is_multipart and 'multipart/form-data' or ''">
     <table border="0" cellspacing="0" cellpadding="2">
       <tal:r tal:repeat="item enumerate(form)">
@@ -33,7 +35,13 @@
       </tal:r>
       <tal:block tal:content="structure csrf_token_field"/>
     </table>
+    <tal:comment tal:condition="nothing">
+      <tal:d tal:condition="args.get('include_came_from', False)"
+        tal:define="came_from python:form.came_from.data|request.url"
+        >
+        <input type="hidden" name="came_from" tal:attributes="value came_from"/>
+      </tal:d>
+    </tal:comment>
     <input type="submit" name="submit" value="${submit_text}"/>
-    <input type="hidden" name="came_from" value="${request.url}" tal:condition="args.get('include_came_from', False)"/>
   </form>
 </tal:b>

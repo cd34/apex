@@ -27,6 +27,7 @@ Uses pyramid_routesalchemy
 Velruse_ is used for OpenID/OpenAuth providers and supports:
   * Google
   * Facebook
+  * github
   * Twitter
   * Yahoo
   * Microsoft Live

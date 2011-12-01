@@ -2,6 +2,8 @@ import base64
 import hmac
 import time
 
+from urllib import urlencode
+
 from wtforms import TextField
 from wtforms import validators
 from wtforms.ext.sqlalchemy.orm import model_form
@@ -23,14 +25,21 @@ from pyramid.url import route_url
 from pyramid_mailer.message import Message
 
 from apex.lib.db import merge_session_with_post
-from apex.lib.libapex import apex_settings
-from apex.lib.libapex import apexid_from_token
-from apex.lib.libapex import apex_email_forgot
-from apex.lib.libapex import apex_remember
-from apex.lib.libapex import auth_provider
-from apex.lib.libapex import generate_velruse_forms
-from apex.lib.libapex import get_module
-from apex.lib.libapex import provider_forms
+from apex.lib.settings import apex_settings
+from apex.lib.libapex import (
+    get_velruse_token,
+    get_providers,
+    apexid_from_token,
+    apex_email_forgot,
+    apex_email_activate,
+    apex_remember,
+    auth_provider,
+    generate_velruse_forms,
+    get_module,
+    provider_forms,
+    apex_email,
+)
+from apex.models import create_user
 from apex.lib.flash import flash
 from apex.lib.form import ExtendedForm
 from apex.models import AuthGroup
@@ -43,12 +52,95 @@ from apex.forms import LoginForm
 
 
 def get_came_from(request):
-    return request.GET.get('came_from', 
+    return request.GET.get('came_from',
                            request.POST.get(
-                               'came_from',  
+                               'came_from',
                                route_url(apex_settings('came_from_route'), request))
-                          ) 
+                          )
 
+
+AUTOSUBMITED_VELRUSE_LDAP_FORM = """\
+<html>
+    <head>
+        <title>LDAP transaction in progress</title>
+    </head>
+    <body onload="document.forms[0].submit();">
+        <form action="%s" method="post" accept-charset="UTF-8"
+         enctype="application/x-www-form-urlencoded">
+        <input type="hidden" name="end_point" value="%s" />
+        <input type="hidden" name="ldap_username" value="%s" />
+        <input type="hidden" name="ldap_password" value="%s" />
+        <input type="submit" value="Continue"/></form>
+        <script>
+            var elements = document.forms[0].elements;
+            for (var i = 0; i < elements.length; i++) {
+                elements[i].style.display = "none";
+            }
+        </script>
+    </body>
+</html>
+"""
+
+
+def search_user(username):
+    user = None
+    if '@' in username:
+        user = AuthUser.get_by_email(username)
+    if not user:
+        user = AuthUser.get_by_username(username)
+    if not user:
+        user = AuthUser.get_by_login(username)
+    return user
+
+def begin_activation_email_process(request, user):
+    timestamp = time.time()+3600
+    hmac_key = hmac.new('%s:%s:%d' % (
+        str(user.id),
+        apex_settings('auth_secret'),
+        timestamp),
+        user.email).hexdigest()[0:10]
+    time_key = base64.urlsafe_b64encode('%d' % timestamp)
+    email_hash = '%s%s' % (hmac_key, time_key)
+    apex_email_activate(request, user.id, user.email, email_hash)
+
+def useradd(request):
+    """ useradd(request)
+    No return value
+
+    Function called from route_url('apex_useradd', request)
+    """
+    title = _('Create an user')
+    velruse_forms = []
+
+    #This fixes the issue with RegisterForm throwing an UnboundLocalError
+    if apex_settings('useradd_form_class'):
+        UseraddForm = get_module(apex_settings('useradd_form_class'))
+    else:
+        from apex.forms import UseraddForm
+    if 'local' not in apex_settings('provider_exclude', []):
+        if asbool(apex_settings('use_recaptcha_on_register')):
+            if apex_settings('recaptcha_public_key') and apex_settings('recaptcha_private_key'):
+                UseraddForm.captcha = RecaptchaField(
+                    public_key=apex_settings('recaptcha_public_key'),
+                    private_key=apex_settings('recaptcha_private_key'),
+                )
+
+        form = UseraddForm(request.POST, captcha={'ip_address': request.environ['REMOTE_ADDR']})
+    else:
+        form = None
+    if request.method == 'POST' and form.validate():
+        user = form.save()
+        # on creation by an admin, the user must activate itself its account.
+        begin_activation_email_process(request, user)
+        DBSession.add(user)
+        user.active = 'N'
+        DBSession.flush()
+        flash(_('User sucessfully created, An email has been sent '
+                'to it\'s email to activate its account.'), 'success')
+    return {'title': title,
+            'form': form,
+            'velruse_forms': velruse_forms,
+            'action': 'useradd'}
 
 def login(request):
     """ login(request)
@@ -56,10 +148,16 @@ def login(request):
 
     Function called from route_url('apex_login', request)
     """
+    if request.user:
+        if 'came_from' in request.params:
+            return HTTPFound(location=request.params['came_from'])
     title = _('You need to login')
     came_from = get_came_from(request)
+    velruse_forms = generate_velruse_forms(request, came_from)
+    providers = get_providers()
+    use_captcha = asbool(apex_settings('use_recaptcha_on_login'))
     if 'local' not in apex_settings('provider_exclude', []):
-        if asbool(apex_settings('use_recaptcha_on_login')):
+        if use_captcha:
             if apex_settings('recaptcha_public_key') and apex_settings('recaptcha_private_key'):
                 LoginForm.captcha = RecaptchaField(
                     public_key=apex_settings('recaptcha_public_key'),
@@ -70,15 +168,54 @@ def login(request):
     else:
         form = None
 
-    velruse_forms = generate_velruse_forms(request, came_from)
+    for vform in velruse_forms:
+        if getattr(vform, 'velruse_login', None):
+            vform.action = vform.velruse_login
 
-    if request.method == 'POST' and form.validate():
-        user = AuthUser.get_by_username(form.data.get('username'))
-        if user:
-            headers = apex_remember(request, user.id)
-            return HTTPFound(location=came_from, headers=headers)
+    # allow to include this as a portlet inside other pages
+    if (request.method == 'POST'
+        and (request.route_url('apex_login') in request.url)):
+        local_status = form.validate()
+        username = form.data.get('username')
+        password = form.data.get('password')
+        user = search_user(username)
+        if local_status and user:
+            if user.active == 'Y':
+                headers = apex_remember(request, user.id)
+                return HTTPFound(location=came_from, headers=headers)
+        else:
+            stop = False
+            if use_captcha:
+                if 'captcha' in form.errors:
+                    stop = True
+                    form.came_from.data = came_from
+                    form.data['came_from'] = came_from
+            if not stop:
+                end_point='%s?%s' % (
+                    request.route_url('apex_callback'),
+                    urlencode(dict(
+                        csrf_token=request.session.get_csrf_token(),
+                        came_from=came_from,
+                    ))
+                )
+                # try ldap auth if present on velruse
+                # idea is to let the browser to the request with
+                # an autosubmitted form
+                if 'velruse.providers.ldapprovider' in providers:
+                    response = AUTOSUBMITED_VELRUSE_LDAP_FORM%(
+                        providers['velruse.providers.ldapprovider']['login'],
+                        end_point,
+                        username,
+                        password)
+                    return Response(response)
 
-    return {'title': title, 'form': form, 'velruse_forms': velruse_forms, \
+    if not came_from:
+        came_from = request.url
+    form.came_from.data = came_from
+
+    return {'title': title,
+            'form': form,
+            'velruse_forms': velruse_forms,
             'form_url': request.route_url('apex_login'),
             'action': 'login'}
 
@@ -197,18 +334,18 @@ def activate(request):
     current_time = time.time()
     time_key = int(base64.b64decode(submitted_hmac[10:]))
     if current_time < time_key:
-        hmac_key = hmac.new('%s:%s:%d' % (str(user.id), \
-                            apex_settings('auth_secret'), time_key), \
+        hmac_key = hmac.new('%s:%s:%d' % (str(user.id),
+                            apex_settings('auth_secret'), time_key),
                             user.email).hexdigest()[0:10]
         if hmac_key == submitted_hmac[0:10]:
             user.active = 'Y'
             DBSession.merge(user)
             DBSession.flush()
             flash(_('Account activated. Please log in.'))
-            return HTTPFound(location=route_url('apex_login', \
+            return HTTPFound(location=route_url('apex_login',
                                                 request))
     flash(_('Invalid request, please try again'))
-    return HTTPFound(location=route_url(apex_settings('came_from_route'), \
+    return HTTPFound(location=route_url(apex_settings('came_from_route'),
                                         request))
 
 def register(request):
@@ -240,11 +377,26 @@ def register(request):
 
     if request.method == 'POST' and form.validate():
         user = form.save()
+        need_verif = apex_settings('need_mail_verification')
+        response = HTTPFound(location=came_from)
+        if need_verif:
+            begin_activation_email_process(request, user)
+            DBSession.add(user)
+            user.active = 'N'
+            DBSession.flush()
+            flash(_('User sucessfully created, '
+                    'please verify your account by clicking '
+                    'on the link in the mail you just received from us !'), 'success')
 
-        headers = apex_remember(request, user.id)
-        return HTTPFound(location=came_from, headers=headers)
+            response = HTTPFound(location=came_from)
+        else:
+            headers = apex_remember(request, user.id)
+            response = HTTPFound(location=came_from, headers=headers)
+        return response
 
-    return {'title': title, 'form': form, 'velruse_forms': velruse_forms, \
+    return {'title': title,
+            'form': form,
+            'velruse_forms': velruse_forms,
             'action': 'register'}
 
 def apex_callback(request):
@@ -253,30 +405,39 @@ def apex_callback(request):
 
     This is the URL that Velruse returns an OpenID request to
     """
-    redir = request.GET.get('came_from', \
+    redir = request.GET.get('came_from',
                 route_url(apex_settings('came_from_route'), request))
     headers = []
+    login_failed = True
+    reason = _('Login failed!')
     if 'token' in request.POST:
-        auth = apexid_from_token(request.POST['token'])
+        token = request.POST['token']
+        auth = apexid_from_token(token)
         if auth:
-            user = AuthUser.get_by_login(auth['apexid'])
+            login_failed = False
+            user, email = None, ''
+            if 'emails' in  auth['profile']:
+                emails = auth['profile']['emails']
+                if isinstance(emails[0], dict):
+                    email = auth['profile']['emails'][0]['value']
+                else:
+                    email = auth['profile']['emails'][0]
+            else:
+                email = auth['profile'].get('verifiedEmail', '').strip()
+            # first try by email
+            if email:
+                user = AuthUser.get_by_email(email)
+            # then by id
+            if user is None:
+                user = search_user(auth['apexid'])
             if not user:
-                user = AuthUser(
-                    login=auth['apexid'],
-                )
-                if auth['profile'].has_key('verifiedEmail'):
-                    user.email = auth['profile']['verifiedEmail']
-                DBSession.add(user)
-                if apex_settings('default_user_group'):
-                    for name in apex_settings('default_user_group'). \
-                                              split(','):
-                        group = DBSession.query(AuthGroup). \
-                           filter(AuthGroup.name==name.strip()).one()
-                        user.groups.append(group)
+                user_infos = {'login': auth['apexid'], 'username': auth['name']}
+                if email:
+                    user_infos['email'] = email
+                user = create_user(**user_infos)
                 if apex_settings('create_openid_after'):
                     openid_after = get_module(apex_settings('create_openid_after'))
                     request = openid_after().after_signup(request, user)
-                DBSession.flush()
             if apex_settings('openid_required'):
                 openid_required = False
                 for required in apex_settings('openid_required').split(','):
@@ -292,6 +453,18 @@ def apex_callback(request):
             redir = request.GET.get('came_from', \
                         route_url(apex_settings('came_from_route'), request))
             flash(_('Successfully Logged in, welcome!'), 'success')
+        else:
+            auth = get_velruse_token(token)
+            reasont = ''
+            if auth.get('code', None):
+                reasont += 'Code %s : ' % auth['code']
+            if auth.get('description', ''):
+                reasont += _(auth['description'])
+            if reasont:
+                reason = reasont
+            login_failed = True
+    if login_failed:
+        flash(reason)
     return HTTPFound(location=redir, headers=headers)
 
 def openid_required(request):

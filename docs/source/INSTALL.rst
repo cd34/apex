@@ -21,6 +21,8 @@ the Root Factory. You'll need to install Pyramid from Github:
 
 ::
 
+    # if you need to confirm by mail on account creation
+    apex.need_mail_verification = true
     apex.session_secret = asdfasdf
     apex.auth_secret = abcdefgh
     apex.came_from_route = index
@@ -41,14 +43,8 @@ the Root Factory. You'll need to install Pyramid from Github:
 
     [app:velruse]
     use = egg:velruse
-    config_file = %(here)s/CONFIG.yaml
-    beaker.session.data_dir = %(here)s/data/sdata
-    beaker.session.lock_dir = %(here)s/data/slock
-    beaker.session.key = velruse
-    beaker.session.secret = somesecret
-    beaker.session.type = cookie
-    beaker.session.validate_key = STRONG_KEY_HERE
-    beaker.session.cookie_domain = .domain.com
+    velruse.providers=
+        velruse.providers.github
 
     [composite:main]
     use = egg:Paste#urlmap

@@ -1,19 +1,23 @@
 from wtforms import Form
-from wtforms import HiddenField
-from wtforms import PasswordField
-from wtforms import TextField
-from wtforms import validators
+from wtforms import (
+    HiddenField,
+    PasswordField,
+    TextField,
+    validators,
+)
 
 from apex import MessageFactory as _
 from pyramid.security import authenticated_userid
 from pyramid.security import remember
-from pyramid.threadlocal import get_current_registry
-from pyramid.threadlocal import get_current_request
+from pyramid.threadlocal import (
+    get_current_registry,
+    get_current_request,
+)
 
-from apex.models import DBSession
-from apex.models import AuthGroup
-from apex.models import AuthUser
+from apex.models import DBSession, AuthGroup, AuthUser
 from apex.lib.form import ExtendedForm
+from apex.lib.settings import apex_settings
+from apex.models import create_user
 
 class RegisterForm(ExtendedForm):
     """ Registration Form
@@ -27,30 +31,23 @@ class RegisterForm(ExtendedForm):
     email = TextField(_('Email Address'), [validators.Required(), \
                       validators.Email()])
 
+    def validate_email(form, field):
+        need_verif = apex_settings('need_mail_verification')
+        if need_verif and not field.data:
+            raise validators.ValidationError(_('Sorry but you need to input an email.'))
+
     def validate_username(form, field):
         if AuthUser.get_by_username(field.data) is not None:
             raise validators.ValidationError(_('Sorry that username already exists.'))
 
-    def create_user(self, username):
-        user = AuthUser(
-            username=username,
-            password=self.data['password'],
-            email=self.data['email'],
-        )
-        DBSession.add(user)
-        settings = get_current_registry().settings
-        if settings.has_key('apex.default_user_group'):
-            group = DBSession.query(AuthGroup). \
-               filter(AuthGroup.name==settings['apex.default_user_group']).one()
-            user.groups.append(group)
-        DBSession.flush()
-
-        return user
-
     def save(self):
-        new_user = self.create_user(self.data['username'])
+        infos = {'password': self.data.get('password', ''),
+                 'email': self.data.get('email', ''),
+                 'username': self.data.get('username', ''),
+                 'login': self.data.get('username', ''),
+                }
+        new_user = create_user(**infos)
         self.after_signup(new_user)
-
         return new_user
 
     def after_signup(self, user, **kwargs):
@@ -59,6 +56,13 @@ class RegisterForm(ExtendedForm):
         extra actions after the form submission.
         """
         pass
+
+
+class UseraddForm(RegisterForm):
+    def __init__(self, *args, **kwargs):
+        RegisterForm.__init__(self, *args, **kwargs)
+        delattr(self, 'password2')
+        delattr(self, 'password')
 
 class ChangePasswordForm(ExtendedForm):
     """ Change Password Form
@@ -78,6 +82,7 @@ class ChangePasswordForm(ExtendedForm):
 class LoginForm(ExtendedForm):
     username = TextField(_('Username'), validators=[validators.Required()])
     password = PasswordField(_('Password'), validators=[validators.Required()])
+    came_from = HiddenField('')
 
     def clean(self):
         errors = []
@@ -154,6 +159,10 @@ class TwitterLogin(OAuthForm):
 class WindowsLiveLogin(OAuthForm):
     provider_name = 'live'
     provider_proper_name = 'Microsoft Live'
+
+class GithubLogin(OAuthForm):
+    provider_name = 'github'
+    provider_proper_name = 'Github'
 
 class OpenIDRequiredForm(ExtendedForm):
     pass

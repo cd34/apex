@@ -20,6 +20,7 @@ from apex.interfaces import ApexImplementation
 from apex.lib.libapex import groupfinder
 from apex.lib.libapex import RequestFactory
 from apex.lib.libapex import RootFactory
+from apex.lib.libapex import apex_settings
 from apex.models import initialize_sql
 from apex.views import apex_callback
 from apex.views import activate
@@ -32,6 +33,7 @@ from apex.views import forbidden
 from apex.views import openid_required
 from apex.views import register
 from apex.views import reset_password
+from apex.views import useradd
 
 """
     Allows flash messages to be called as:
@@ -78,8 +80,14 @@ def includeme(config):
     if use_request_factory:
         config.set_request_factory(RequestFactory)
 
-    if not config.registry.queryUtility(IMailer):
+    mailer = config.registry.queryUtility(IMailer)
+    if not mailer:
         config.include('pyramid_mailer')
+        mailer = config.registry.queryUtility(IMailer)
+    if mailer:
+        if (not config.registry.settings.has_key('apex.sender_email')):
+            if mailer.default_sender:
+                config.registry.settings['apex.sender_email'] = mailer.default_sender
 
     if not settings.get('mako.directories'):
         config.add_settings({'mako.directories': ['apex:templates']})
@@ -127,6 +135,9 @@ def includeme(config):
 
     config.add_route('apex_callback', '/apex_callback')
     config.add_view(apex_callback, route_name='apex_callback')
+
+    config.add_route('apex_useradd', '/useradd')
+    config.add_view(useradd, route_name='apex_useradd') 
 
     config.add_route('apex_openid_required', '/openid_required')
     config.add_view(openid_required, route_name= \
