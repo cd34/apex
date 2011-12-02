@@ -22,6 +22,8 @@ from pyramid.settings import asbool
 from pyramid.url import current_route_url
 from pyramid.url import route_url
 
+
+from sqlalchemy.sql import expression as se
 from pyramid_mailer.message import Message
 
 from apex.lib.db import merge_session_with_post
@@ -42,13 +44,17 @@ from apex.lib.libapex import (
 from apex.models import create_user
 from apex.lib.flash import flash
 from apex.lib.form import ExtendedForm
-from apex.models import AuthGroup
-from apex.models import AuthUser
-from apex.models import DBSession
-from apex.forms import ChangePasswordForm
-from apex.forms import ForgotForm
-from apex.forms import ResetPasswordForm
-from apex.forms import LoginForm
+from apex.models import (
+    AuthGroup,
+    AuthUser,
+    get_default_groups,
+    DBSession,
+)
+from apex.forms import (ChangePasswordForm,
+                        ForgotForm,
+                        ResetPasswordForm,
+                        LoginForm,
+                        GroupForm,)
 
 
 def get_came_from(request):
@@ -347,6 +353,54 @@ def activate(request):
     flash(_('Invalid request, please try again'))
     return HTTPFound(location=route_url(apex_settings('came_from_route'),
                                         request))
+
+def managegroups(request):
+    params = {'action': 'manage_groups', 'form': None}
+    form, session = None, DBSession
+    is_a_post = request.method == 'POST'
+    adding = 'groupname' in request.POST
+    deleting = request.params.get('group_action', '') == 'delete'
+    settings = request.registry.settings
+    default_groups_names = [a[0] 
+                            for a in get_default_groups(settings)] 
+    if is_a_post and deleting:
+        items = [a[1]
+                 for a in request.POST.items()
+                 if a[0] == 'delete']
+
+        todelete = session.query( AuthGroup).filter(
+            se.and_(
+                AuthGroup.id.in_(items),
+                se.not_(AuthGroup.name.in_(default_groups_names))
+            )).all()
+        noecho = [session.delete(i) for i in todelete]
+        request.session.flash(_('Groups %s have been deleted') % (
+            ', '.join([a.name for a in todelete])), 'info')
+    add_form = GroupForm(request.POST)
+    if is_a_post and adding:
+        if add_form.validate():
+            try:
+                group = add_form.save()
+                add_form = GroupForm()
+                flash(_('Added group : %s' % group.name, 'info'))
+            except Exception, e:
+                flash(_('Problem adding group : %s' % e, 'error'))
+    params['group_add_form'] = add_form
+    action = request.params.get('group_action', '')
+    groups = [(a.name not in default_groups_names, a)
+              for a in session.query(
+                  AuthGroup).order_by(AuthGroup.name).all()]
+    rdata = []
+    for deletable, group in groups:
+        item = {
+            'id': group.id,
+            'name': group.name,
+            'description':group.description,
+            'deletable': deletable,
+        }
+        rdata.append(item)
+    params['groups'] = rdata
+    return params 
 
 def register(request):
     """ register(request):

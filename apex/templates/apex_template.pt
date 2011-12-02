@@ -17,6 +17,35 @@
   </head>
   <body  metal:define-macro="body"
     tal:define="test python:action.endswith;velruse_forms velruse_forms|nothing">
+    <div class="group"
+      tal:condition="python:action == 'manage_groups'|nothing">
+      <h1>Add a group</h1>
+      <tal:b i18n:translate="" 
+        tal:content="structure python:group_add_form.render(action=request.url)"/> 
+      <div class="groups">
+        <h1>Existing groups</h1>
+        <form action="${request.route_url('apex_managegroups')}" method="post">
+          <table>
+            <th>
+              <td>Name</td>
+              <td>Description</td>
+            </th>
+            <tal:r tal:repeat="group groups">
+              <tr>
+                <td>
+                  <input tal:condition="python:group.get('deletable', False)" type="checkbox" value="${group.id}" name="delete"/>
+                </td>
+                <td>${group['name']}</td>
+                <td>${group['description']}</td>
+              </tr>
+            </tal:r>
+          </table>
+          <input type="hidden" name="group_action" value="delete"/>
+          <input type="submit" i18n:attributes="name" name="Delete groups" value="Delete groups"/>
+          <input type="hidden" name="csrf_token" tal:attributes="value python:request.session.get_csrf_token()|nothing"/>
+        </form> 
+      </div>
+    </div>
     <div class="login-box"
       tal:define="action request.route_url('apex_%s' % action)|form_url|action|string:;
       include_came_from include_came_from|nothing;
@@ -31,8 +60,8 @@
         <tal:r tal:repeat="provider_form velruse_forms">
           <tal:b i18n:translate=""
             tal:content="structure python:provider_form.render(
-                                         action='/velruse/%s/login' % provider_form.provider_name,
-                                         submit_text=provider_form.provider_proper_name)"/>
+            action='/velruse/%s/login' % provider_form.provider_name,
+            submit_text=provider_form.provider_proper_name)"/>
         </tal:r>
       </tal:if>
       <a i18n:translate="" tal:condition="not test('login') and not test('register') and not test('useradd')"

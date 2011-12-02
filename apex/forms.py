@@ -14,10 +14,53 @@ from pyramid.threadlocal import (
     get_current_request,
 )
 
-from apex.models import DBSession, AuthGroup, AuthUser
+from apex.models import (
+    AuthUser,
+    create_user, create_group,
+)
 from apex.lib.form import ExtendedForm
 from apex.lib.settings import apex_settings
-from apex.models import create_user
+
+from apex.models import DBSession, AuthGroup
+from wtforms.validators import ValidationError
+
+class GroupValidator(object):
+    """
+    validate if the group already exists
+    """
+
+    def __call__(self, form, field):
+        message = _('"%s" is an already existing group.')
+        data = field.data
+        item = DBSession.query(AuthGroup).filter(AuthGroup.name == data).first()
+        if item is not None:
+            raise ValidationError(message % field.data)
+
+class GroupForm(ExtendedForm):
+    """ Registration Form
+    """
+    groupname = TextField(_('Group name'), 
+                          [validators.Required(), 
+                           GroupValidator(),
+                           validators.Length(min=4, max=25)])
+    description = TextField(_('Description'), 
+                            [validators.Required(), 
+                             validators.Length(min=4, max=2500)])
+    def save(self):
+        infos = {'description': self.data.get('description', ''),
+                 'name': self.data.get('groupname', ''),
+                }
+        new_group = create_group(**infos)
+        self.after_signup(new_group)
+        return new_group
+
+    def after_signup(self, user, **kwargs):
+        """ Function to be overloaded and called after form submission
+        to allow you the ability to save additional form data or perform
+        extra actions after the form submission.
+        """
+        pass 
+
 
 class RegisterForm(ExtendedForm):
     """ Registration Form

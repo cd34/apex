@@ -25,7 +25,7 @@ from velruse.store.sqlstore import SQLBase
 from zope.sqlalchemy import ZopeTransactionExtension 
 
 from apex.lib.db import get_or_create
-from apex.events import UserCreatedEvent
+from apex.events import UserCreatedEvent, GroupCreatedEvent
 
 DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 Base = declarative_base()
@@ -221,20 +221,25 @@ class AuthUserLog(Base):
     ip_addr = Column(Unicode(39), nullable=False)
     event = Column(types.Enum(u'L',u'R',u'P',u'F', name=u"event"), default=u'L')
 
-def populate(settings):
-    session = DBSession()
-    
+
+
+def get_default_groups(settings):
     default_groups = []
     if settings.has_key('apex.default_groups'):
         for name in settings['apex.default_groups'].split(','):
             default_groups.append((unicode(name.strip()),u''))
     else:
         default_groups = [(u'users',u'User Group'), \
-                          (u'admin',u'Admin Group')]
+                          (u'admin',u'Admin Group')] 
+
+    return default_groups
+
+def populate(settings):
+    session = DBSession()
+    default_groups = get_default_groups(settings)
     for name, description in default_groups:
         group = AuthGroup(name=name, description=description)
         session.add(group)
-
     session.flush()
     transaction.commit()
 
@@ -282,4 +287,25 @@ def create_user(**kwargs):
     registry.notify(UserCreatedEvent(request, user))
     return user
 
+def create_group(**kwargs):
+    """
+::
+
+    from apex.lib.libapex import create_group
+    create_group(groupname='test', password='my_password', active='Y', group='group')
+    Returns: AuthGroup object
+    """
+    group = AuthGroup()
+    request = get_current_request()
+    registry = get_current_registry()
+    for key, value in kwargs.items():
+        setattr(group, key, value)
+    DBSession.add(group)
+    try:
+        DBSession.flush()
+        registry.notify(GroupCreatedEvent(request, group))
+    except Exception, e:
+        DBSession.rollback()
+        raise Exception('Cant create group: %s' % e)
+    return group
 

@@ -34,6 +34,7 @@ from apex.views import openid_required
 from apex.views import register
 from apex.views import reset_password
 from apex.views import useradd
+from apex.views import managegroups
 
 """
     Allows flash messages to be called as:
@@ -134,7 +135,10 @@ def includeme(config):
     config.add_view(apex_callback, route_name='apex_callback')
 
     config.add_route('apex_useradd', '/useradd')
-    config.add_view(useradd, route_name='apex_useradd') 
+    config.add_view(useradd, route_name='apex_useradd')
+
+    config.add_route('apex_managegroups', '/managegroups')
+    config.add_view(managegroups, route_name='apex_managegroups')
 
     config.add_route('apex_openid_required', '/openid_required')
     config.add_view(openid_required, route_name= \
