@@ -1,3 +1,4 @@
+import logging
 from cryptacular.bcrypt import BCRYPTPasswordManager
 import transaction
 
@@ -26,6 +27,8 @@ from zope.sqlalchemy import ZopeTransactionExtension
 
 from apex.lib.db import get_or_create
 from apex.events import UserCreatedEvent, GroupCreatedEvent
+
+from apex.i18n import MessageFactory as _
 
 DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 Base = declarative_base()
@@ -263,28 +266,67 @@ def create_user(**kwargs):
     create_user(username='test', password='my_password', active='Y', group='group')
     Returns: AuthUser object
     """
-    user = AuthUser()
     request = get_current_request()
     registry = get_current_registry()
     settings = registry.settings
+    # map default groups
+    groups = []
     if settings.has_key('apex.default_user_group'):
-        group = DBSession.query(AuthGroup). \
-           filter(AuthGroup.name==settings['apex.default_user_group']).one()
-        user.groups.append(group)
-    DBSession.flush()
+        group = DBSession.query(AuthGroup).filter(
+            AuthGroup.name==settings['apex.default_user_group']).one()
+        if not group in groups:
+            groups.append(group)
+    # add user to users groups
+    qgroup = DBSession.query(AuthGroup).filter(
+        AuthGroup.name=='users').first()
+    if qgroup:
+        if not qgroup in groups:
+            groups.append(qgroup) 
+    # extra kw group
     if 'group' in kwargs:
         try:
-            group = DBSession.query(AuthGroup). \
-            filter(AuthGroup.name==kwargs['group']).one()
-            user.groups.append(group)
+            group = DBSession.query(AuthGroup).filter(
+                AuthGroup.name==kwargs['group']).one()
+            groups.append(group)
         except NoResultFound:
             pass
         del kwargs['group']
+    # extra kw groups splitted on ','
+    if 'groups' in kwargs:
+        try:
+            sgroups = kwargs['group'].split(',')
+            qgroups= DBSession.query(AuthGroup).filter(
+                AuthGroup.name.in_(sgroups)).all()
+            for group in qgroups:
+                if not group in groups:
+                    groups.append(group)
+        except NoResultFound:
+            pass
+        del kwargs['groups']
+    # register user
+    user = AuthUser()
     for key, value in kwargs.items():
-        setattr(user, key, value)
+        setattr(user, key, value)  
     DBSession.add(user)
-    DBSession.flush()
-    registry.notify(UserCreatedEvent(request, user))
+    try:
+        transaction.commit()
+        DBSession.add(user)
+        # link groups
+        for group in groups:
+            try:
+                user.groups.append(group)
+                transaction.commit()
+            except Exception, e:
+                error = _('Cant add user :%s to group: %s (%s)') % (user, group, e)
+                logging.getLogger('apex.add_user_to_group').error(error)
+                request.session.flash(error, 'error') 
+        transaction.commit()
+        DBSession.add(user)
+        registry.notify(UserCreatedEvent(request, user))
+        transaction.commit()
+        DBSession.add(user)
+    except Exception, e:
+        raise Exception('Cant create user: %s' % e)  
     return user
 
 def create_group(**kwargs):
@@ -303,6 +345,7 @@ def create_group(**kwargs):
     DBSession.add(group)
     try:
         DBSession.flush()
+        transaction.commit()
         registry.notify(GroupCreatedEvent(request, group))
     except Exception, e:
         DBSession.rollback()

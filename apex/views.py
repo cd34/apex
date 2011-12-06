@@ -3,6 +3,7 @@ import hmac
 import time
 
 from urllib import urlencode
+import transaction
 
 from wtforms import TextField
 from wtforms import validators
@@ -434,8 +435,11 @@ def register(request):
         need_verif = apex_settings('need_mail_verification')
         response = HTTPFound(location=came_from)
         if need_verif:
+            try:
+                DBSession.add(user)
+            except:
+                pass
             begin_activation_email_process(request, user)
-            DBSession.add(user)
             user.active = 'N'
             DBSession.flush()
             flash(_('User sucessfully created, '
@@ -444,6 +448,7 @@ def register(request):
 
             response = HTTPFound(location=came_from)
         else:
+            transaction.commit()
             headers = apex_remember(request, user.id)
             response = HTTPFound(location=came_from, headers=headers)
         return response
