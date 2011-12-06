@@ -39,8 +39,9 @@ def csrf_validation(event):
         token = event.request.POST.get('csrf_token') or event.request.GET.get('csrf_token')
         no_csrf = apex_settings('no_csrf', '').split(':')
         if (token is None or token != event.request.session.get_csrf_token()):
-            if event.request.matched_route and event.request.matched_route.name not in no_csrf:
-                raise HTTPForbidden(_('CSRF token is missing or invalid'))
+            if event.request.matched_route and event.request.matched_route.name not in no_csrf \
+                and not event.request.matched_route.name.startswith('debugtoolbar.'):
+                    raise HTTPForbidden(_('CSRF token is missing or invalid'))
 
 def add_renderer_globals(event):
     """ add globals to templates
