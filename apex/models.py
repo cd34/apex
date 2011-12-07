@@ -10,9 +10,7 @@ from sqlalchemy import Table
 from sqlalchemy import Unicode
 from sqlalchemy import types
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import backref
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker

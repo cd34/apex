@@ -5,14 +5,12 @@ except ImportError:
 
 import urlparse
 
-import velruse.store.sqlstore
 from velruse.app import parse_config_file
 from velruse.store.sqlstore import KeyStorage
 
 from sqlalchemy.orm.exc import NoResultFound
 
 from pyramid.decorator import reify
-from pyramid.httpexceptions import HTTPFound
 from pyramid.security import Allow
 from pyramid.security import authenticated_userid
 from pyramid.security import Everyone
