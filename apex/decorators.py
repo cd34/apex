@@ -3,7 +3,6 @@ from apex import MessageFactory as _
 from pyramid.security import authenticated_userid
 from pyramid.url import route_url
 
-from apex.lib.libapex import apex_settings
 from apex.lib.flash import flash
 
 def login_required(wrapped):

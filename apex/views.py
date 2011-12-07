@@ -11,16 +11,11 @@ from wtfrecaptcha.fields import RecaptchaField
 from pyramid.httpexceptions import HTTPFound
 from apex import MessageFactory as _
 from pyramid.response import Response
-from pyramid.security import Allow
-from pyramid.security import Authenticated
 from pyramid.security import authenticated_userid
-from pyramid.security import Everyone
 from pyramid.security import forget
 from pyramid.settings import asbool
 from pyramid.url import current_route_url
 from pyramid.url import route_url
-
-from pyramid_mailer.message import Message
 
 from apex.lib.db import merge_session_with_post
 from apex.lib.libapex import apex_settings
@@ -30,7 +25,6 @@ from apex.lib.libapex import apex_remember
 from apex.lib.libapex import auth_provider
 from apex.lib.libapex import generate_velruse_forms
 from apex.lib.libapex import get_module
-from apex.lib.libapex import provider_forms
 from apex.lib.flash import flash
 from apex.lib.form import ExtendedForm
 from apex.models import AuthGroup
