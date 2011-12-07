@@ -1,0 +1,3 @@
+Store:
+    Type: SQL
+    DB: sqlite:///%(here)s/apex_test.db
