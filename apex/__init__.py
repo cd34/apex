@@ -59,6 +59,11 @@ def includeme(config):
                UnencryptedCookieSessionFactoryConfig( \
                settings.get('apex.session_secret')))
 
+    if not config.registry.queryUtility(IAuthorizationPolicy):
+        authz_policy = ACLAuthorizationPolicy()
+        config.set_authorization_policy(authz_policy)
+
+
     if not config.registry.queryUtility(IAuthenticationPolicy):
         if not settings.has_key('apex.auth_secret'):
             raise ApexAuthSecret()
@@ -66,10 +71,6 @@ def includeme(config):
                        settings.get('apex.auth_secret'), \
                        callback=groupfinder)
         config.set_authentication_policy(authn_policy)
-
-    if not config.registry.queryUtility(IAuthorizationPolicy):
-        authz_policy = ACLAuthorizationPolicy()
-        config.set_authorization_policy(authz_policy)
 
     cache = RootFactory.__acl__
     config.set_root_factory(RootFactory)
