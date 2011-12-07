@@ -4,6 +4,7 @@ from sqlalchemy import engine_from_config
 from pyramid import testing
 from sqlalchemy.orm import sessionmaker
 from apex.models import DBSession
+from apex.models import Base
 here = os.path.abspath(os.path.dirname(__file__))
 
 
@@ -27,7 +28,17 @@ class BaseTestCase(unittest.TestCase):
             we also must create a default user/pass/group to test
         """
         cls.engine = engine_from_config(settings, prefix='sqlalchemy.')
+        DBSession.configure(bind=cls.engine)
+        Base.metadata.create_all(cls.engine)
+
         cls.Session = sessionmaker()
+
+    @classmethod
+    def tearDownClass(cls):
+        DBSession.close()
+        from apex.models import Base
+        Base.metadata.drop_all(cls.engine)
+
 
     def setUp(self):
         self.config = testing.setUp()
