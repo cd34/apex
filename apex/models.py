@@ -25,6 +25,10 @@ from zope.sqlalchemy import ZopeTransactionExtension
 
 from apex.lib.db import get_or_create
 
+import hashlib
+import random
+import string
+
 DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 Base = declarative_base()
 
@@ -79,6 +83,7 @@ class AuthUser(Base):
     id = Column(types.Integer(), primary_key=True)
     login = Column(Unicode(80), default=u'', index=True)
     username = Column(Unicode(80), default=u'', index=True)
+    salt = Column(Unicode(24))
     _password = Column('password', Unicode(80), default=u'')
     email = Column(Unicode(80), default=u'', index=True)
     active = Column(types.Enum(u'Y',u'N',u'D', name=u"active"), default=u'Y')
@@ -96,6 +101,8 @@ class AuthUser(Base):
     """
 
     def _set_password(self, password):
+        self.salt = self.get_salt(24)
+        password = password + self.salt
         self._password = BCRYPTPasswordManager().encode(password, rounds=12)
 
     def _get_password(self):
@@ -103,6 +110,17 @@ class AuthUser(Base):
 
     password = synonym('_password', descriptor=property(_get_password, \
                        _set_password))
+
+    def get_salt(self, length):
+        m = hashlib.sha256()
+        word = ''
+
+        for i in xrange(length):
+            word += random.choice(string.ascii_letters)
+
+        m.update(word)
+
+        return unicode(m.hexdigest()[:length])
 
     def in_group(self, group):
         """
@@ -171,7 +189,8 @@ class AuthUser(Base):
 
         if not user:
             return False
-        if BCRYPTPasswordManager().check(user.password, kwargs['password']):
+        if BCRYPTPasswordManager().check(user.password,
+            kwargs['password'] + user.salt):
             return True
         else:
             return False
