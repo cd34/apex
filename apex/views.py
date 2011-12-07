@@ -65,8 +65,10 @@ def login(request):
                     public_key=apex_settings('recaptcha_public_key'),
                     private_key=apex_settings('recaptcha_private_key'),
                 )
-        form = LoginForm(request.POST,
-                         captcha={'ip_address': request.environ['REMOTE_ADDR']})
+            form = LoginForm(request.POST,
+                            captcha={'ip_address': request.environ['REMOTE_ADDR']})
+        else:
+            form = LoginForm(request.POST)
     else:
         form = None
 
