@@ -30,12 +30,15 @@ import string
 DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 Base = declarative_base()
 
-user_group_table = Table('auth_user_groups', Base.metadata,
-    Column('user_id', types.Integer(), \
-        ForeignKey('auth_users.id', onupdate='CASCADE', ondelete='CASCADE')),
-    Column('group_id', types.Integer(), \
+class AuthGroupUser(Base):
+    __tablename__ = 'auth_user_groups'
+    user_id = Column(types.Integer(), \
+        ForeignKey('auth_users.id', onupdate='CASCADE', ondelete='CASCADE'))
+    group_id = Column('group_id', types.Integer(), \
         ForeignKey('auth_groups.id', onupdate='CASCADE', ondelete='CASCADE'))
-)
+    
+    user = relationship('AuthUser', backref='auth_groups')
+    group = relationship('AuthGroup', backref="auth_users")
 
 class AuthGroup(Base):
     """ Table name: auth_groups
@@ -53,8 +56,7 @@ class AuthGroup(Base):
     name = Column(Unicode(80), unique=True, nullable=False)
     description = Column(Unicode(255), default=u'')
 
-    users = relationship('AuthUser', secondary=user_group_table, \
-                     backref='auth_groups')
+    users = association_proxy('auth_groups', "user")
 
     def __repr__(self):
         return u'%s' % self.name
@@ -86,8 +88,7 @@ class AuthUser(Base):
     email = Column(Unicode(80), default=u'', index=True)
     active = Column(types.Enum(u'Y',u'N',u'D', name=u"active"), default=u'Y')
 
-    groups = relationship('AuthGroup', secondary=user_group_table, \
-                      backref='auth_users')
+    groups = association_proxy('auth_groups', "group")
 
     last_login = relationship('AuthUserLog', \
                          order_by='AuthUserLog.id.desc()')
