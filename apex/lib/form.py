@@ -43,12 +43,12 @@ class ExtendedForm(Form):
     def hidden_fields(self):
         """ Returns all the hidden fields.
         """
-        return [field for name, field in self._fields.iteritems() if field.type == 'HiddenField']
+        return [self._fields[name] for name, field in self._unbound_fields if self._fields[name].type == 'HiddenField']
 
     def visible_fields(self):
         """ Returns all the visible fields.
         """
-        return [field for name, field in self._fields.iteritems() if not field.type == 'HiddenField']
+        return [self._fields[name] for name, field in self._unbound_fields if not self._fields[name].type == 'HiddenField']
 
     def _get_translations(self): 
         if self.request:
