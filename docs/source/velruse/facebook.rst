@@ -21,11 +21,10 @@ Site Domain should be the domain of your site, and needs to be part of the
 site URL. So, if you use http://specialname.domain.com, you would need to 
 put domain.com or specialname.domain.com. You cannot specify a separate domain.
 
-Modify your **CONFIG.yaml** file to include the following:
+Modify your **development.ini** file to include the following:
 
 ::
 
-    Facebook:
-        API Key: (the generated App ID)
-        Application Secret: (the generated App Secret)
-        Application ID: (the generated App ID)
+    velruse.facebook.app_id =
+    velruse.facebook.app_secret =
+    velruse.facebook.scope =

@@ -20,7 +20,7 @@ from apex.interfaces import ApexImplementation
 from apex.lib.libapex import groupfinder
 from apex.lib.libapex import RequestFactory
 from apex.lib.libapex import RootFactory
-from apex.models import initialize_sql
+from apex.models import DBSession
 from apex.views import apex_callback
 from apex.views import activate
 from apex.views import change_password
@@ -45,8 +45,9 @@ from apex.lib.flash import flash
 
 def includeme(config):
     settings = config.registry.settings
-
-    initialize_sql(engine_from_config(settings, 'sqlalchemy.'), settings)
+    engine = engine_from_config(settings, 'sqlalchemy.')
+    DBSession.configure(bind=engine)
+    #initialize_sql(engine_from_config(settings, 'sqlalchemy.'), settings)
 
     config.registry.registerUtility(ApexImplementation, IApex)
     config.add_translation_dirs('apex:locale/')

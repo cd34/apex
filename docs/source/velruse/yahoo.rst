@@ -23,10 +23,15 @@ Agree to Terms of Use.
 After you agree to the terms, you're presented with a page that contains your
 Consumer Key and Consumer Secret.
 
-Modify your **CONFIG.yaml** file to include the following:
+Modify your **development.ini** file to include the following:
 
 ::
 
-    Yahoo:
-        Consumer Key: (key from page under Authentication Information)
-        Consumer Secret: (secret from page under Authentication Information)
+    # OpenID storage required by:
+    # google, yahoo and openid providers
+    velruse.openid.store = openid.store.memstore:MemoryStore
+    velruse.openid.realm = http://domain.com
+
+    # Yahoo (also requires OpenID configuration)
+    velruse.yahoo.consumer_key =
+    velruse.yahoo.consumer_secret =
