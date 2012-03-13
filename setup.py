@@ -13,7 +13,7 @@ install_requires=[
     "wtforms-recaptcha",
 ]
 
-tests_require = install_requires + ['Sphinx', 'docutils', 
+tests_require = install_requires + ['Sphinx', 'docutils',
                                     'WebTest', 'virtualenv', 'nose']
 
 kwargs = dict(

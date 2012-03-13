@@ -11,3 +11,4 @@
 *.db
 *.db-journal
 .coverage
+/build

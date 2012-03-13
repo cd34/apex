@@ -16,7 +16,7 @@ Initial Setup of Pyramid-Apex
   cd newenv
   source bin/activate
   easy_install https://github.com/cd34/apex/tarball/master
-  paster create -t pyramid_routesalchemy example
+  pcreate -s alchemy example
   cd example
   vi development.ini
 
