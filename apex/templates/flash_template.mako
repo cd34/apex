@@ -4,7 +4,7 @@
 
 <%def name="apex_flash()">
 % for flashmsg in flash.get_all():
-    <div class="alert-message ${flashmsg['queue']}">
+    <div class="alert alert-${flashmsg['queue']}">
         <p>${flashmsg['message']}</p>
     </div>
 % endfor
