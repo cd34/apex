@@ -13,9 +13,6 @@ apex.came_from_route = home
   **REQUIRED**, defines the default home route. Pyramid defaults to home, but
   some installations may use index, etc.
 
-apex.velruse_config = %(here)s/CONFIG.yaml
-  **REQUIRED**, location of the Velruse CONFIG.yaml file
-
 apex.recaptcha_public_key = 
   OPTIONAL, REQUIRED if using Recaptcha
 
@@ -34,9 +31,11 @@ apex.use_recaptcha_on_reset = false
 apex.use_recaptcha_on_register = true
   OPTIONAL, Display Recaptcha form on Registration Page
 
-apex.provider_exclude = openid
-  OPTIONAL, comma separated list to exclude configured providers. The
-  value local will exclude local validation
+apex.exclude_local = false
+  OPTIONAL, disable local authentication
+
+apex.velruse_providers = 
+  OPTIONAL, comma separated list to include velruse configured providers.
 
 apex.apex_template = project:templates/auth.mako
   OPTIONAL, an optional template for rendering the authentication forms
@@ -71,7 +70,7 @@ apex.default_groups =
   OPTIONAL, comma separated list of group names to create. Defaults to 
   admin,user
 
-apex.log_logins =
+apex.log_logins = false
   OPTIONAL, boolean flag to log timestamp and IP address on each login.
  
 apex.log_login_header =
@@ -84,7 +83,7 @@ apex.use_apex_edit = false
   simple function.
 
 apex.no_csrf = 
-  OPTIONAL, a colon separated list of route names that should NOT be subject
+  OPTIONAL, a comma separated list of route names that should NOT be subject
   to CSRF tests.
 
 **Email Settings**
@@ -106,11 +105,32 @@ apex.email_message_text = apex.lib.libapex.EmailMessageText
 apex.use_request_factory = true
   OPTIONAL, use apex's default request factory
 
-**Velruse Options**
+**Fallback Authorization**
 
-These options allow you to control the scope/oauth_scope requested from the
-provider.
+Fallback Authorization is optional and is used for transitioning a 
+local user authentication table over to a native Apex salt+BCrypt. If
+you are running an existing authentication system, this eliminates
+having to reset everyone's password and send notifications for an existing
+auth system as you can run both in parallel and Apex will convert the
+user to native salt+BCrypt after a successful login. By default, Apex 
+includes a generic fallback that guesses between md5, sha1 and plaintext.
 
-apex.velruse_facebook_scope = 
-  OPTIONAL, string representing additional permissions to be requested 
-  upon login. http://developers.facebook.com/docs/reference/api/permissions/
+apex.fallback_auth = 
+  OPTIONAL, use apex.lib.fallbacks.GenericFallback which will handle md5,
+  prefix salt+md5, table field salt+md5, sha1, prefix salt+sha1, table field
+  salt+sha1 and plaintext. If a local password fails bcrypt, you can enable
+  the fallback to check other schemes and update the password table.
+  You can also write your own callback to match your existing password
+  hash method.
+
+apex.fallback_prefix_salt = 
+  OPTIONAL, salt to be prepended to password string
+
+apex.fallback_salt_field = 
+  OPTIONAL, field in user table containing salt
+
+==Future==
+
+apex.max_local_logins = 1
+  OPTIONAL, controls the number of local authentication records that can
+  be assigned to a single user.

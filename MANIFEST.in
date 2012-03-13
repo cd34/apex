@@ -1,2 +1,3 @@
 graft apex/static
 graft apex/templates
+graft apex/locale

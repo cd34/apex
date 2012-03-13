@@ -3,9 +3,6 @@ try:
 except ImportError:
     import simplejson as json
 
-import urlparse
-
-from velruse.app import parse_config_file
 from velruse.store.sqlstore import KeyStorage
 
 from sqlalchemy.orm.exc import NoResultFound
@@ -26,25 +23,22 @@ from pyramid_mailer import get_mailer
 from pyramid_mailer.message import Message
 
 from apex import MessageFactory as _
-from apex.forms import OpenIdLogin
-from apex.forms import GoogleLogin
-from apex.forms import FacebookLogin
-from apex.forms import YahooLogin
-from apex.forms import WindowsLiveLogin
-from apex.forms import TwitterLogin
+from apex.forms import (OpenIdLogin,
+                        GoogleLogin,
+                        FacebookLogin,
+                        YahooLogin,
+                        WindowsLiveLogin,
+                        TwitterLogin,
+                        BitbucketLogin,
+                        GithubLogin,
+                        LastfmLogin,
+                        IdenticaLogin,
+                        LinkedinLogin)
 from apex.models import DBSession
+from apex.models import AuthID
 from apex.models import AuthUser
 from apex.models import AuthGroup
 from apex.models import AuthUserLog
-
-auth_provider = {
-    'G':'Google',
-    'F':'Facebook',
-    'T':'Twitter',
-    'Y':'Yahoo',
-    'O':'OpenID',
-    'M':'Microsoft Live',
-}
 
 class EmailMessageText(object):
     """ Default email message text class
@@ -90,42 +84,6 @@ If you did not make this request, you can safely ignore it.
 """),
         }
 
-def apexid_from_url(provider, identifier):
-    """
-    returns the login ID for apex
-    """
-    id = None
-    if provider == 'Google':
-        try:
-            id = '$G$%s' % \
-                 urlparse.parse_qs(urlparse.urlparse(identifier).query)['id'][0]
-        except KeyError:
-            pass
-    elif provider == 'Facebook':
-        path = urlparse.urlparse(identifier).path[1:]
-        if path:
-            try:
-                id = '$F$%s' % path
-            except:
-                pass
-    elif provider == 'Twitter':
-        try:
-            id = '$T$%s' % \
-                 urlparse.parse_qs(urlparse.urlparse(identifier).query) \
-                     ['id'][0].split('\'')[1]
-        except KeyError:
-            pass
-    elif provider == 'Yahoo':
-        urlparts = urlparse.urlparse(identifier)
-        try:
-            id = '$Y$%s#%s' % \
-                 (urlparts.path.split('/')[2], urlparts.fragment)
-        except:
-            pass
-    elif provider == "OpenID":
-        id = '$O$%s' % identifier
-    return id
-
 def apexid_from_token(token):
     """ Returns the apex id from the OpenID Token
     """
@@ -133,9 +91,8 @@ def apexid_from_token(token):
     auth = json.loads(dbsession.query(KeyStorage.value). \
                       filter(KeyStorage.key==token).one()[0])
     if 'profile' in auth:
-        id = apexid_from_url(auth['profile']['providerName'], \
-                             auth['profile']['identifier'])
-        auth['apexid'] = id
+        auth['id'] = auth['profile']['accounts'][0]['userid']
+        auth['provider'] = auth['profile']['accounts'][0]['domain']
         return auth
     return None
 
@@ -143,7 +100,7 @@ def groupfinder(userid, request):
     """ Returns ACL formatted list of groups for the userid in the
     current request
     """
-    auth = AuthUser.get_by_id(userid)
+    auth = AuthID.get_by_id(userid)
     if auth:
         return [('group:%s' % group.name) for group in auth.groups]
 
@@ -171,6 +128,11 @@ provider_forms = {
     'yahoo': YahooLogin,
     'live': WindowsLiveLogin,
     'facebook': FacebookLogin,
+    'bitbucket': BitbucketLogin,
+    'github': GithubLogin,
+    'identica': IdenticaLogin,
+    'lastfm': LastfmLogin,
+    'linkedin': LinkedinLogin,
 }
 
 def apex_email(request, recipients, subject, body, sender=None):
@@ -230,11 +192,13 @@ def apex_settings(key=None, default=None):
 
 def create_user(**kwargs):
     """
+
 ::
 
     from apex.lib.libapex import create_user
 
     create_user(username='test', password='my_password', active='Y', group='group')
+
 
     Returns: AuthUser object
     """
@@ -263,13 +227,10 @@ def generate_velruse_forms(request, came_from):
     the CONFIG.yaml file
     """
     velruse_forms = []
-    if apex_settings('velruse_config'):
-        configs = parse_config_file(apex_settings('velruse_config'))[0].keys()
-        if apex_settings('provider_exclude'):
-            for provider in apex_settings('provider_exclude').split(','):
-                if provider.strip() in configs:
-                    configs.remove(provider.strip())
-        for provider in configs:
+    providers = apex_settings('velruse_providers', None)
+    if providers:
+        providers = [x.strip() for x in providers.split(',')]
+        for provider in providers:
             if provider_forms.has_key(provider):
                 form = provider_forms[provider](
                     end_point='%s?csrf_token=%s&came_from=%s' % \
@@ -278,8 +239,6 @@ def generate_velruse_forms(request, came_from):
                       came_from), \
                      csrf_token = request.session.get_csrf_token(),
                 )
-                if provider == 'facebook':
-                    form.scope.data = apex_settings('velruse_facebook_scope')
                 velruse_forms.append(form)
     return velruse_forms
 
@@ -311,5 +270,5 @@ class RequestFactory(Request):
     def user(self):
         user = None
         if authenticated_userid(self):
-            user = AuthUser.get_by_id(authenticated_userid(self))
+            user = AuthID.get_by_id(authenticated_userid(self))
         return user

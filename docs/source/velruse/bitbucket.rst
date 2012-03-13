@@ -1,9 +1,13 @@
-Twitter
-=======
+Bitbucket
+=========
+
+::
+
+    INCOMPLETE
 
 Go to:
 
-http://dev.twitter.com/apps/new
+http://
 
 Sign in.
 
@@ -21,6 +25,6 @@ Modify your **development.ini** file to include the following:
 
 ::
 
-    velruse.twitter.consumer_key =
-    velruse.twitter.consumer_secret =
-    velruse.twitter.authorize = (optional)
+    velruse.bitbucket.consumer_key =
+    velruse.bitbucket.consumer_secret =
+    velruse.bitbucket.authorize = true

@@ -40,16 +40,6 @@ class ExtendedForm(Form):
 
         self.process(formdata, obj, **kwargs)
 
-    def hidden_fields(self):
-        """ Returns all the hidden fields.
-        """
-        return [self._fields[name] for name, field in self._unbound_fields if self._fields[name].type == 'HiddenField']
-
-    def visible_fields(self):
-        """ Returns all the visible fields.
-        """
-        return [self._fields[name] for name, field in self._unbound_fields if not self._fields[name].type == 'HiddenField']
-
     def _get_translations(self): 
         if self.request:
             localizer = get_localizer(self.request)

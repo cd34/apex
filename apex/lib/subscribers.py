@@ -37,10 +37,12 @@ def csrf_validation(event):
     """
     if event.request.method == 'POST':
         token = event.request.POST.get('csrf_token') or event.request.GET.get('csrf_token')
-        no_csrf = apex_settings('no_csrf', '').split(':')
+        no_csrf = apex_settings('no_csrf', '').split(',')
         if (token is None or token != event.request.session.get_csrf_token()):
             if event.request.matched_route and event.request.matched_route.name not in no_csrf \
                 and not event.request.matched_route.name.startswith('debugtoolbar.'):
+                    print 't:', token, event.request.session.get_csrf_token()
+                    print event.request.matched_route
                     raise HTTPForbidden(_('CSRF token is missing or invalid'))
 
 def add_renderer_globals(event):

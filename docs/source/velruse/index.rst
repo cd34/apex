@@ -16,6 +16,11 @@ Contents:
    twitter
    yahoo
    live
+   bitbucket
+   github
+   identica
+   lastfm
+   linkedin
 
 Indices and tables
 ==================

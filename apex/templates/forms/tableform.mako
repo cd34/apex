@@ -29,5 +29,5 @@
 		%endfor
 		${csrf_token_field|n}
 	</table>
-	<input type="submit" name="submit" value="${submit_text}" />
+	<input class="btn btn-primary" type="submit" name="submit" value="${submit_text}" />
 </form>

@@ -3,8 +3,8 @@
 </metal:m>
 <metal:m  metal:define-macro="apex_flash">
   <tal:r tal:repeat="flashmsg flash.get_all()">
-    <div class="flash">
-      <p class="${flashmsg['queue']}">${flashmsg['message']}</p>
+    <div class="alert-message ${flashmsg['queue']}">
+      <p>${flashmsg['message']}</p>
     </div>
   </tal:r>
 </metal:m>

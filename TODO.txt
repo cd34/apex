@@ -1,5 +1,16 @@
-Registration Hooks
-* before/after methods that pass user object for local interaction
+Username/Displayname
+* display_name added to Auth_ID
+* With multiple accounts referencing single ID, how do we know what 
+  the display name should be?
+
+Multiple Accounts
+* Associate account mechanism
+** Add another association
+** Takeover/merge existing association (which auth_id wins?)
+** allow duplicate login types? i.e. assign two twitter accounts, two 
+   local login accounts?
+** change password - we need to know whether we have any local auth 
+   accounts. Which one gets changed? Selector box to choose?
 
 Email Issues
 * Activation Email
@@ -12,3 +23,5 @@ Email Issues
 UX Issues
 * add more detail to exceptions
 
+SQL Issues
+* unique index on auth_user_group on user_id,group_id

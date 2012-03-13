@@ -5,12 +5,12 @@ Deploying your application
 
 ::
 
-    Alias /apex/static/ /path/to/virtualenv/lib/python2.6/site-packages/Apex-0.9.0-py2.6.egg/apex/static/
+    Alias /apex/static/ /path/to/virtualenv/lib/python2.7/site-packages/Apex-0.9.5-py2.7.egg/apex/static/
 
 **Nginx**
 
 ::
 
     location ^~ /apex/static/ {
-        alias   /path/to/virtualenv/lib/python2.6/site-packages/Apex-0.9.0-py2.6.egg/apex/static/;
+        alias   /path/to/virtualenv/lib/python2.7/site-packages/Apex-0.9.5-py2.7.egg/apex/static/;
     }

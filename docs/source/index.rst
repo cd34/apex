@@ -6,6 +6,26 @@
 Welcome to Apex's documentation!
 ================================
 
+::
+
+    WARNING!!! Velruse has changed substantially.  Apex acts more as a
+    wrapper to Velruse since Velruse brought in a lot of functionality
+    and now has Pyramid as a dependency. In addition, Apex has been
+    modified to allow a single Auth Identity to have multiple
+    authentication providers. 
+
+    Currently, Twitter has an odd connection close bug related to paste.http,
+    Mac OS/X Lion and webkit enabled browsers. Using CherryPy for development 
+    will work around this.
+
+::
+
+    [server:main]
+    #use = egg:Paste#http
+    use = egg:PasteScript#cherrypy
+    host = 0.0.0.0
+    port = 8080
+
 **Quick Overview**
 
 Apex is a framework that works on top of Pyramid_ focused on simplifying
@@ -21,7 +41,7 @@ Uses pyramid_routesalchemy
 
 **Authentication**
 
-  * Local authentication uses BCrypt
+  * Local authentication uses salt + BCrypt
   * http://codahale.com/how-to-safely-store-a-password/
 
 Velruse_ is used for OpenID/OpenAuth providers and supports:
@@ -30,10 +50,15 @@ Velruse_ is used for OpenID/OpenAuth providers and supports:
   * Twitter
   * Yahoo
   * Microsoft Live
+  * Bitbucket
+  * Github
+  * Identi.ca
+  * Last.fm
+  * LinkedIn
   * Any OpenID provider
 
 Ability to overload the login form, extend the AuthUser class through
-polymorphism or a Foreign Key user profile table.
+a Foreign Key user profile table.
 
 **Form Library**
 

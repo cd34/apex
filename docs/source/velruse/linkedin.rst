@@ -1,9 +1,13 @@
-Twitter
-=======
+LinkedIn
+========
+
+::
+
+    INCOMPLETE
 
 Go to:
 
-http://dev.twitter.com/apps/new
+http://
 
 Sign in.
 
@@ -21,6 +25,6 @@ Modify your **development.ini** file to include the following:
 
 ::
 
-    velruse.twitter.consumer_key =
-    velruse.twitter.consumer_secret =
-    velruse.twitter.authorize = (optional)
+    velruse.linkedin.consumer_key =
+    velruse.linkedin.consumer_secret =
+    velruse.linkedin.authorize =

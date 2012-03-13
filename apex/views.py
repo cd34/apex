@@ -18,16 +18,16 @@ from pyramid.url import current_route_url
 from pyramid.url import route_url
 
 from apex.lib.db import merge_session_with_post
-from apex.lib.libapex import apex_settings
-from apex.lib.libapex import apexid_from_token
-from apex.lib.libapex import apex_email_forgot
-from apex.lib.libapex import apex_remember
-from apex.lib.libapex import auth_provider
-from apex.lib.libapex import generate_velruse_forms
-from apex.lib.libapex import get_module
+from apex.lib.libapex import (apex_email_forgot,
+                              apexid_from_token,
+                              apex_remember,
+                              apex_settings,
+                              generate_velruse_forms,
+                              get_module)
 from apex.lib.flash import flash
 from apex.lib.form import ExtendedForm
 from apex.models import AuthGroup
+from apex.models import AuthID
 from apex.models import AuthUser
 from apex.models import DBSession
 from apex.forms import ChangePasswordForm
@@ -52,7 +52,7 @@ def login(request):
     """
     title = _('You need to login')
     came_from = get_came_from(request)
-    if 'local' not in apex_settings('provider_exclude', []):
+    if not apex_settings('exclude_local'):
         if asbool(apex_settings('use_recaptcha_on_login')):
             if apex_settings('recaptcha_public_key') and apex_settings('recaptcha_private_key'):
                 LoginForm.captcha = RecaptchaField(
@@ -69,9 +69,9 @@ def login(request):
     velruse_forms = generate_velruse_forms(request, came_from)
 
     if request.method == 'POST' and form.validate():
-        user = AuthUser.get_by_username(form.data.get('username'))
+        user = AuthUser.get_by_login(form.data.get('login'))
         if user:
-            headers = apex_remember(request, user.id)
+            headers = apex_remember(request, user.auth_id)
             return HTTPFound(location=came_from, headers=headers)
 
     return {'title': title, 'form': form, 'velruse_forms': velruse_forms, \
@@ -89,14 +89,20 @@ def logout(request):
 def change_password(request):
     """ change_password(request):
     no return value, called with route_url('apex_change_password', request)
+    FIXME doesn't adjust auth_user based on local ID, how do we handle multiple
+        IDs that are local? Do we tell person that they don't have local
+        permissions?
     """
     title = _('Change your Password')
 
     came_from = get_came_from(request)
-    form = ChangePasswordForm(request.POST)
+    user = DBSession.query(AuthUser). \
+               filter(AuthUser.auth_id==authenticated_userid(request)). \
+               filter(AuthUser.provider=='local').first()
+    form = ChangePasswordForm(request.POST, user_id=user.id)
 
     if request.method == 'POST' and form.validate():
-        user = AuthUser.get_by_id(authenticated_userid(request))
+        #user = AuthID.get_by_id(authenticated_userid(request))
         user.password = form.data['password']
         DBSession.merge(user)
         DBSession.flush()
@@ -125,14 +131,14 @@ def forgot_password(request):
         """
         if form.data['email']:
             user = AuthUser.get_by_email(form.data['email'])
-            if user.login:
-                provider_name = auth_provider.get(user.login[1], 'Unknown')
+            if user.provider != 'local':
+                provider_name = user.provider
                 flash(_('You used %s as your login provider' % \
                      provider_name))
                 return HTTPFound(location=route_url('apex_login', \
                                           request))
-        if form.data['username']:
-            user = AuthUser.get_by_username(form.data['username'])
+        if form.data['login']:
+            user = AuthUser.get_by_login(form.data['login'])
         if user:
             timestamp = time.time()+3600
             hmac_key = hmac.new('%s:%s:%d' % (str(user.id), \
@@ -172,6 +178,7 @@ def reset_password(request):
                                 apex_settings('auth_secret'), time_key), \
                                 user.email).hexdigest()[0:10]
             if hmac_key == submitted_hmac[0:10]:
+                #FIXME reset email, no such attribute email
                 user.password = form.data['password']
                 DBSession.merge(user)
                 DBSession.flush()
@@ -188,7 +195,7 @@ def activate(request):
     """
     """
     user_id = request.matchdict.get('user_id')
-    user = AuthUser.get_by_id(user_id)
+    user = AuthID.get_by_id(user_id)
     submitted_hmac = request.matchdict.get('hmac')
     current_time = time.time()
     time_key = int(base64.b64decode(submitted_hmac[10:]))
@@ -222,7 +229,7 @@ def register(request):
     else:
         from apex.forms import RegisterForm
 
-    if 'local' not in apex_settings('provider_exclude', []):
+    if not apex_settings('exclude_local'):
         if asbool(apex_settings('use_recaptcha_on_register')):
             if apex_settings('recaptcha_public_key') and apex_settings('recaptcha_private_key'):
                 RegisterForm.captcha = RecaptchaField(
@@ -255,23 +262,26 @@ def apex_callback(request):
     if 'token' in request.POST:
         auth = apexid_from_token(request.POST['token'])
         if auth:
-            user = AuthUser.get_by_login(auth['apexid'])
+            user = AuthUser.get_by_login(auth['userid'])
             if not user:
+                id = AuthID()
+                DBSession.add(id)
                 user = AuthUser(
-                    login=auth['apexid'],
+                    login=auth_info['userid'],
+                    provider=auth_info['domain'],
                 )
                 if auth['profile'].has_key('verifiedEmail'):
                     user.email = auth['profile']['verifiedEmail']
-                DBSession.add(user)
+                id.users.append(user)
                 if apex_settings('default_user_group'):
                     for name in apex_settings('default_user_group'). \
                                               split(','):
                         group = DBSession.query(AuthGroup). \
                            filter(AuthGroup.name==name.strip()).one()
-                        user.groups.append(group)
+                        id.groups.append(group)
                 if apex_settings('create_openid_after'):
                     openid_after = get_module(apex_settings('create_openid_after'))
-                    request = openid_after().after_signup(request, user)
+                    openid_after().after_signup(user)
                 DBSession.flush()
             if apex_settings('openid_required'):
                 openid_required = False
@@ -279,7 +289,8 @@ def apex_callback(request):
                     if not getattr(user, required):
                         openid_required = True
                 if openid_required:
-                    request.session['id'] = user.id
+                    request.session['id'] = id.id
+                    request.session['userid'] = user.id
                     return HTTPFound(location='%s?came_from=%s' % \
                         (route_url('apex_openid_required', request), \
                         request.GET.get('came_from', \
@@ -318,7 +329,11 @@ def openid_required(request):
                captcha={'ip_address': request.environ['REMOTE_ADDR']})
 
     if request.method == 'POST' and form.validate():
-        user = AuthUser.get_by_id(request.session['id'])
+        """
+            need to have the AuthUser id that corresponds to the login
+            method.
+        """
+        user = AuthUser.get_by_id(request.session['userid'])
         for required in apex_settings('openid_required').split(','):
             setattr(user, required, form.data[required])
         DBSession.merge(user)

@@ -3,9 +3,7 @@ Wishlist/Future Features
 
 * Allow user to use multiple login credentials, i.e. Create an account and
   associate that account with both Google and Facebook, allowing them to
-  log in with either Auth provider.
-
-* Easier access to scope/permission models with sx,ax parameters.
+  log in with either Auth provider. ** Initial setup done
 
 * Configurable number of rounds for BCrypt - currently a load order
   instantiation issue.

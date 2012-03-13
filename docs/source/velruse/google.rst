@@ -20,10 +20,16 @@ http://domain.com/velruse/logged_in
 Once you've done this, you're presented with your OAuth Consumer Key
 and OAuth Consumer Secret.
 
-Modify your **CONFIG.yaml** file to include the following:
+Modify your **development.ini** file to include the following:
 
 ::
 
-    Google:
-        OAuth Consumer Key: domain.com
-        OAuth Consumer Secret: (OAuth Consumer Secret)
+    # OpenID storage required by:
+    # google, yahoo and openid providers
+    velruse.openid.store = openid.store.memstore:MemoryStore
+    velruse.openid.realm = http://domain.com
+
+    # Google (also requires OpenID configuration)
+    velruse.google.consumer_key =
+    velruse.google.consumer_secret =
+    velruse.google.oauth_scope =

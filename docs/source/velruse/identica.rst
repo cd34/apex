@@ -1,9 +1,13 @@
-Twitter
-=======
+Identi.ca
+=========
+
+::
+
+    INCOMPLETE
 
 Go to:
 
-http://dev.twitter.com/apps/new
+http://
 
 Sign in.
 
@@ -16,11 +20,3 @@ After you agree to the terms, you're presented with a page that contains your
 Consumer Key and Consumer Secret.
 
 Click the button, Create my Access token
-
-Modify your **development.ini** file to include the following:
-
-::
-
-    velruse.twitter.consumer_key =
-    velruse.twitter.consumer_secret =
-    velruse.twitter.authorize = (optional)

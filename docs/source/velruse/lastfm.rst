@@ -1,9 +1,13 @@
-Twitter
+Last.fm
 =======
+
+::
+
+    INCOMPLETE
 
 Go to:
 
-http://dev.twitter.com/apps/new
+http://
 
 Sign in.
 
@@ -21,6 +25,5 @@ Modify your **development.ini** file to include the following:
 
 ::
 
-    velruse.twitter.consumer_key =
-    velruse.twitter.consumer_secret =
-    velruse.twitter.authorize = (optional)
+    velruse.lastfm.api_key =
+    velruse.lastfm.secret =

@@ -1,3 +1,9 @@
+THIS BREAKS ALL BACKWARDS COMPATIBILITY.
+
+This means that existing auth systems need to be modified - check the install 
+instructions as you'll need to slightly modify your SQL, do some imports, 
+and make sure you're running Velruse trunk.
+
 Authentication, Form Library, I18N/L10N, Flash Message Template
 (not associated with Pyramid, a Pylons project)
 
@@ -5,7 +11,14 @@ Uses pyramid_routesalchemy
 
 * Authentication
 
-Local authentication uses BCrypt
+Authentication has a single authentication id which can have multiple
+associated credentials. A user can create a username and associate their
+Facebook and Google login records with their current record and log in
+with any of them. It is planned that Apex will act as an endpoint for
+multi-domain multi-site installations - allowing one to associate a login
+account from one domain to another.
+
+Local authentication uses salt + BCrypt
 http://codahale.com/how-to-safely-store-a-password/
 
 Velruse is used for OpenID/OpenAuth providers and supports
@@ -14,6 +27,11 @@ Velruse is used for OpenID/OpenAuth providers and supports
   * Twitter
   * Yahoo
   * Microsoft Live
+  * Bitbucket
+  * Github
+  * Identi.ca
+  * Last.fm
+  * LinkedIn
   * Any OpenID provider
 
 Ability to overload the login form, extend the AuthUser class through
