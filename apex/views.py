@@ -9,7 +9,6 @@ from wtforms.ext.sqlalchemy.orm import model_form
 from wtfrecaptcha.fields import RecaptchaField
 
 from pyramid.httpexceptions import HTTPFound
-from apex import MessageFactory as _
 from pyramid.response import Response
 from pyramid.security import authenticated_userid
 from pyramid.security import forget
@@ -17,6 +16,7 @@ from pyramid.settings import asbool
 from pyramid.url import current_route_url
 from pyramid.url import route_url
 
+from apex import MessageFactory as _
 from apex.lib.db import merge_session_with_post
 from apex.lib.libapex import (apex_email_forgot,
                               apexid_from_token,
