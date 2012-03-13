@@ -4,7 +4,7 @@ class Flash(object):
     """ There are 4 default queues, warning, notice, error and success
     """
 
-    queues = ['warning', 'notice', 'error', 'success']
+    queues = ['warning', ''error', 'success', 'notice']
     default_queue = 'notice'
         
     def __init__(self, queues=None, default_queue=None, allow_duplicate=True):

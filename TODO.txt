@@ -2,6 +2,7 @@ Username/Displayname
 * display_name added to Auth_ID
 * With multiple accounts referencing single ID, how do we know what 
   the display name should be?
+* login logging needs to track auth_id and user_id
 
 Multiple Accounts
 * Associate account mechanism
@@ -25,3 +26,6 @@ UX Issues
 
 SQL Issues
 * unique index on auth_user_group on user_id,group_id
+
+Flash messages
+* bootstrap uses -info rather than -notice
