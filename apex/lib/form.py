@@ -8,15 +8,8 @@ from pyramid.renderers import render
 from pyramid.threadlocal import get_current_registry
 from pyramid.threadlocal import get_current_request
 
-class Translator:
-        def __init__(self, localizer):
-            self.t = localizer
-        def gettext(self, string):
-            return self.t.translate(string)
-        def ngettext(self, single, plural, string):
-            return self.t.pluralize(single, plural, string)
-
 from apex.lib.db import merge_session_with_post
+from apex.lib.i18n import Translator
 
 class ExtendedForm(Form):
     """ Base Model used to wrap WTForms for local use
@@ -39,6 +32,18 @@ class ExtendedForm(Form):
             setattr(self, name, field)
 
         self.process(formdata, obj, **kwargs)
+
+    def hidden_fields(self):
+        """ Returns all the hidden fields.
+        """
+        return [self._fields[name] for name, field in self._unbound_fields
+            if self._fields.has_key(name) and self._fields[name].type == 'HiddenField']
+
+    def visible_fields(self):
+        """ Returns all the visible fields.
+        """
+        return [self._fields[name] for name, field in self._unbound_fields
+            if self._fields.has_key(name) and not self._fields[name].type == 'HiddenField']
 
     def _get_translations(self): 
         if self.request:
@@ -64,7 +69,8 @@ class ExtendedForm(Form):
         template = kwargs.pop('template', False)
 
         if not template:
-            settings = get_current_registry().settings
+            settings = self.request.registry.settings
+
             template = settings.get('apex.form_template', \
                 'apex:templates/forms/tableform.mako')
 
