@@ -17,7 +17,6 @@ convert your database over to the new format.
 
     insert into auth_id (id) select id from auth_users;
     alter table auth_users add provider varchar(80) default '' after auth_id;
-    alter table auth_users add salt varchar(24) after login;
     create unique index login_provider on auth_users (login,provider);
     update auth_users set auth_id=id;
     update auth_users set login=username,provider='local' where login='';

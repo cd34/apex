@@ -4,7 +4,7 @@
 
 {% macro apex_flash() -%}
 {%- for flash in flash.get_all() %}
-    <div class="alert alert-{{ flash['queue'] }}">
+    <div class="alert-message {{ flash['queue'] }}">
         <p>{{ flash['message'] }}</p>
     </div>
 {%- endfor -%}
