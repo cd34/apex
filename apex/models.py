@@ -38,7 +38,7 @@ auth_group_table = Table('auth_auth_groups', Base.metadata,
         ForeignKey('auth_groups.id', onupdate='CASCADE', ondelete='CASCADE'))
 )
 # need to create Unique index on (auth_id,group_id)
-Index('auth_group', auth_group_table, auth_group_table.c.auth_id, auth_group_table.c.group_id)
+Index('auth_group', auth_group_table.c.auth_id, auth_group_table.c.group_id)
 
 class AuthGroup(Base):
     """ Table name: auth_groups
