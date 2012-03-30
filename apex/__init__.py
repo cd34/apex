@@ -14,8 +14,6 @@ from pyramid.security import NO_PERMISSION_REQUIRED
 from pyramid.session import UnencryptedCookieSessionFactoryConfig
 from pyramid.settings import asbool
 
-from apex.exceptions import ApexAuthSecret
-from apex.exceptions import ApexSessionSecret
 from apex.interfaces import IApex
 from apex.interfaces import ApexImplementation
 from apex.lib.libapex import groupfinder
@@ -53,12 +51,9 @@ def includeme(config):
     config.add_translation_dirs('apex:locale/')
 
     if not config.registry.queryUtility(ISessionFactory):
-        if not settings.has_key('apex.session_secret'):
-            raise ApexSessionSecret()
-
         config.set_session_factory( \
                UnencryptedCookieSessionFactoryConfig( \
-               settings.get('apex.session_secret')))
+               settings['apex.session_secret']))
 
     if not config.registry.queryUtility(IAuthorizationPolicy):
         authz_policy = ACLAuthorizationPolicy()
@@ -66,10 +61,8 @@ def includeme(config):
 
 
     if not config.registry.queryUtility(IAuthenticationPolicy):
-        if not settings.has_key('apex.auth_secret'):
-            raise ApexAuthSecret()
         authn_policy = AuthTktAuthenticationPolicy( \
-                       settings.get('apex.auth_secret'), \
+                       settings['apex.auth_secret'], \
                        callback=groupfinder)
         config.set_authentication_policy(authn_policy)
 
