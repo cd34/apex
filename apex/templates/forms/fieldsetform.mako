@@ -9,7 +9,7 @@
 		 enctype="multipart/form-data"
 	%endif
 	>
-	%for loop, field in enumerate(form):
+	%for field in form:
 		<fieldset>
 			<legend>${field.label}
 				%if field.flags.required:
