@@ -255,7 +255,9 @@ def apex_remember(request, user_id):
                     u'invalid value - apex.log_login_header')
         else:
              ip_addr=request.environ['REMOTE_ADDR']
-        record = AuthUserLog(user_id=user_id, ip_addr=ip_addr)
+        # need to pass user and auth id, temporarily, fill both fields
+        # until I can rewrite apex_remember
+        record = AuthUserLog(auth_id=user_id, user_id=user_id, ip_addr=ip_addr)
         DBSession.add(record)
         DBSession.flush()
     return remember(request, user_id)

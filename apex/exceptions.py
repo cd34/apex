@@ -1,9 +1,13 @@
-class ApexAuthSecret(Exception):
+class MessageException(Exception):
+    def __init__(self, message=None):
+        Exception.__init__(self, message or self.message)
+
+class ApexAuthSecret(MessageException):
     """ Exception called if there is no Auth Secret
     """
-    pass
+    message = 'Unable to find the apex.auth_secret setting, check your settings.'
 
-class ApexSessionSecret(Exception):
+class ApexSessionSecret(MessageException):
     """ Exception called if there is no Session Secret
     """
-    pass
+    message = 'Unable to find the apex.session_secret setting, check your settings.'
