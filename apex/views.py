@@ -71,7 +71,7 @@ def login(request):
     if request.method == 'POST' and form.validate():
         user = AuthUser.get_by_login(form.data.get('login'))
         if user:
-            headers = apex_remember(request, user.auth_id)
+            headers = apex_remember(request, user)
             return HTTPFound(location=came_from, headers=headers)
 
     return {'title': title, 'form': form, 'velruse_forms': velruse_forms, \
@@ -244,7 +244,7 @@ def register(request):
     if request.method == 'POST' and form.validate():
         user = form.save()
 
-        headers = apex_remember(request, user.id)
+        headers = apex_remember(request, user)
         return HTTPFound(location=came_from, headers=headers)
 
     return {'title': title, 'form': form, 'velruse_forms': velruse_forms, \
@@ -295,7 +295,7 @@ def apex_callback(request):
                         (route_url('apex_openid_required', request), \
                         request.GET.get('came_from', \
                         route_url(apex_settings('came_from_route'), request))))
-            headers = apex_remember(request, user.id)
+            headers = apex_remember(request, user)
             redir = request.GET.get('came_from', \
                         route_url(apex_settings('came_from_route'), request))
             flash(_('Successfully Logged in, welcome!'), 'success')
@@ -338,7 +338,7 @@ def openid_required(request):
             setattr(user, required, form.data[required])
         DBSession.merge(user)
         DBSession.flush()
-        headers = apex_remember(request, user.id)
+        headers = apex_remember(request, user)
         return HTTPFound(location=came_from, headers=headers)
 
     return {'title': title, 'form': form, 'action': 'openid_required'}

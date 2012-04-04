@@ -248,19 +248,18 @@ def get_module(package):
     resolver = DottedNameResolver(package.split('.', 1)[0])
     return resolver.resolve(package)
 
-def apex_remember(request, user_id):
+def apex_remember(request, user):
     if asbool(apex_settings('log_logins')):
         if apex_settings('log_login_header'):
             ip_addr=request.environ.get(apex_settings('log_login_header'), \
                     u'invalid value - apex.log_login_header')
         else:
              ip_addr=request.environ['REMOTE_ADDR']
-        # need to pass user and auth id, temporarily, fill both fields
-        # until I can rewrite apex_remember
-        record = AuthUserLog(auth_id=user_id, user_id=user_id, ip_addr=ip_addr)
+        record = AuthUserLog(auth_id=user.auth_id, user_id=user.id, \
+            ip_addr=ip_addr)
         DBSession.add(record)
         DBSession.flush()
-    return remember(request, user_id)
+    return remember(request, user.auth_id)
 
 class RequestFactory(Request):
     """ Custom Request factory, that adds the user context
