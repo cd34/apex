@@ -262,8 +262,9 @@ def apex_callback(request):
     if 'token' in request.POST:
         auth = apexid_from_token(request.POST['token'])
         if auth:
-            user = AuthUser.get_by_login(auth['userid'])
+            user = AuthUser.get_by_login(auth['id'])
             if not user:
+                auth_info = auth['profile']['accounts'][0]
                 id = AuthID()
                 DBSession.add(id)
                 user = AuthUser(
