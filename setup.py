@@ -6,7 +6,7 @@ version = '0.9.5'
 install_requires=[
     "cryptacular",
     "zope.sqlalchemy",
-    "velruse==0.20a1dev",
+    "velruse==0.20a1",
     "pyramid>1.1.2",
     "pyramid_mailer",
     "wtforms",
