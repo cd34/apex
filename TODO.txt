@@ -2,7 +2,6 @@ Username/Displayname
 * display_name added to Auth_ID
 * With multiple accounts referencing single ID, how do we know what 
   the display name should be?
-* login logging needs to track auth_id and user_id
 
 Multiple Accounts
 * Associate account mechanism

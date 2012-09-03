@@ -22,7 +22,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import synonym
 from sqlalchemy.sql.expression import func
 
-from velruse.store.sqlstore import SQLBase
+#from velruse.store.sqlstore import SQLBase
 
 from zope.sqlalchemy import ZopeTransactionExtension 
 
@@ -144,7 +144,7 @@ class AuthID(Base):
         if auth_profile:
             resolver = DottedNameResolver(auth_profile.split('.')[0])
             profile_cls = resolver.resolve(auth_profile)
-            return get_or_create(DBSession, profile_cls, user_id=self.id)
+            return get_or_create(DBSession, profile_cls, auth_id=self.id)
 
     @property
     def group_list(self):
@@ -305,8 +305,9 @@ def initialize_sql(engine, settings):
     Base.metadata.bind = engine
     Base.metadata.create_all(engine)
     if settings.has_key('apex.velruse_providers'):
-        SQLBase.metadata.bind = engine
-        SQLBase.metadata.create_all(engine)
+        pass
+        #SQLBase.metadata.bind = engine
+        #SQLBase.metadata.create_all(engine)
     try:
         populate(settings)
     except IntegrityError:

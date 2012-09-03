@@ -16,6 +16,8 @@ convert your database over to the new format.
 ::
 
     insert into auth_id (id) select id from auth_users;
+    alter table auth_users add auth_id bigint unsigned after id;
+    alter table auth_users add created datetime after email;
     alter table auth_users add provider varchar(80) default '' after auth_id;
     create unique index login_provider on auth_users (login,provider);
     update auth_users set auth_id=id;
