@@ -23,7 +23,7 @@ ${form.render()|n}
 % if velruse_forms:
 	% for provider_form in velruse_forms:
 		${provider_form.render(
-			action='/velruse/%s/login' % provider_form.provider_name,
+			action='/velruse/login/%s' % provider_form.provider_name,
 			submit_text=provider_form.provider_proper_name,
 		)|n}
 	% endfor
