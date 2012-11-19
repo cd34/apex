@@ -7,6 +7,7 @@ import requests
 from sqlalchemy.orm.exc import NoResultFound
 
 from pyramid.decorator import reify
+from pyramid.httpexceptions import HTTPBadRequest
 from pyramid.security import Allow
 from pyramid.security import authenticated_userid
 from pyramid.security import Everyone
@@ -90,12 +91,15 @@ def apexid_from_token(request):
     payload = {'format': 'json', 'token': request.POST['token']}
     velruse = requests.get(request.host_url + '/velruse/auth_info', \
         params=payload)
-    auth = velruse.json
-    if 'profile' in auth:
-        auth['id'] = auth['profile']['accounts'][0]['userid']
-        auth['provider'] = auth['profile']['accounts'][0]['domain']
-        return auth
-    return None
+    if velruse.status_code == 200:
+        auth = velruse.json
+        if 'profile' in auth:
+            auth['id'] = auth['profile']['accounts'][0]['userid']
+            auth['provider'] = auth['profile']['accounts'][0]['domain']
+            return auth
+        return None
+    else:
+        raise HTTPBadRequest(_('Velruse backing store unavailable'))
 
 def groupfinder(userid, request):
     """ Returns ACL formatted list of groups for the userid in the
