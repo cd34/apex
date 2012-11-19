@@ -3,8 +3,7 @@ try:
 except ImportError:
     import simplejson as json
 
-#from velruse.store.sqlstore import KeyStorage
-
+import requests
 from sqlalchemy.orm.exc import NoResultFound
 
 from pyramid.decorator import reify
@@ -84,12 +83,14 @@ If you did not make this request, you can safely ignore it.
 """),
         }
 
-def apexid_from_token(token):
+def apexid_from_token(request):
     """ Returns the apex id from the OpenID Token
     """
     dbsession = DBSession()
-    #auth = json.loads(dbsession.query(KeyStorage.value). \
-    #                  filter(KeyStorage.key==token).one()[0])
+    payload = {'format': 'json', 'token': request.POST['token']}
+    velruse = requests.get(request.host_url + '/velruse/auth_info', \
+        params=payload)
+    auth = velruse.json
     if 'profile' in auth:
         auth['id'] = auth['profile']['accounts'][0]['userid']
         auth['provider'] = auth['profile']['accounts'][0]['domain']

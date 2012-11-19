@@ -50,7 +50,7 @@ class AuthGroup(Base):
     description = Column(Unicode(255), default=u'')
     """
     __tablename__ = 'auth_groups'
-    __table_args__ = {"sqlite_autoincrement": True}
+    __table_args__ = {'sqlite_autoincrement': True}
     
     id = Column(types.Integer(), primary_key=True)
     name = Column(Unicode(80), unique=True, nullable=False)
@@ -73,17 +73,17 @@ class AuthID(Base):
 
     id = Column(types.Integer(), primary_key=True)
     display_name = Column(Unicode(80), default=u'')
-    active = Column(types.Enum(u'Y',u'N',u'D', name=u"active"), default=u'Y')
+    active = Column(types.Enum(u'Y',u'N',u'D', name=u'active'), default=u'Y')
     created = Column(types.DateTime(), default=func.now())
 
     """
 
     __tablename__ = 'auth_id'
-    __table_args__ = {"sqlite_autoincrement": True}
+    __table_args__ = {'sqlite_autoincrement': True}
 
     id = Column(types.Integer(), primary_key=True)
     display_name = Column(Unicode(80), default=u'')
-    active = Column(types.Enum(u'Y',u'N',u'D', name=u"active"), default=u'Y')
+    active = Column(types.Enum(u'Y',u'N',u'D', name=u'active'), default=u'Y')
     created = Column(types.DateTime(), default=func.now())
 
     groups = relationship('AuthGroup', secondary=auth_group_table, \
@@ -166,7 +166,7 @@ class AuthUser(Base):
     active = Column(types.Enum(u'Y',u'N',u'D'), default=u'Y')
     """
     __tablename__ = 'auth_users'
-    __table_args__ = {"sqlite_autoincrement": True}
+    __table_args__ = {'sqlite_autoincrement': True}
 
     id = Column(types.Integer(), primary_key=True)
     auth_id = Column(types.Integer, ForeignKey(AuthID.id), index=True)
@@ -176,7 +176,7 @@ class AuthUser(Base):
     _password = Column('password', Unicode(80), default=u'')
     email = Column(Unicode(80), default=u'', index=True)
     created = Column(types.DateTime(), default=func.now())
-    active = Column(types.Enum(u'Y',u'N',u'D', name=u"active"), default=u'Y')
+    active = Column(types.Enum(u'Y',u'N',u'D', name=u'active'), default=u'Y')
 
     def _set_password(self, password):
         self.salt = self.get_salt(24)
@@ -274,14 +274,14 @@ class AuthUserLog(Base):
       F - Forgot
     """
     __tablename__ = 'auth_user_log'
-    __table_args__ = {"sqlite_autoincrement": True}
+    __table_args__ = {'sqlite_autoincrement': True}
 
     id = Column(types.Integer, primary_key=True)
     auth_id = Column(types.Integer, ForeignKey(AuthID.id), index=True)
     user_id = Column(types.Integer, ForeignKey(AuthUser.id), index=True)
     time = Column(types.DateTime(), default=func.now())
     ip_addr = Column(Unicode(39), nullable=False)
-    event = Column(types.Enum(u'L',u'R',u'P',u'F', name=u"event"), default=u'L')
+    event = Column(types.Enum(u'L',u'R',u'P',u'F', name=u'event'), default=u'L')
 
 def populate(settings):
     session = DBSession()

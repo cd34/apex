@@ -260,7 +260,7 @@ def apex_callback(request):
                 route_url(apex_settings('came_from_route'), request))
     headers = []
     if 'token' in request.POST:
-        auth = apexid_from_token(request.POST['token'])
+        auth = apexid_from_token(request)
         if auth:
             user = AuthUser.get_by_login(auth['id'])
             if not user:

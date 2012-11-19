@@ -55,7 +55,7 @@ class RegisterForm(ExtendedForm):
 
         return new_user
 
-    def after_signup(self, user, **kwargs):
+    def after_signup(self, **kwargs):
         """ Function to be overloaded and called after form submission
         to allow you the ability to save additional form data or perform
         extra actions after the form submission.
