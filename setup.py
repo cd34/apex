@@ -9,6 +9,7 @@ install_requires = [
     "velruse==0.20a1",
     "pyramid>1.1.2",
     "pyramid_mailer",
+    "requests",
     "wtforms",
     "wtforms-recaptcha",
 ]
