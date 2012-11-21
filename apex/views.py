@@ -282,7 +282,7 @@ def apex_callback(request):
                         id.groups.append(group)
                 if apex_settings('create_openid_after'):
                     openid_after = get_module(apex_settings('create_openid_after'))
-                    openid_after().after_signup(user)
+                    openid_after().after_signup(request=request, user=user)
                 DBSession.flush()
             if apex_settings('openid_required'):
                 openid_required = False
