@@ -21,6 +21,6 @@ Modify your **development.ini** file to include the following:
 
 ::
 
-    velruse.twitter.consumer_key =
-    velruse.twitter.consumer_secret =
-    velruse.twitter.authorize = (optional)
+    provider.twitter.consumer_key =
+    provider.twitter.consumer_secret =
+    provider.twitter.authorize = (optional)

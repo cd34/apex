@@ -25,6 +25,6 @@ Modify your **development.ini** file to include the following:
 
 ::
 
-    velruse.facebook.app_id =
-    velruse.facebook.app_secret =
-    velruse.facebook.scope =
+    provider.facebook.consumer_key =
+    provider.facebook.consumer_secret =
+    provider.facebook.scope = (optional)
