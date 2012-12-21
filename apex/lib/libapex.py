@@ -202,19 +202,32 @@ def create_user(**kwargs):
 
     from apex.lib.libapex import create_user
 
-    create_user(username='test', password='my_password', active='Y', group='group')
+    create_user(username='test', password='my_password', active='Y')
+
+    Optional Parameters:
+
+    display_name
+    group
 
 
-    Returns: AuthUser object
+
+    Returns: AuthID object
     """
-    user = AuthUser()
+    auth_id = AuthID(active=kwargs['active'])
+    if 'display_name' in kwargs:
+        user.display_name = kwargs['display_name']
+        del kwargs['display_name']
+
+    user = AuthUser(login=kwargs['username'], password=kwargs['password'], \
+               active=kwargs['active'])
+    auth_id.users.append(user)
 
     if 'group' in kwargs:
         try:
             group = DBSession.query(AuthGroup). \
             filter(AuthGroup.name==kwargs['group']).one()
 
-            user.groups.append(group)
+            auth_id.groups.append(group)
         except NoResultFound:
             pass
 
