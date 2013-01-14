@@ -23,6 +23,7 @@ from apex.lib.libapex import (apex_email_forgot,
                               apex_remember,
                               apex_settings,
                               generate_velruse_forms,
+                              get_came_from,
                               get_module)
 from apex.lib.flash import flash
 from apex.lib.form import ExtendedForm
@@ -34,14 +35,6 @@ from apex.forms import ChangePasswordForm
 from apex.forms import ForgotForm
 from apex.forms import ResetPasswordForm
 from apex.forms import LoginForm
-
-
-def get_came_from(request):
-    return request.GET.get('came_from', 
-                           request.POST.get(
-                               'came_from',  
-                               route_url(apex_settings('came_from_route'), request))
-                          ) 
 
 
 def login(request):
@@ -71,7 +64,8 @@ def login(request):
     if request.method == 'POST' and form.validate():
         user = AuthUser.get_by_login(form.data.get('login'))
         if user:
-            headers = apex_remember(request, user)
+            headers = apex_remember(request, user, \
+                max_age=apex_settings('max_cookie_age', None))
             return HTTPFound(location=came_from, headers=headers)
 
     return {'title': title, 'form': form, 'velruse_forms': velruse_forms, \

@@ -97,7 +97,7 @@ class AuthID(Base):
     """
 
     last_login = relationship('AuthUserLog', \
-                         order_by='AuthUserLog.id.desc()')
+                         order_by='AuthUserLog.id.desc()', uselist=False)
     login_log = relationship('AuthUserLog', \
                          order_by='AuthUserLog.id')
 

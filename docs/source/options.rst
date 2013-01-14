@@ -129,6 +129,9 @@ apex.fallback_prefix_salt =
 apex.fallback_salt_field = 
   OPTIONAL, field in user table containing salt
 
+apex.max_cookie_age = None
+  OPTIONAL, set the max cookie age in seconds
+
 ==Future==
 
 apex.max_local_logins = 1

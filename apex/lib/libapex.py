@@ -266,18 +266,25 @@ def get_module(package):
     resolver = DottedNameResolver(package.split('.', 1)[0])
     return resolver.resolve(package)
 
-def apex_remember(request, user):
+def apex_remember(request, user, max_age=None):
     if asbool(apex_settings('log_logins')):
         if apex_settings('log_login_header'):
-            ip_addr=request.environ.get(apex_settings('log_login_header'), \
+            ip_addr = request.environ.get(apex_settings('log_login_header'), \
                     u'invalid value - apex.log_login_header')
         else:
-             ip_addr=request.environ['REMOTE_ADDR']
+             ip_addr = unicode(request.environ['REMOTE_ADDR'])
         record = AuthUserLog(auth_id=user.auth_id, user_id=user.id, \
             ip_addr=ip_addr)
         DBSession.add(record)
         DBSession.flush()
-    return remember(request, user.auth_id)
+    return remember(request, user.auth_id, max_age=max_age)
+
+def get_came_from(request):
+    return request.GET.get('came_from',
+                           request.POST.get(
+                               'came_from',
+                               route_url(apex_settings('came_from_route'), request))
+                          )
 
 class RequestFactory(Request):
     """ Custom Request factory, that adds the user context

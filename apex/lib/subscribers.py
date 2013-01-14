@@ -46,6 +46,8 @@ def csrf_validation(event):
                 event.request.matched_route.name not in no_csrf \
                 and not event.request.matched_route.name.startswith('debugtoolbar.') \
                 and not event.request.matched_route.name.startswith('apex_'):
+                    log.debug('apex: CSRF token received %s didn\'t match %s' % \
+                        (token, event.request.session.get_csrf_token()))
                     raise HTTPForbidden(_('CSRF token is missing or invalid'))
 
 def add_renderer_globals(event):

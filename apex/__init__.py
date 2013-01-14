@@ -93,7 +93,7 @@ def includeme(config):
 
     config.add_static_view('apex/static', 'apex:static')
 
-    config.add_view(forbidden, context=Forbidden)
+    config.add_forbidden_view(forbidden)
 
     render_template = settings['apex.apex_render_template'
                               ] = settings.get('apex.apex_template',
