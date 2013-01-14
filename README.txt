@@ -1,9 +1,3 @@
-THIS BREAKS ALL BACKWARDS COMPATIBILITY.
-
-This means that existing auth systems need to be modified - check the install 
-instructions as you'll need to slightly modify your SQL, do some imports, 
-and make sure you're running Velruse trunk.
-
 Authentication, Form Library, I18N/L10N, Flash Message Template
 (not associated with Pyramid, a Pylons project)
 
