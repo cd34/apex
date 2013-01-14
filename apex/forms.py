@@ -51,7 +51,7 @@ class RegisterForm(ExtendedForm):
 
     def save(self):
         new_user = self.create_user(self.data['login'])
-        self.after_signup(new_user)
+        self.after_signup(user=new_user)
 
         return new_user
 
