@@ -28,7 +28,7 @@ except IOError:
 
 kwargs = dict(
     version=version,
-    name='Apex',
+    name='apex',
     description="""\
 Pyramid toolkit to add Velruse, Flash Messages,\
 CSRF, ReCaptcha and Sessions""",
@@ -45,6 +45,9 @@ CSRF, ReCaptcha and Sessions""",
     zip_safe=True,
     tests_require=tests_require,
     test_suite="apex.tests",
+    url="http://thesoftwarestudio.com/apex/",
+    author="Chris Davies",
+    author_email='user@domain.com',
     entry_points="""\
         [paste.paster_create_template]
         apex_routesalchemy=apex.scaffolds:ApexRoutesAlchemyTemplate
