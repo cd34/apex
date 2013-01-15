@@ -1,3 +1,5 @@
+import logging
+
 from pyramid.httpexceptions import HTTPForbidden
 from pyramid.threadlocal import get_current_request
 from pyramid.threadlocal import get_current_registry
@@ -7,6 +9,8 @@ from apex.lib.flash import flash
 from apex.lib.libapex import apex_settings
 
 from apex.i18n import MessageFactory as _
+
+log = logging.getLogger('apex.lib.subscribers')
 
 def csrf_validation(event):
     """ CSRF token validation Subscriber
