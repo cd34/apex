@@ -213,13 +213,13 @@ def create_user(**kwargs):
 
     Returns: AuthID object
     """
-    auth_id = AuthID(active=kwargs['active'])
+    auth_id = AuthID(active=kwargs.get('active', 'Y'))
     if 'display_name' in kwargs:
         user.display_name = kwargs['display_name']
         del kwargs['display_name']
 
     user = AuthUser(login=kwargs['username'], password=kwargs['password'], \
-               active=kwargs['active'])
+               active=kwargs.get('active', 'Y'))
     auth_id.users.append(user)
 
     if 'group' in kwargs:
