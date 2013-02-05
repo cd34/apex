@@ -25,5 +25,5 @@ Modify your **development.ini** file to include the following:
 
 ::
 
-    velruse.lastfm.api_key =
-    velruse.lastfm.secret =
+    lastfm.api_key =
+    lastfm.secret =

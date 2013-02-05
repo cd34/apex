@@ -25,6 +25,6 @@ Modify your **development.ini** file to include the following:
 
 ::
 
-    velruse.bitbucket.consumer_key =
-    velruse.bitbucket.consumer_secret =
-    velruse.bitbucket.authorize = true
+    bitbucket.consumer_key =
+    bitbucket.consumer_secret =
+    bitbucket.authorize = true

@@ -18,6 +18,6 @@ Modify your **development.ini** file to include the following:
 
 ::
 
-    velruse.live.client_id =
-    velruse.live.client_secret =
-    velruse.live.scope =
+    live.client_id =
+    live.client_secret =
+    live.scope =

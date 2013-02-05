@@ -132,7 +132,7 @@ apex.fallback_salt_field =
 apex.max_cookie_age = None
   OPTIONAL, set the max cookie age in seconds
 
-==Future==
+**Future**
 
 apex.max_local_logins = 1
   OPTIONAL, controls the number of local authentication records that can

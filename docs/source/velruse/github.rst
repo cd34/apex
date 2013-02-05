@@ -25,6 +25,6 @@ Modify your **development.ini** file to include the following:
 
 ::
 
-    velruse.github.app_id =
-    velruse.github.app_secret =
-    velruse.github.scope =
+    github.app_id =
+    github.app_secret =
+    github.scope =

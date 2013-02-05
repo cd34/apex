@@ -1,10 +1,9 @@
 import os
-import unittest
+import webob.multidict
 
 from pyramid import testing
 
 from apex.tests import BaseTestCase
-from paste.util.multidict import MultiDict
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -20,14 +19,14 @@ environ = {
 class Test_views(BaseTestCase):
     def test_view_login(self):
         from apex.lib.libapex import create_user
+        from apex.views import login
+
         create_user(username='test', password='password')
 
-        from apex.views import login
         request = testing.DummyRequest()
 
         # wtforms requires this
-        request.POST = MultiDict()
-
+        request.POST = webob.multidict.MultiDict()
         request.context = testing.DummyResource()
         response = login(request)
 
@@ -35,16 +34,17 @@ class Test_views(BaseTestCase):
 
     def test_simple_login(self):
         from apex.lib.libapex import create_user
+        from apex.views import login
+
         create_user(username='test', password='password')
 
         request = testing.DummyRequest(environ=environ)
         request.method = 'POST'
         # wtforms requires this
-        request.POST = MultiDict()
+        request.POST = webob.multidict.MultiDict()
         request.POST['username'] = 'test'
         request.POST['password'] = 'password'
 
-        from apex.views import login
         request.context = testing.DummyResource()
         response = login(request)
 
@@ -53,16 +53,17 @@ class Test_views(BaseTestCase):
 
     def test_fail_login(self):
         from apex.lib.libapex import create_user
+        from apex.views import login
+
         create_user(username='test', password='password1')
 
         request = testing.DummyRequest(environ=environ)
         request.method = 'POST'
         # wtforms requires this
-        request.POST = MultiDict()
+        request.POST = webob.multidict.MultiDict()
         request.POST['username'] = 'test'
         request.POST['password'] = 'password'
 
-        from apex.views import login
         request.context = testing.DummyResource()
         response = login(request)
 
@@ -73,6 +74,7 @@ class Test_views(BaseTestCase):
         since we're dealing with cookies.
         """
         from apex.views import logout
+
         request = testing.DummyRequest(environ=environ)
         request.context = testing.DummyResource()
         response = logout(request)

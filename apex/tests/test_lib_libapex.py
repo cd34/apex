@@ -9,28 +9,49 @@ class Test_lib_libapex(unittest.TestCase):
     def tearDown(self):
         testing.tearDown()
 
-    def test_apexid_from_url(self):
-        """
-needs to be rewritten due to new backend handling from velruse
+    def test_apexid_from_token(self):
+        # apexid_from_token(request)
+        pass
 
-        from apex.lib.libapex import apexid_from_url
+    def test_groupfinder(self):
+        # groupfinder(userid, request)
+        pass
 
-        # Test Google
-        self.assertEqual('$G$xxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', apexid_from_url('Google','https://www.google.com/accounts/o8/id?id=xxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'))
-        self.assertEqual(None, apexid_from_url('Google','https://www.google.com/accounts/o8/id?xx=xxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'))
+    def test_apex_email(self):
+        # apex_email(request, recipients, subject, body, sender=None)
+        pass
 
-        # Test Twitter
-        self.assertEqual('$T$xxxxxxxx', apexid_from_url('Twitter',"http://twitter.com/?id=['xxxxxxxx']"))
-        self.assertEqual(None, apexid_from_url('Twitter',"http://twitter.com/?xx=['xxxxxxxx']"))
+    def test_apex_email_forgot(self):
+        # apex_email_forgot(request, user_id, email, hmac)
+        pass
 
-        # Test Facebook
-        self.assertEqual('$F$xxxxxxxxxx', apexid_from_url('Facebook','https://graph.facebook.com/xxxxxxxxxx'))
-        self.assertEqual(None, apexid_from_url('Facebook','https://graph.facebook.com'))
+    def test_apex_email_activate(self):
+        # apex_email_activate(request, user_id, email, hmac)
+        pass
 
-        # Test Yahoo
-        self.assertEqual('$Y$xxxxxxxxxxxxxxxxxx.xxxxx#xxxxx', apexid_from_url('Yahoo','https://me.yahoo.com/a/xxxxxxxxxxxxxxxxxx.xxxxx#xxxxx'))
-        self.assertEqual(None, apexid_from_url('Yahoo','https://me.yahoo.com/a'))
+    def test_apex_settings(self):
+        # apex_settings(key=None, default=None)
+        pass
 
-        # Test Invalid Provider name
-        self.assertEqual(None, apexid_from_url('Blah','https://www.google.com/accounts/o8/id?id=xxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'))
-        """
+    def test_create_user(self):
+        # create_user(**kwargs)
+        from apex.lib.libapex import create_user
+
+        create_user(username='test', password='password')
+        pass
+
+    def test_generate_velruse_forms(self):
+        # generate_velruse_forms(request, came_from)
+        pass
+
+    def test_get_module(self):
+        # get_module(package)
+        pass
+
+    def test_apex_remember(self):
+        # apex_remember(request, user, max_age=None)
+        pass
+
+    def test_get_came_from(self):
+        # get_came_from(request)
+        pass

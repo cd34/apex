@@ -1,21 +1,14 @@
 Quickstart
 ==========
 
-To use translations, you'll need to use the following version of wtforms
-until it is pulled into the master
-
-    easy_install -U https://bitbucket.org/kiorky/wtforms/get/77a9e3f0e0cd.tar.bz2
-
-    https://bitbucket.org/kiorky/wtforms
-
 Initial Setup of Pyramid-Apex
 
 ::
 
-  virtualenv --no-site-packages newenv
+  virtualenv newenv
   cd newenv
   source bin/activate
-  easy_install https://github.com/cd34/apex/tarball/master
+  easy_install apex
   pcreate -s alchemy example
   cd example
   vi development.ini
@@ -56,15 +49,15 @@ For Velruse, we need to add the following:
     openid.store = openid.store.memstore:MemoryStore
     openid.realm = http://domain.com
 
-    velruse.providers =
+    providers =
         providers.facebook
         providers.twitter
 
-    velruse.facebook.consumer_key = 111111111111111
-    velruse.facebook.consumer_secret = 11111111111111111111111111111111
+    facebook.consumer_key = 111111111111111
+    facebook.consumer_secret = 11111111111111111111111111111111
 
-    velruse.twitter.consumer_key = 1111111111111111111111
-    velruse.twitter.consumer_secret = 111111111111111111111111111111111111111111
+    twitter.consumer_key = 1111111111111111111111
+    twitter.consumer_secret = 111111111111111111111111111111111111111111
 
 
 Comment or remove the following settings:
@@ -97,11 +90,6 @@ If you are going to be developing with this virtualenv:
 ::
 
     python setup.py develop
-
-Currently, we need to access the backing store, so, we've opted to use 
-Type: SQL. You can use any store as long as the backend can be read 
-without calling /velruse/authinfo. The Memory Store requires the 
-additional urllib2 call.
 
 In **example/__init__.py**, before the return config.make_wsgi_app(), put:
 

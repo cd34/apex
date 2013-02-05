@@ -16,7 +16,6 @@ settings = {
     'apex.session_secret':'session_secret',
     'apex.auth_secret':'auth_secret',
     'apex.came_from_route':'home',
-    'apex.velruse_config':'{0}/CONFIG.yaml'.format(here),
     'apex.use_recaptcha_on_login': 'false',
 }
 

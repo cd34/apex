@@ -26,10 +26,10 @@ Modify your **development.ini** file to include the following:
 
     # OpenID storage required by:
     # google, yahoo and openid providers
-    velruse.openid.store = openid.store.memstore:MemoryStore
-    velruse.openid.realm = http://domain.com
+    openid.store = openid.store.memstore:MemoryStore
+    openid.realm = http://domain.com
 
     # Google (also requires OpenID configuration)
-    velruse.google.consumer_key =
-    velruse.google.consumer_secret =
-    velruse.google.oauth_scope =
+    google.consumer_key =
+    google.consumer_secret =
+    google.oauth_scope =
