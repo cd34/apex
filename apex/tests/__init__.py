@@ -38,7 +38,6 @@ class BaseTestCase(unittest.TestCase):
         from apex.models import Base
         Base.metadata.drop_all(cls.engine)
 
-
     def setUp(self):
         self.config = testing.setUp()
         self.config.add_route('home', '/')

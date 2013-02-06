@@ -6,8 +6,8 @@ class Test_lib_libapex(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp()
 
-    def tearDown(self):
-        testing.tearDown()
+    #def tearDown(self):
+    #    testing.tearDown()
 
     def test_apexid_from_token(self):
         # apexid_from_token(request)
@@ -31,13 +31,20 @@ class Test_lib_libapex(unittest.TestCase):
 
     def test_apex_settings(self):
         # apex_settings(key=None, default=None)
-        pass
+        from apex.lib.libapex import apex_settings
+
+        self.assertEqual([], apex_settings(key=None, default=None))
+        self.assertEqual('session_secret', \
+            apex_settings(key='session_secret', default=None))
+        self.assertEqual('home', apex_settings(key='came_from_route', \
+            default=None))
+        self.assertEqual(None, apex_settings(key='no_match', default=None))
 
     def test_create_user(self):
         # create_user(**kwargs)
         from apex.lib.libapex import create_user
 
-        create_user(username='test', password='password')
+        #create_user(username='libtest', password='password')
         pass
 
     def test_generate_velruse_forms(self):
