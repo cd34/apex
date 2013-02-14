@@ -301,6 +301,7 @@ def apex_callback(request):
     headers = []
     if 'token' in request.POST:
         auth = apex_id_from_token(request)
+        print auth
         if auth:
             user = AuthUser.get_by_login(auth['id'])
             if not user:

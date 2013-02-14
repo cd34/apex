@@ -1,8 +1,3 @@
-try:
-    import json
-except ImportError:
-    import simplejson as json
-
 import requests
 from sqlalchemy.orm.exc import NoResultFound
 

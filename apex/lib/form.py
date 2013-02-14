@@ -5,7 +5,6 @@ from wtforms import validators
 
 from pyramid.i18n import get_localizer
 from pyramid.renderers import render
-from pyramid.threadlocal import get_current_registry
 from pyramid.threadlocal import get_current_request
 
 from apex.lib.db import merge_session_with_post
