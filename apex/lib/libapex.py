@@ -35,6 +35,8 @@ from apex.models import (AuthID,
                          AuthUserLog,
                          DBSession)
 
+key_store = {}
+
 class EmailMessageText(object):
     """ Default email message text class
     """

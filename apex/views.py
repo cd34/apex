@@ -25,7 +25,8 @@ from apex.lib.libapex import (apex_email_forgot,
                               apex_settings,
                               generate_velruse_forms,
                               get_came_from,
-                              get_module)
+                              get_module,
+                              key_store)
 from apex.lib.flash import flash
 from apex.lib.form import ExtendedForm
 from apex.models import (AuthGroup,
@@ -281,6 +282,8 @@ def add_auth(request):
             request.environ['REMOTE_ADDR']})
     else:
         form = None
+    key_store[request.session.get_csrf_token()] = \
+        authenticated_userid(request)
 
     if request.method == 'POST' and form.validate():
         form.save(authenticated_userid(request))
@@ -304,6 +307,9 @@ def apex_callback(request):
         print auth
         if auth:
             user = AuthUser.get_by_login(auth['id'])
+            # pass data through velruse to associate to existing auth_id
+            #if key_store[request.params['csrf_token']]:
+            #    user = AuthID.get_by_id()
             if not user:
                 auth_info = auth['profile']['accounts'][0]
                 id = AuthID()
