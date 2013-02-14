@@ -92,7 +92,7 @@ def apex_id_from_token(request):
     velruse = requests.get(request.host_url + '/velruse/auth_info', \
         params=payload)
     if velruse.status_code == 200:
-        auth = velruse.json
+        auth = velruse.json()
         if 'profile' in auth:
             auth['id'] = auth['profile']['accounts'][0]['userid']
             auth['provider'] = auth['profile']['accounts'][0]['domain']
@@ -247,7 +247,7 @@ def create_user(**kwargs):
     DBSession.flush()
     return user
 
-def generate_velruse_forms(request, came_from, exclude=None):
+def generate_velruse_forms(request, came_from, exclude=set([])):
     """ Generates variable form based on OpenID providers
     """
     velruse_forms = []
