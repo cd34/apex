@@ -1,3 +1,4 @@
+% if action != 'add_auth':
 % if action != 'login':
 <a href="${request.route_path('apex_login')}">Login</a>
 % endif
@@ -6,4 +7,5 @@
 % endif
 % if action != 'forgot':
 <a href="${request.route_path('apex_forgot')}">Forgot my Password</a>
+% endif
 % endif

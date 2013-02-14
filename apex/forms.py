@@ -1,17 +1,17 @@
-from wtforms import HiddenField
-from wtforms import PasswordField
-from wtforms import TextField
-from wtforms import validators
+from wtforms import (HiddenField,
+                     PasswordField,
+                     TextField,
+                     validators)
 
 from apex import MessageFactory as _
 from pyramid.security import authenticated_userid
-from pyramid.threadlocal import get_current_registry
-from pyramid.threadlocal import get_current_request
+from pyramid.threadlocal import (get_current_registry,
+                                 get_current_request)
 
-from apex.models import DBSession
-from apex.models import AuthGroup
-from apex.models import AuthID
-from apex.models import AuthUser
+from apex.models import (AuthGroup,
+                         AuthID,
+                         AuthUser,
+                         DBSession)
 from apex.lib.form import ExtendedForm
 
 class RegisterForm(ExtendedForm):
@@ -125,6 +125,44 @@ class ResetPasswordForm(ExtendedForm):
                              validators.EqualTo('password2', \
                              message=_('Passwords must match'))])
     password2 = PasswordField(_('Repeat New Password'), [validators.Required()])
+
+class AddAuthForm(ExtendedForm):
+    login = TextField(_('Username'), [validators.Required(), \
+                         validators.Length(min=4, max=25)])
+    password = PasswordField(_('Password'), [validators.Required(), \
+                             validators.EqualTo('password2', \
+                             message=_('Passwords must match'))])
+    password2 = PasswordField(_('Repeat Password'), [validators.Required()])
+    email = TextField(_('Email Address'), [validators.Required(), \
+                      validators.Email()])
+
+    def validate_login(form, field):
+        if AuthUser.get_by_login(field.data) is not None:
+            raise validators.ValidationError(_('Sorry that username already exists.'))
+
+    def create_user(self, auth_id, login):
+        id = DBSession.query(AuthID).filter(AuthID.id==auth_id).one()
+        user = AuthUser(
+            login=login,
+            password=self.data['password'],
+            email=self.data['email'],
+        )
+        id.users.append(user)
+        DBSession.add(user)
+        DBSession.flush()
+
+        return user
+
+    def save(self, auth_id):
+        new_user = self.create_user(auth_id, self.data['login'])
+        self.after_signup(user=new_user)
+
+    def after_signup(self, **kwargs):
+        """ Function to be overloaded and called after form submission
+        to allow you the ability to save additional form data or perform
+        extra actions after the form submission.
+        """
+        pass
 
 class OAuthForm(ExtendedForm):
     end_point = HiddenField('')

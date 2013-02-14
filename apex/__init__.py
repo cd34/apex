@@ -6,32 +6,33 @@ from sqlalchemy import engine_from_config
 
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
-from pyramid.interfaces import IAuthenticationPolicy
-from pyramid.interfaces import IAuthorizationPolicy
-from pyramid.interfaces import ISessionFactory
+from pyramid.interfaces import (IAuthenticationPolicy,
+                                IAuthorizationPolicy,
+                                ISessionFactory)
 from pyramid.security import NO_PERMISSION_REQUIRED
 from pyramid.session import UnencryptedCookieSessionFactoryConfig
 from pyramid.settings import asbool
 
-from apex.exceptions import ApexAuthSecret
-from apex.exceptions import ApexSessionSecret
-from apex.interfaces import IApex
-from apex.interfaces import ApexImplementation
-from apex.lib.libapex import groupfinder
-from apex.lib.libapex import RequestFactory
-from apex.lib.libapex import RootFactory
+from apex.exceptions import (ApexAuthSecret,
+                             ApexSessionSecret)
+from apex.interfaces import (ApexImplementation,
+                             IApex)
+from apex.lib.libapex import (groupfinder,
+                              RequestFactory,
+                              RootFactory)
 from apex.models import initialize_sql
-from apex.views import apex_callback
-from apex.views import activate
-from apex.views import change_password
-from apex.views import edit
-from apex.views import login
-from apex.views import logout
-from apex.views import forgot_password
-from apex.views import forbidden
-from apex.views import openid_required
-from apex.views import register
-from apex.views import reset_password
+from apex.views import (apex_callback,
+                        activate,
+                        add_auth,
+                        change_password,
+                        edit,
+                        login,
+                        logout,
+                        forgot_password,
+                        forbidden,
+                        openid_required,
+                        register,
+                        reset_password)
 
 """
     Allows flash messages to be called as:
@@ -125,6 +126,10 @@ def includeme(config):
     config.add_route('apex_activate', '/activate/:user_id/:hmac')
     config.add_view(activate, route_name='apex_activate',
                     renderer=render_template, permission=NO_PERMISSION_REQUIRED)
+
+    config.add_route('apex_add_auth', '/add_auth')
+    config.add_view(add_auth, route_name='apex_add_auth',
+                    renderer=render_template, permission='authenticated')
 
     config.add_route('apex_callback', '/apex_callback')
     config.add_view(apex_callback, route_name='apex_callback', permission=NO_PERMISSION_REQUIRED)

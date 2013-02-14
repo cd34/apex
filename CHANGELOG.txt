@@ -1,0 +1,3 @@
+* apexid_from_token renamed to apex_id_from_token
+* added 'add_auth' function to allow secondary authentication providers
+  on a single auth_id

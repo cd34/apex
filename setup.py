@@ -22,9 +22,9 @@ tests_require = install_requires + ['Sphinx', 'docutils',
 here = os.path.abspath(os.path.dirname(__file__))
 try:
     README = open(os.path.join(here, 'README.txt')).read()
-    CHANGES = open(os.path.join(here, 'CHANGES.txt')).read()
+    CHANGELOG = open(os.path.join(here, 'CHANGELOG.txt')).read()
 except IOError:
-    README = CHANGES = ''
+    README = CHANGELOG = ''
 
 kwargs = dict(
     version=version,
@@ -32,7 +32,7 @@ kwargs = dict(
     description="""\
 Pyramid toolkit to add Velruse, Flash Messages,\
 CSRF, ReCaptcha and Sessions""",
-    long_description=README + '\n\n' + CHANGES,
+    long_description=README + '\n\n' + CHANGELOG,
     classifiers=[
       "Intended Audience :: Developers",
       "Programming Language :: Python",

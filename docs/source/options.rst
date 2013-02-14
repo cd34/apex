@@ -31,6 +31,9 @@ apex.use_recaptcha_on_reset = false
 apex.use_recaptcha_on_register = true
   OPTIONAL, Display Recaptcha form on Registration Page
 
+apex.use_recaptcha_on_auth = false
+  OPTIONAL, Display Recaptcha form on Add Additional Authentication method Page
+
 apex.exclude_local = false
   OPTIONAL, disable local authentication
 
@@ -47,6 +50,10 @@ apex.form_template = project:templates/form.mako
 apex.register_form_class = project.models.form_name
   OPTIONAL, requires DOTTED notation, specifies overloaded form for
   registration
+
+apex.auth_form_class = project.models.form_name
+  OPTIONAL, requires DOTTED notation, specifies overloaded form for
+  adding additional authentication methods
 
 apex.default_user_group = 
   OPTIONAL, If defined, will add the user to this group when created. If
@@ -85,6 +92,12 @@ apex.use_apex_edit = false
 apex.no_csrf = 
   OPTIONAL, a comma separated list of route names that should NOT be subject
   to CSRF tests.
+
+apex.allow_duplicate_providers = false
+  OPTIONAL, when allowing one to merge additional authentication providers,
+  do you want to allow an ID to have two Facebook accounts, or, two local
+  authentication accounts. Or, should apex disallow the addition of a
+  duplicate authentication provider.
 
 **Email Settings**
 

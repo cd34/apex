@@ -2,24 +2,25 @@ import base64
 import hmac
 import time
 
-from wtforms import TextField
-from wtforms import validators
+from wtforms import (TextField,
+                     validators)
 from wtforms.ext.sqlalchemy.orm import model_form
 
 from wtfrecaptcha.fields import RecaptchaField
 
 from pyramid.httpexceptions import HTTPFound
 from pyramid.response import Response
-from pyramid.security import authenticated_userid
-from pyramid.security import forget
+from pyramid.security import (authenticated_userid,
+                              forget)
 from pyramid.settings import asbool
-from pyramid.url import current_route_url
-from pyramid.url import route_url
+from pyramid.url import (current_route_url,
+                         route_url)
 
 from apex import MessageFactory as _
 from apex.lib.db import merge_session_with_post
 from apex.lib.libapex import (apex_email_forgot,
-                              apexid_from_token,
+                              apex_id_from_token,
+                              apex_id_providers,
                               apex_remember,
                               apex_settings,
                               generate_velruse_forms,
@@ -27,14 +28,14 @@ from apex.lib.libapex import (apex_email_forgot,
                               get_module)
 from apex.lib.flash import flash
 from apex.lib.form import ExtendedForm
-from apex.models import AuthGroup
-from apex.models import AuthID
-from apex.models import AuthUser
-from apex.models import DBSession
-from apex.forms import ChangePasswordForm
-from apex.forms import ForgotForm
-from apex.forms import ResetPasswordForm
-from apex.forms import LoginForm
+from apex.models import (AuthGroup,
+                         AuthID,
+                         AuthUser,
+                         DBSession)
+from apex.forms import (ChangePasswordForm,
+                        ForgotForm,
+                        ResetPasswordForm,
+                        LoginForm)
 
 
 def login(request):
@@ -47,13 +48,15 @@ def login(request):
     came_from = get_came_from(request)
     if not apex_settings('exclude_local'):
         if asbool(apex_settings('use_recaptcha_on_login')):
-            if apex_settings('recaptcha_public_key') and apex_settings('recaptcha_private_key'):
+            if apex_settings('recaptcha_public_key') and \
+                apex_settings('recaptcha_private_key'):
                 LoginForm.captcha = RecaptchaField(
                     public_key=apex_settings('recaptcha_public_key'),
                     private_key=apex_settings('recaptcha_private_key'),
                 )
             form = LoginForm(request.POST,
-                            captcha={'ip_address': request.environ['REMOTE_ADDR']})
+                             captcha={'ip_address': \
+                             request.environ['REMOTE_ADDR']})
         else:
             form = LoginForm(request.POST)
     else:
@@ -111,7 +114,8 @@ def forgot_password(request):
     title = _('Forgot my password')
 
     if asbool(apex_settings('use_recaptcha_on_forgot')):
-        if apex_settings('recaptcha_public_key') and apex_settings('recaptcha_private_key'):
+        if apex_settings('recaptcha_public_key') and \
+            apex_settings('recaptcha_private_key'):
             ForgotForm.captcha = RecaptchaField(
                 public_key=apex_settings('recaptcha_public_key'),
                 private_key=apex_settings('recaptcha_private_key'),
@@ -154,7 +158,8 @@ def reset_password(request):
     title = _('Reset My Password')
 
     if asbool(apex_settings('use_recaptcha_on_reset')):
-        if apex_settings('recaptcha_public_key') and apex_settings('recaptcha_private_key'):
+        if apex_settings('recaptcha_public_key') and \
+            apex_settings('recaptcha_private_key'):
             ResetPasswordForm.captcha = RecaptchaField(
                 public_key=apex_settings('recaptcha_public_key'),
                 private_key=apex_settings('recaptcha_private_key'),
@@ -225,13 +230,15 @@ def register(request):
 
     if not apex_settings('exclude_local'):
         if asbool(apex_settings('use_recaptcha_on_register')):
-            if apex_settings('recaptcha_public_key') and apex_settings('recaptcha_private_key'):
+            if apex_settings('recaptcha_public_key') and \
+                apex_settings('recaptcha_private_key'):
                 RegisterForm.captcha = RecaptchaField(
                     public_key=apex_settings('recaptcha_public_key'),
                     private_key=apex_settings('recaptcha_private_key'),
                 )
 
-        form = RegisterForm(request.POST, captcha={'ip_address': request.environ['REMOTE_ADDR']})
+        form = RegisterForm(request.POST, captcha={'ip_address': \
+            request.environ['REMOTE_ADDR']})
     else:
         form = None
 
@@ -244,6 +251,45 @@ def register(request):
     return {'title': title, 'form': form, 'velruse_forms': velruse_forms, \
             'action': 'register'}
 
+def add_auth(request):
+    title = _('Add another Authentication method')
+    came_from = request.params.get('came_from', \
+                    route_url(apex_settings('came_from_route'), request))
+    auth_providers = apex_id_providers(authenticated_userid(request))
+    exclude = set([])
+    if not apex_settings('allow_duplicate_providers'):
+        exclude = set(auth_providers)
+
+    velruse_forms = generate_velruse_forms(request, came_from, exclude)
+
+    #This fixes the issue with RegisterForm throwing an UnboundLocalError
+    if apex_settings('auth_form_class'):
+        AddAuthForm = get_module(apex_settings('auth_form_class'))
+    else:
+        from apex.forms import AddAuthForm
+
+    if not apex_settings('exclude_local') and 'local' not in exclude:
+        if not asbool(apex_settings('use_recaptcha_on_auth')):
+            if apex_settings('recaptcha_public_key') and \
+                apex_settings('recaptcha_private_key'):
+                AddAuthForm.captcha = RecaptchaField(
+                    public_key=apex_settings('recaptcha_public_key'),
+                    private_key=apex_settings('recaptcha_private_key'),
+                )
+
+        form = AddAuthForm(request.POST, captcha={'ip_address': \
+            request.environ['REMOTE_ADDR']})
+    else:
+        form = None
+
+    if request.method == 'POST' and form.validate():
+        form.save(authenticated_userid(request))
+
+        return HTTPFound(location=came_from)
+
+    return {'title': title, 'form': form, 'velruse_forms': velruse_forms, \
+            'action': 'add_auth'}
+
 def apex_callback(request):
     """ apex_callback(request):
     no return value, called with route_url('apex_callback', request)
@@ -254,7 +300,7 @@ def apex_callback(request):
                 route_url(apex_settings('came_from_route'), request))
     headers = []
     if 'token' in request.POST:
-        auth = apexid_from_token(request)
+        auth = apex_id_from_token(request)
         if auth:
             user = AuthUser.get_by_login(auth['id'])
             if not user:

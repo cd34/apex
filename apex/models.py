@@ -16,13 +16,11 @@ from sqlalchemy import (Column,
                         Unicode)
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
-from sqlalchemy.orm import scoped_session
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.orm import synonym
+from sqlalchemy.orm import (relationship,
+                            scoped_session,
+                            sessionmaker,
+                            synonym)
 from sqlalchemy.sql.expression import func
-
-#from velruse.store.sqlstore import SQLBase
 
 from zope.sqlalchemy import ZopeTransactionExtension 
 

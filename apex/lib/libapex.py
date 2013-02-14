@@ -8,11 +8,11 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from pyramid.decorator import reify
 from pyramid.httpexceptions import HTTPBadRequest
-from pyramid.security import Allow
-from pyramid.security import authenticated_userid
-from pyramid.security import Everyone
-from pyramid.security import Authenticated
-from pyramid.security import remember
+from pyramid.security import (Allow,
+                              Authenticated,
+                              authenticated_userid,
+                              Everyone,
+                              remember)
 from pyramid.settings import asbool
 from pyramid.request import Request
 from pyramid.threadlocal import get_current_registry
@@ -34,11 +34,11 @@ from apex.forms import (OpenIdLogin,
                         LastfmLogin,
                         IdenticaLogin,
                         LinkedinLogin)
-from apex.models import DBSession
-from apex.models import AuthID
-from apex.models import AuthUser
-from apex.models import AuthGroup
-from apex.models import AuthUserLog
+from apex.models import (AuthID,
+                         AuthUser,
+                         AuthGroup,
+                         AuthUserLog,
+                         DBSession)
 
 class EmailMessageText(object):
     """ Default email message text class
@@ -84,7 +84,7 @@ If you did not make this request, you can safely ignore it.
 """),
         }
 
-def apexid_from_token(request):
+def apex_id_from_token(request):
     """ Returns the apex id from the OpenID Token
     """
     dbsession = DBSession()
@@ -176,6 +176,13 @@ def apex_email_activate(request, user_id, email, hmac):
 
     apex_email(request, email, message_text['subject'], message_body)
 
+def apex_id_providers(auth_id):
+    """ return a list of the providers that are currently active for 
+        this auth_id
+    """
+    return [x[0] for x in DBSession.query(AuthUser.provider). \
+        filter(AuthUser.auth_id==auth_id).all()]
+
 def apex_settings(key=None, default=None):
     """ Gets an apex setting if the key is set.
         If no key it set, returns all the apex settings.
@@ -240,14 +247,14 @@ def create_user(**kwargs):
     DBSession.flush()
     return user
 
-def generate_velruse_forms(request, came_from):
-    """ Generates variable form based on OpenID providers supported in
-    the CONFIG.yaml file
+def generate_velruse_forms(request, came_from, exclude=None):
+    """ Generates variable form based on OpenID providers
     """
     velruse_forms = []
     providers = apex_settings('velruse_providers', None)
     if providers:
-        providers = [x.strip() for x in providers.split(',')]
+        providers = list(set([x.strip() for x in providers.split(',')]) - \
+            exclude)
         for provider in providers:
             if provider_forms.has_key(provider):
                 form = provider_forms[provider](
