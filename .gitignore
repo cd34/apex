@@ -12,3 +12,4 @@
 *.db-journal
 .coverage
 /build
+/dist
