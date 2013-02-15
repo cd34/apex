@@ -2,7 +2,6 @@ import os
 import unittest
 from sqlalchemy import engine_from_config
 from pyramid import testing
-from sqlalchemy.orm import sessionmaker
 from apex.models import (Base,
                          DBSession)
 here = os.path.abspath(os.path.dirname(__file__))
@@ -29,8 +28,6 @@ class BaseTestCase(unittest.TestCase):
         cls.engine = engine_from_config(settings, prefix='sqlalchemy.')
         DBSession.configure(bind=cls.engine)
         Base.metadata.create_all(cls.engine)
-
-        cls.Session = sessionmaker()
 
     @classmethod
     def tearDownClass(cls):

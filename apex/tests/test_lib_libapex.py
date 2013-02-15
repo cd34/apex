@@ -3,14 +3,6 @@ import unittest
 from pyramid import testing
 
 class Test_lib_libapex(unittest.TestCase):
-    """
-    def setUp(self):
-        self.config = testing.setUp()
-
-    def tearDown(self):
-        testing.tearDown()
-    """
-
     def test_apex_id_from_token(self):
         # apex_id_from_token(request)
         pass
@@ -50,9 +42,13 @@ class Test_lib_libapex(unittest.TestCase):
     def test_create_user(self):
         # create_user(**kwargs)
         from apex.lib.libapex import create_user
+        from apex.models import (AuthUser,
+                                 DBSession)
 
         create_user(username='libtest', password='password')
-        pass
+        # check that auth_id, auth_user, auth_group are added
+        self.assertEqual('libtest', DBSession.query(AuthUser.login). \
+            filter(AuthUser.login=='libtest').one()[0])
 
     def test_generate_velruse_forms(self):
         # generate_velruse_forms(request, came_from)
