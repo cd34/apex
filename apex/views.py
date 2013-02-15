@@ -25,8 +25,7 @@ from apex.lib.libapex import (apex_email_forgot,
                               apex_settings,
                               generate_velruse_forms,
                               get_came_from,
-                              get_module,
-                              key_store)
+                              get_module)
 from apex.lib.flash import flash
 from apex.lib.form import ExtendedForm
 from apex.models import (AuthGroup,
@@ -82,6 +81,7 @@ def logout(request):
     """
     headers = forget(request)
     came_from = get_came_from(request)
+    request.session.invalidate()
     return HTTPFound(location=came_from, headers=headers)
 
 def change_password(request):
@@ -256,10 +256,12 @@ def add_auth(request):
     title = _('Add another Authentication method')
     came_from = request.params.get('came_from', \
                     route_url(apex_settings('came_from_route'), request))
-    auth_providers = apex_id_providers(authenticated_userid(request))
+    auth_id = authenticated_userid(request)
+    request.session['id'] = auth_id
+    auth_providers = apex_id_providers(auth_id)
     exclude = set([])
     if not apex_settings('allow_duplicate_providers'):
-        exclude = set(auth_providers)
+        exclude = set([x.split('.')[0] for x in auth_providers])
 
     velruse_forms = generate_velruse_forms(request, came_from, exclude)
 
@@ -282,11 +284,9 @@ def add_auth(request):
             request.environ['REMOTE_ADDR']})
     else:
         form = None
-    key_store[request.session.get_csrf_token()] = \
-        authenticated_userid(request)
 
     if request.method == 'POST' and form.validate():
-        form.save(authenticated_userid(request))
+        form.save(auth_id)
 
         return HTTPFound(location=came_from)
 
@@ -304,16 +304,18 @@ def apex_callback(request):
     headers = []
     if 'token' in request.POST:
         auth = apex_id_from_token(request)
-        print auth
         if auth:
-            user = AuthUser.get_by_login(auth['id'])
-            # pass data through velruse to associate to existing auth_id
-            #if key_store[request.params['csrf_token']]:
-            #    user = AuthID.get_by_id()
+            user = None
+            if not request.session.has_key('id'):
+                user = AuthUser.get_by_login(auth['id'])
             if not user:
+                id = None
+                if request.session.has_key('id'):
+                    id = AuthID.get_by_id(request.session['id'])
+                else:
+                    id = AuthID()
+                    DBSession.add(id)
                 auth_info = auth['profile']['accounts'][0]
-                id = AuthID()
-                DBSession.add(id)
                 user = AuthUser(
                     login=auth_info['userid'],
                     provider=auth_info['domain'],

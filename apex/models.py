@@ -176,6 +176,10 @@ class AuthUser(Base):
     created = Column(types.DateTime(), default=func.now())
     active = Column(types.Enum(u'Y',u'N',u'D', name=u'active'), default=u'Y')
 
+    # need unique index on auth_id, provider, login
+    # create unique index ilp on auth_users (auth_id,login,provider);
+    # how do we handle same auth on multiple ids?
+
     def _set_password(self, password):
         self.salt = self.get_salt(24)
         password = password + self.salt

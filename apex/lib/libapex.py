@@ -35,8 +35,6 @@ from apex.models import (AuthID,
                          AuthUserLog,
                          DBSession)
 
-key_store = {}
-
 class EmailMessageText(object):
     """ Default email message text class
     """
@@ -287,7 +285,8 @@ def get_came_from(request):
     return request.GET.get('came_from',
                            request.POST.get(
                                'came_from',
-                               route_url(apex_settings('came_from_route'), request))
+                               route_url(apex_settings('came_from_route'), \
+                               request))
                           )
 
 class RequestFactory(Request):
