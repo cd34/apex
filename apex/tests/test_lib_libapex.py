@@ -9,7 +9,15 @@ class Test_lib_libapex(unittest.TestCase):
 
     def test_groupfinder(self):
         # groupfinder(userid, request)
-        pass
+        from apex.lib.libapex import (create_user,
+                                      groupfinder)
+
+        user = create_user(username='libtest', password='password', \
+            group='users')
+        self.assertEqual([u'group:users'], groupfinder(user.auth_id, None))
+        self.assertNotEqual(None, groupfinder(user.auth_id, None))
+        self.assertEqual(None, groupfinder(18, None))
+        self.assertNotEqual([u'group:users'], groupfinder(18, None))
 
     def test_apex_email(self):
         # apex_email(request, recipients, subject, body, sender=None)

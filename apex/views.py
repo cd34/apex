@@ -271,6 +271,7 @@ def add_auth(request):
     else:
         from apex.forms import AddAuthForm
 
+    form = None
     if not apex_settings('exclude_local') and 'local' not in exclude:
         if not asbool(apex_settings('use_recaptcha_on_auth')):
             if apex_settings('recaptcha_public_key') and \
@@ -282,8 +283,6 @@ def add_auth(request):
 
         form = AddAuthForm(request.POST, captcha={'ip_address': \
             request.environ['REMOTE_ADDR']})
-    else:
-        form = None
 
     if request.method == 'POST' and form.validate():
         form.save(auth_id)
