@@ -90,9 +90,23 @@ class Test_views(BaseTestCase):
     def test_reset_password(self):
         pass
 
+    def test_activate(self):
+        pass
+
     def test_register(self):
+        pass
+
+    def test_add_auth(self):
         pass
 
     def test_apex_callback(self):
         pass
 
+    def test_openid_required(self):
+        pass
+
+    def test_forbidden(self):
+        pass
+
+    def test_edit(self):
+        pass
