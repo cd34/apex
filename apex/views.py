@@ -86,10 +86,10 @@ def logout(request):
 
 def change_password(request):
     """ change_password(request):
-    no return value, called with route_url('apex_change_password', request)
-    FIXME doesn't adjust auth_user based on local ID, how do we handle multiple
-        IDs that are local? Do we tell person that they don't have local
-        permissions?
+        no return value, called with route_url('apex_change_password', request)
+        FIXME doesn't adjust auth_user based on local ID, how do we handle
+        multiple IDs that are local? Do we tell person that they don't have
+        local permissions?
     """
     title = _('Change your Password')
 
