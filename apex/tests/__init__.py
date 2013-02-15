@@ -3,8 +3,8 @@ import unittest
 from sqlalchemy import engine_from_config
 from pyramid import testing
 from sqlalchemy.orm import sessionmaker
-from apex.models import DBSession
-from apex.models import Base
+from apex.models import (Base,
+                         DBSession)
 here = os.path.abspath(os.path.dirname(__file__))
 
 
@@ -35,8 +35,7 @@ class BaseTestCase(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         DBSession.close()
-        from apex.models import Base
-        Base.metadata.drop_all(cls.engine)
+        #Base.metadata.drop_all(cls.engine)
 
     def setUp(self):
         self.config = testing.setUp()
@@ -44,19 +43,5 @@ class BaseTestCase(unittest.TestCase):
         self.config.add_settings(settings)
         self.config.include('apex')
 
-        connection = self.engine.connect()
-
-        # begin a non-ORM transaction
-        self.trans = connection.begin()
-
-        # bind an individual Session to the connection
-        DBSession.configure(bind=connection)
-        self.session = self.Session(bind=connection)
-
     def tearDown(self):
-        # rollback - everything that happened with the
-        # Session above (including calls to commit())
-        # is rolled back.
         testing.tearDown()
-        self.trans.rollback()
-        self.session.close()

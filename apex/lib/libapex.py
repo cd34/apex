@@ -82,7 +82,6 @@ If you did not make this request, you can safely ignore it.
 def apex_id_from_token(request):
     """ Returns the apex id from the OpenID Token
     """
-    dbsession = DBSession()
     payload = {'format': 'json', 'token': request.POST['token']}
     velruse = requests.get(request.host_url + '/velruse/auth_info', \
         params=payload)
