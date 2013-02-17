@@ -237,6 +237,7 @@ def create_user(**kwargs):
     for key, value in kwargs.items():
         setattr(user, key, value)
 
+    DBSession.add(auth_id)
     DBSession.add(user)
     DBSession.flush()
     return user

@@ -35,7 +35,7 @@ class RegisterForm(ExtendedForm):
     def create_user(self, login):
         group = self.request.registry.settings.get('apex.default_user_group',
                                                    None)
-        user = apex.lib.libapex.create_user(login=login,
+        user = apex.lib.libapex.create_user(username=login,
                                             password=self.data['password'],
                                             email=self.data['email'],
                                             group=group)
