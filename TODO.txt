@@ -33,3 +33,7 @@ Tests
 * view test
 * functional view test with webtest
   this is needed to test permissions
+
+Code cleanup
+* get rid of globals like settings and request
+* pep8 (autopep8)
