@@ -86,7 +86,10 @@ def apex_id_from_token(request):
     velruse = requests.get(request.host_url + '/velruse/auth_info', \
         params=payload)
     if velruse.status_code == 200:
-        auth = velruse.json()
+        try:
+            auth = velruse.json()
+        except:
+            raise HTTPBadRequest(_('Velruse error while decoding json'))
         if 'profile' in auth:
             auth['id'] = auth['profile']['accounts'][0]['userid']
             auth['provider'] = auth['profile']['accounts'][0]['domain']
