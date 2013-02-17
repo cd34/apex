@@ -302,7 +302,12 @@ def apex_callback(request):
                 route_url(apex_settings('came_from_route'), request))
     headers = []
     if 'token' in request.POST:
-        auth = apex_id_from_token(request)
+        auth = None
+        try:
+            auth = apex_id_from_token(request)
+        except:
+            # TODO add logging
+            pass
         if auth:
             user = None
             if not request.session.has_key('id'):

@@ -35,7 +35,9 @@ class BaseTestCase(unittest.TestCase):
         #Base.metadata.drop_all(cls.engine)
 
     def setUp(self):
-        self.config = testing.setUp()
+        request = testing.DummyRequest()
+        self.config = testing.setUp(request=request)
+
         self.config.add_route('home', '/')
         self.config.add_settings(settings)
         self.config.include('apex')

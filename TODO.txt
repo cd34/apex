@@ -28,3 +28,13 @@ SQL Issues
 
 Flash messages
 * bootstrap uses -info rather than -notice
+
+Tests
+* view test
+* functional view test with webtest
+  this is needed to test permissions
+* travis ci
+
+Code cleanup
+* get rid of globals like settings and request
+* pep8 (autopep8)

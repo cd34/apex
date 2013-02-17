@@ -1,3 +1,5 @@
+import apex.lib.libapex
+
 from wtforms import (HiddenField,
                      PasswordField,
                      TextField,
@@ -31,22 +33,12 @@ class RegisterForm(ExtendedForm):
             raise validators.ValidationError(_('Sorry that username already exists.'))
 
     def create_user(self, login):
-        id = AuthID()
-        DBSession.add(id)
-        user = AuthUser(
-            login=login,
-            password=self.data['password'],
-            email=self.data['email'],
-        )
-        id.users.append(user)
-        DBSession.add(user)
-        settings = get_current_registry().settings
-        if settings.has_key('apex.default_user_group'):
-            group = DBSession.query(AuthGroup). \
-               filter(AuthGroup.name==settings['apex.default_user_group']).one()
-            id.groups.append(group)
-        DBSession.flush()
-
+        group = self.request.registry.settings.get('apex.default_user_group',
+                                                   None)
+        user = apex.lib.libapex.create_user(username=login,
+                                            password=self.data['password'],
+                                            email=self.data['email'],
+                                            group=group)
         return user
 
     def save(self):
