@@ -2,9 +2,7 @@ import unittest
 
 from pyramid import testing
 
-from apex.tests import BaseTestCase
-
-class Test_lib_libapex(BaseTestCase):
+class Test_lib_libapex(unittest.TestCase):
     def test_apex_id_from_token(self):
         # apex_id_from_token(request)
         pass
