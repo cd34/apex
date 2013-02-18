@@ -22,7 +22,7 @@ tests_require = install_requires + ['Sphinx', 'docutils',
 
 here = os.path.abspath(os.path.dirname(__file__))
 try:
-    README = open(os.path.join(here, 'README.txt')).read()
+    README = open(os.path.join(here, 'README.rst')).read()
     CHANGELOG = open(os.path.join(here, 'CHANGELOG.txt')).read()
 except IOError:
     README = CHANGELOG = ''
