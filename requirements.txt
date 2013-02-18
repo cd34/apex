@@ -1,0 +1,10 @@
+cryptacular
+zope.sqlalchemy
+velruse >= 1.0.3
+pyramid > 1.1.2
+pyramid_mailer
+requests
+wtforms
+wtforms-recaptcha
+nose
+coverage
