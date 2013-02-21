@@ -1,8 +1,8 @@
 Apex 
 ====
 
-.. image:: https://api.travis-ci.org/delijati/apex.png?branch=master
-        :target: https://travis-ci.org/delijati/apex
+.. image:: https://api.travis-ci.org/cd34/apex.png?branch=master
+        :target: https://travis-ci.org/cd34/apex
 
 Authentication, Form Library, I18N/L10N, Flash Message Template
 (not associated with Pyramid, a Pylons project)
