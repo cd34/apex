@@ -1,10 +1,6 @@
 Example Application
 ================================
 
-::
-
-    Currently Broken - will update shortly
-
 Example application to show you how to use various aspects of Apex in 
 your project.
 
