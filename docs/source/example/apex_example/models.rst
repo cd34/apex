@@ -3,14 +3,11 @@ Models
 
 ::
 
-    import transaction
-
     from sqlalchemy import Column
     from sqlalchemy import ForeignKey
     from sqlalchemy import Integer
     from sqlalchemy import Unicode
 
-    from sqlalchemy.exc import IntegrityError
     from sqlalchemy.ext.declarative import declarative_base
 
     from sqlalchemy.orm import backref
@@ -19,9 +16,6 @@ Models
     from sqlalchemy.orm import sessionmaker
 
     from zope.sqlalchemy import ZopeTransactionExtension
-
-    from velruse.store.sqlstore import KeyStorage
-    from velruse.store.sqlstore import SQLBase
 
     from apex.models import AuthUser
     """ To Extend the User Model, make sure you import AuthUser in your
@@ -59,5 +53,3 @@ Models
         DBSession.configure(bind=engine)
         Base.metadata.bind = engine
         Base.metadata.create_all(engine)
-        SQLBase.metadata.bind = engine
-        SQLBase.metadata.create_all(engine)

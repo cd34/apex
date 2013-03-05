@@ -5,6 +5,7 @@ To get started, create a virtualenv for your test, activate it and copy
 the example code:
 
 ::
+
     virtualenv /var/www/apex_example
     cd /var/www/apex_example
     source bin/activate
