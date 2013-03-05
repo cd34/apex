@@ -15,37 +15,28 @@ development.ini
 
     mako.directories = apex_example:templates
 
-    # at a minimum, the following 4 settings are required. If you have
-    # already created a root factory, the secret's are not required.
     apex.session_secret = apex_example_session_secret
     apex.auth_secret = apex_example_auth_secret
     apex.came_from_route = home
-    apex.velruse_config = %(here)s/CONFIG.yaml
 
-    # we need to set up Velruse as an application
     [app:velruse]
     use = egg:velruse
-    config_file = %(here)s/CONFIG.yaml
-    beaker.session.data_dir = %(here)s/data/sdata
-    beaker.session.lock_dir = %(here)s/data/slock
-    beaker.session.key = velruse
-    beaker.session.secret = somesecret
-    beaker.session.type = cookie
-    beaker.session.validate_key = STRONG_KEY_HERE
-    # make sure you put the right domain here, otherwise, you'll get
-    # a key error when trying to authenticate with an OpenID provider.
-    beaker.session.cookie_domain = .domain.com
+    endpoint = http://domain.com/auth/apex_callback
+    openid.store = openid.store.memstore:MemoryStore
+    openid.realm = http://domain.com/
+
+    providers =
+        providers.twitter
+
+    providers.twitter.consumer_key =
+    providers.twitter.consumer_secret =
 
     [filter:exc]
     use=egg:WebError#evalerror
 
-    # we use a pipeline to add the exception handler, tm, and our 
-    # application
     [pipeline:papex_example]
     pipeline = exc tm apex_example
 
-    # set up a composite app, mapping / to our application and /velruse
-    # to velruse
     [composite:main]
     use = egg:Paste#urlmap
     / = papex_example
