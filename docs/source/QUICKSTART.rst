@@ -53,11 +53,11 @@ For Velruse, we need to add the following:
         providers.facebook
         providers.twitter
 
-    facebook.consumer_key = 111111111111111
-    facebook.consumer_secret = 11111111111111111111111111111111
+    provider.facebook.consumer_key = 111111111111111
+    provider.facebook.consumer_secret = 11111111111111111111111111111111
 
-    twitter.consumer_key = 1111111111111111111111
-    twitter.consumer_secret = 111111111111111111111111111111111111111111
+    provider.twitter.consumer_key = 1111111111111111111111
+    provider.twitter.consumer_secret = 111111111111111111111111111111111111111111
 
 
 Comment or remove the following settings:
