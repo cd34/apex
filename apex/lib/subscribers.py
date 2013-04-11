@@ -43,7 +43,11 @@ def csrf_validation(event):
 
     """
     if event.request.method == 'POST':
-        token = event.request.POST.get('csrf_token') or event.request.GET.get('csrf_token')
+                token = event.request.POST.get('csrf_token')\
+                                    or event.request.GET.get('csrf_token')\
+                                    or event.request.json_body.get('csrf_token')\
+                                    or event.request.headers.get('X-CSRF-Token'
+                                    
         no_csrf = apex_settings('no_csrf', '').split(',')
         if (token is None or token != event.request.session.get_csrf_token()):
             if event.request.matched_route and \
