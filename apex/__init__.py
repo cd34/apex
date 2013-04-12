@@ -70,6 +70,7 @@ def includeme(config):
             raise ApexAuthSecret()
         authn_policy = AuthTktAuthenticationPolicy( \
                        settings.get('apex.auth_secret'), \
+                       hashalg='sha512', \
                        callback=groupfinder)
         config.set_authentication_policy(authn_policy)
 
