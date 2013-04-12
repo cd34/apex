@@ -13,7 +13,7 @@ If you are using a local authentication database:
         __tablename__ = 'auth_user_profile'
 
         id = Column(types.BigInteger, primary_key=True)
-        user_id = Column(types.BigInteger, ForeignKey(AuthID.id), index=True)
+        auth_id = Column(types.BigInteger, ForeignKey(AuthID.id), index=True)
 
         """ Add your locally defined options here
         """
@@ -60,14 +60,14 @@ If you are using OpenID providers:
         __tablename__ = 'auth_user_profile'
 
         id = Column(types.BigInteger, primary_key=True)
-        user_id = Column(types.BigInteger, ForeignKey(AuthUser.id))
+        auth_id = Column(types.BigInteger, ForeignKey(Auth.id))
 
         """ Add your locally defined options here
         """
         first_name = Column(Unicode(80))
         last_name = Column(Unicode(80))
 
-        user = relationship('AuthUser', backref=backref('profile', uselist=False))
+        user = relationship('AuthID', backref=backref('profile', uselist=False))
 
 **project/models/profile.py**
 
