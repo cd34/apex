@@ -115,6 +115,14 @@ apex.email_validate = false
 apex.email_message_text = apex.lib.libapex.EmailMessageText
   OPTIONAL, dotted class notation containing replacement message text
 
+apex.email_report_recipients =
+  OPTIONAL, specifies a list of recipients who are notified by email
+  when a registration activity occurs.
+
+apex.email_report_prefix =
+  OPTIONS, prepend the subject line of an email report with the specified
+  string.  Only applicable when email_report_recipients is set.
+
 apex.use_request_factory = true
   OPTIONAL, use apex's default request factory
 

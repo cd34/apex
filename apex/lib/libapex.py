@@ -146,9 +146,35 @@ def apex_email(request, recipients, subject, body, sender=None):
         if not sender:
             sender = 'nobody@example.com'
     message = Message(subject=subject,
-                  sender=sender,
-                  recipients=[recipients],
-                  body=body)
+                      sender=sender,
+                      recipients=[recipients],
+                      body=body)
+    mailer.send(message)
+
+    report_recipients = apex_settings('email_report_recipients')
+    if not report_recipients:
+        return
+
+    report_recipients = [s.strip() for s in report_recipients.split(',')]
+
+    # since the config options are interpreted (not raw)
+    # the report_subject variable is not easily customizable.
+    report_subject = "Registration activity for '%(recipients)s' : %(subject)s"
+
+    report_prefix = apex_settings('email_report_prefix')
+    if report_prefix:
+        report_subject = report_prefix + ' ' + report_subject
+
+    d = { 'recipients': recipients, 'subject': subject }
+    report_subject = report_subject % d
+
+    body = "The following registration-related activity occurred: \r\n" + \
+        "--------------------------------------------\r\n" + body
+
+    message = Message(subject=report_subject,
+                      sender=sender,
+                      recipients=report_recipients,
+                      body=body)
     mailer.send(message)
 
 def apex_email_forgot(request, user_id, email, hmac):
