@@ -55,6 +55,10 @@ apex.auth_form_class = project.models.form_name
   OPTIONAL, requires DOTTED notation, specifies overloaded form for
   adding additional authentication methods
 
+apex.login_form_class = project.models.form_name
+  OPTIONAL, requires DOTTED notation, specifies overloaded form for
+  handling user login.
+
 apex.default_user_group = 
   OPTIONAL, If defined, will add the user to this group when created. If
   undefined, users will not be assigned to a group and you'll only have the
