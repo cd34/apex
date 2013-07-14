@@ -37,6 +37,10 @@ apex.use_recaptcha_on_auth = false
 apex.exclude_local = false
   OPTIONAL, disable local authentication
 
+apex.use_sha256 = false
+  OPTIONAL, force use of a SHA256 hash to store passwords instead of the
+  default encode method from cryptacular.bcrypt.BCRYPTPasswordManager.
+
 apex.velruse_providers = 
   OPTIONAL, comma separated list to include velruse configured providers.
 
