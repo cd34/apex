@@ -18,7 +18,9 @@ from pyramid.url import (current_route_url,
 
 from apex import MessageFactory as _
 from apex.lib.db import merge_session_with_post
+
 from apex.lib.libapex import (apex_email_forgot,
+                              apex_email_activate,
                               apex_id_from_token,
                               apex_id_providers,
                               apex_remember,
@@ -36,7 +38,6 @@ from apex.forms import (ChangePasswordForm,
                         ForgotForm,
                         ResetPasswordForm,
                         LoginForm)
-
 
 def login(request):
     """ login(request)
@@ -195,7 +196,7 @@ def activate(request):
     """
     """
     user_id = request.matchdict.get('user_id')
-    user = AuthID.get_by_id(user_id)
+    user = AuthUser.get_by_id(user_id)
     submitted_hmac = request.matchdict.get('hmac')
     current_time = time.time()
     time_key = int(base64.b64decode(submitted_hmac[10:]))
@@ -208,8 +209,11 @@ def activate(request):
             DBSession.merge(user)
             DBSession.flush()
             flash(_('Account activated. Please log in.'))
-            return HTTPFound(location=route_url('apex_login', \
-                                                request))
+            activated_route = apex_settings('activated_route')
+            if not activated_route:
+                activated_route = 'apex_login'
+            return HTTPFound(location=route_url(activated_route, request))
+
     flash(_('Invalid request, please try again'))
     return HTTPFound(location=route_url(apex_settings('came_from_route'), \
                                         request))
@@ -244,10 +248,22 @@ def register(request):
         form = None
 
     if request.method == 'POST' and form.validate():
-        user = form.save()
+        if not asbool(apex_settings('email_validate')):
+            user = form.save()
+            headers = apex_remember(request, user.id)
+            return HTTPFound(location=came_from, headers=headers)
 
-        headers = apex_remember(request, user)
-        return HTTPFound(location=came_from, headers=headers)
+        # email activation required.
+        user = form.save()
+        timestamp = time.time()+3600
+        key = '%s:%s:%d' % (str(user.id), \
+                                apex_settings('auth_secret'), timestamp)
+        hmac_key = hmac.new(key, user.email).hexdigest()[0:10]
+        time_key = base64.urlsafe_b64encode('%d' % timestamp)
+        email_hash = '%s%s' % (hmac_key, time_key)
+        apex_email_activate(request, user.id, user.email, email_hash)
+        flash(_('Account activation email sent.'))
+        return HTTPFound(location=route_url('apex_login', request))
 
     return {'title': title, 'form': form, 'velruse_forms': velruse_forms, \
             'action': 'register'}
