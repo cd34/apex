@@ -34,8 +34,7 @@ from apex.models import (AuthGroup,
                          DBSession)
 from apex.forms import (ChangePasswordForm,
                         ForgotForm,
-                        ResetPasswordForm,
-                        LoginForm)
+                        ResetPasswordForm)
 
 
 def login(request):
@@ -46,6 +45,12 @@ def login(request):
     """
     title = _('You need to login')
     came_from = get_came_from(request)
+
+    if apex_settings('login_form_class'):
+        LoginForm = get_module(apex_settings('login_form_class'))
+    else:
+        from apex.forms import LoginForm
+
     if not apex_settings('exclude_local'):
         if asbool(apex_settings('use_recaptcha_on_login')):
             if apex_settings('recaptcha_public_key') and \
