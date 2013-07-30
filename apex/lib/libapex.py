@@ -245,7 +245,7 @@ def create_user(**kwargs):
     """
     auth_id = AuthID(active=kwargs.get('active', 'Y'))
     if 'display_name' in kwargs:
-        user.display_name = kwargs['display_name']
+        auth_id.display_name = kwargs['display_name']
         del kwargs['display_name']
 
     user = AuthUser(login=kwargs['username'], password=kwargs['password'], \
