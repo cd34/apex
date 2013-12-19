@@ -53,7 +53,7 @@ def includeme(config):
     config.add_translation_dirs('apex:locale/')
 
     if not config.registry.queryUtility(ISessionFactory):
-        if not settings.has_key('apex.session_secret'):
+        if 'apex.session_secret' not in settings:
             raise ApexSessionSecret()
 
         config.set_session_factory( \
@@ -66,7 +66,7 @@ def includeme(config):
 
 
     if not config.registry.queryUtility(IAuthenticationPolicy):
-        if not settings.has_key('apex.auth_secret'):
+        if 'apex.auth_secret' not in settings:
             raise ApexAuthSecret()
         authn_policy = AuthTktAuthenticationPolicy( \
                        settings.get('apex.auth_secret'), \
@@ -140,7 +140,7 @@ def includeme(config):
                     'apex_openid_required', \
                     renderer=render_template, permission=NO_PERMISSION_REQUIRED)
 
-    if settings.has_key('apex.auth_profile'):
+    if 'apex.auth_profile' in settings:
         use_edit = asbool(settings.get('apex.use_apex_edit', False))
         if use_edit:
             config.add_route('apex_edit', '/edit')

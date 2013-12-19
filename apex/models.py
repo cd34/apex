@@ -195,12 +195,13 @@ class AuthUser(Base):
         m = hashlib.sha256()
         word = ''
 
-        for i in xrange(length):
+        for i in range(length):
             word += random.choice(string.ascii_letters)
 
-        m.update(word)
+        word_bytes = word.encode('utf-8')
+        m.update(word_bytes)
 
-        return unicode(m.hexdigest()[:length])
+        return m.hexdigest()[:length]
 
     @classmethod
     def get_by_id(cls, id):
@@ -243,9 +244,9 @@ class AuthUser(Base):
 
     @classmethod
     def check_password(cls, **kwargs):
-        if kwargs.has_key('id'):
+        if 'id' in kwargs:
             user = cls.get_by_id(kwargs['id'])
-        if kwargs.has_key('login'):
+        if 'login' in kwargs:
             user = cls.get_by_login(kwargs['login'])
 
         if not user:
@@ -289,7 +290,7 @@ def populate(settings):
     session = DBSession()
 
     default_groups = []
-    if settings.has_key('apex.default_groups'):
+    if 'apex.default_groups' in settings:
         for name in settings['apex.default_groups'].split(','):
             default_groups.append((unicode(name.strip()),u''))
     else:
@@ -306,7 +307,7 @@ def initialize_sql(engine, settings):
     DBSession.configure(bind=engine)
     Base.metadata.bind = engine
     Base.metadata.create_all(engine)
-    if settings.has_key('apex.velruse_providers'):
+    if 'apex.velruse_providers' in settings:
         pass
         #SQLBase.metadata.bind = engine
         #SQLBase.metadata.create_all(engine)
