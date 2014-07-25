@@ -10,6 +10,7 @@ install_requires = [
     "zope.sqlalchemy",
     "velruse>=1.0.3",
     "pyramid>1.1.2",
+    'pyramid_mako',
     "pyramid_mailer",
     "requests",
     "wtforms",
