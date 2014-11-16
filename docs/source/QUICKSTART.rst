@@ -60,31 +60,6 @@ For Velruse, we need to add the following:
     provider.twitter.consumer_secret = 111111111111111111111111111111111111111111
 
 
-Comment or remove the following settings:
-
-::
-
-    [pipeline:main]
-    pipeline =
-        egg:WebError#evalerror
-        tm
-        example
-
-Add the following settings:
-
-::
-
-    [filter:exc]
-    use=egg:WebError#evalerror
-
-    [pipeline:pexample]
-    pipeline = exc tm example
-
-    [composite:main]
-    use = egg:Paste#urlmap
-    / = pexample
-    /velruse = velruse
-
 If you are going to be developing with this virtualenv:
 
 ::
