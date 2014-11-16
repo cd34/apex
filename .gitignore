@@ -13,3 +13,6 @@
 .coverage
 /build
 /dist
+.idea/
+atlassian-ide-plugin.xml
+.DS_Store
