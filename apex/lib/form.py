@@ -24,7 +24,7 @@ class ExtendedForm(Form):
 
         self.is_multipart = False
 
-        for name, field in self._fields.iteritems():
+        for name, field in self._fields.items():
             if field.type == 'FileField':
                 self.is_multipart = True
 
@@ -115,7 +115,7 @@ class ModelForm(ExtendedForm):
     """
     def save(self, session, model, commit=True):
         record = model()
-        record = merge_session_with_post(record, self.data.items())
+        record = merge_session_with_post(record, list(self.data.items()))
         if commit:
             session.add(record)
             session.flush()
