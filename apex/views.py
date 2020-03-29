@@ -366,7 +366,7 @@ def openid_required(request):
 
     If apex_settings.openid_required is set, and the ax/sx from the OpenID
     auth doesn't return the required fields, this is called which builds
-    a dynamic form to ask for the missing inforation.
+    a dynamic form to ask for the missing information.
 
     Called on Registration or Login with OpenID Authentication.
     """
