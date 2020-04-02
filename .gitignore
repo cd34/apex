@@ -1,4 +1,4 @@
-*.egg
+*.egg*
 *.egg-info
 *.pyc
 *.pyo

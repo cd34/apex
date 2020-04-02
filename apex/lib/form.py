@@ -24,7 +24,7 @@ class ExtendedForm(Form):
 
         self.is_multipart = False
 
-        for name, field in self._fields.iteritems():
+        for name, field in self._fields.items():
             if field.type == 'FileField':
                 self.is_multipart = True
 

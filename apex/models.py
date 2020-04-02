@@ -22,11 +22,12 @@ from sqlalchemy.orm import (relationship,
                             synonym)
 from sqlalchemy.sql.expression import func
 
-from zope.sqlalchemy import ZopeTransactionExtension 
+from zope.sqlalchemy import register 
 
 from apex.lib.db import get_or_create
 
-DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
+DBSession = scoped_session(sessionmaker())
+register(DBSession)
 Base = declarative_base()
 
 auth_group_table = Table('auth_auth_groups', Base.metadata,
@@ -195,12 +196,12 @@ class AuthUser(Base):
         m = hashlib.sha256()
         word = ''
 
-        for i in xrange(length):
+        for i in list(range(length)):
             word += random.choice(string.ascii_letters)
 
-        m.update(word)
+        m.update(word.encode('utf-8'))
 
-        return unicode(m.hexdigest()[:length])
+        return str(m.hexdigest()[:length])
 
     @classmethod
     def get_by_id(cls, id):
@@ -243,9 +244,9 @@ class AuthUser(Base):
 
     @classmethod
     def check_password(cls, **kwargs):
-        if kwargs.has_key('id'):
+        if 'id' in kwargs:
             user = cls.get_by_id(kwargs['id'])
-        if kwargs.has_key('login'):
+        if 'login' in kwargs:
             user = cls.get_by_login(kwargs['login'])
 
         if not user:
@@ -289,9 +290,9 @@ def populate(settings):
     session = DBSession()
 
     default_groups = []
-    if settings.has_key('apex.default_groups'):
+    if 'apex.default_groups' in settings:
         for name in settings['apex.default_groups'].split(','):
-            default_groups.append((unicode(name.strip()),u''))
+            default_groups.append((str(name.strip()),u''))
     else:
         default_groups = [(u'users',u'User Group'), \
                           (u'admin',u'Admin Group')]
@@ -306,7 +307,7 @@ def initialize_sql(engine, settings):
     DBSession.configure(bind=engine)
     Base.metadata.bind = engine
     Base.metadata.create_all(engine)
-    if settings.has_key('apex.velruse_providers'):
+    if 'apex.velruse_providers' in settings:
         pass
         #SQLBase.metadata.bind = engine
         #SQLBase.metadata.create_all(engine)

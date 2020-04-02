@@ -37,7 +37,7 @@ login/registration forms will not include the ReCaptcha.net form.
 
 To generate a secret, you can use::
 
-    python -c "import os; print(''.join('%02x' % ord(x) for x in os.urandom(16)))"
+    python -c "import os; print(''.join('%02x' % x for x in os.urandom(16)))"
 
 If you need to get a key for ReCaptcha.net, go to:
 https://www.google.com/recaptcha/admin/create and 'Create Key'
