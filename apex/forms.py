@@ -9,6 +9,7 @@ from apex import MessageFactory as _
 from pyramid.security import authenticated_userid
 from pyramid.threadlocal import (get_current_registry,
                                  get_current_request)
+from pyramid.settings import asbool
 
 from apex.models import (AuthGroup,
                          AuthID,
@@ -35,10 +36,16 @@ class RegisterForm(ExtendedForm):
     def create_user(self, login):
         group = self.request.registry.settings.get('apex.default_user_group',
                                                    None)
+        if asbool(apex.lib.libapex.apex_settings('email_validate')):
+            activate='Y'
+        else:
+            activate='N'
+
         user = apex.lib.libapex.create_user(username=login,
                                             password=self.data['password'],
                                             email=self.data['email'],
-                                            group=group)
+                                            group=group,
+                                            activate=activate)
         return user
 
     def save(self):
