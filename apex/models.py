@@ -4,9 +4,11 @@ import string
 import transaction
 
 from cryptacular.bcrypt import BCRYPTPasswordManager
+from cryptacular.crypt import CRYPTPasswordManager, SHA256CRYPT
 
 from pyramid.threadlocal import get_current_request
 from pyramid.util import DottedNameResolver
+from pyramid.settings import asbool
 
 from sqlalchemy import (Column,
                         ForeignKey,
@@ -182,9 +184,15 @@ class AuthUser(Base):
     # how do we handle same auth on multiple ids?
 
     def _set_password(self, password):
+        request = get_current_request()
+        use_sha256 = asbool(request.registry.settings.get('apex.use_sha256'))
+
         self.salt = self.get_salt(24)
-        password = password + self.salt
-        self._password = BCRYPTPasswordManager().encode(password, rounds=12)
+        if use_sha256:
+            self._password = CRYPTPasswordManager(SHA256CRYPT).encode(password)
+        else:
+            password = password + self.salt
+            self._password = BCRYPTPasswordManager().encode(password, rounds=12)
 
     def _get_password(self):
         return self._password
@@ -249,22 +257,30 @@ class AuthUser(Base):
         if 'login' in kwargs:
             user = cls.get_by_login(kwargs['login'])
 
+        request = get_current_request()
+        use_sha256 = asbool(request.registry.settings.get('apex.use_sha256'))
+
         if not user:
             return False
+
         try:
-            if BCRYPTPasswordManager().check(user.password,
-                '%s%s' % (kwargs['password'], user.salt)):
-                return True
+            if use_sha256:
+                pw = kwargs['password']
+                if CRYPTPasswordManager(SHA256CRYPT).check(user.password, pw):
+                    return True
+            else:
+                pw = kwargs['password'] + user.salt
+                if BCRYPTPasswordManager().check(user.password, pw):
+                    return True
         except TypeError:
             pass
 
-        request = get_current_request()
         fallback_auth = request.registry.settings.get('apex.fallback_auth')
         if fallback_auth:
             resolver = DottedNameResolver(fallback_auth.split('.', 1)[0])
             fallback = resolver.resolve(fallback_auth)
-            return fallback().check(DBSession, request, user, \
-                       kwargs['password'])
+            pw = kwargs['password']
+            return fallback().check(DBSession, request, user, pw)
 
         return False
 
