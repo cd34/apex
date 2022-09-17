@@ -6,7 +6,7 @@ from pyramid.url import route_url
 from apex.lib.flash import flash
 
 def login_required(wrapped):
-    """ login_requred - Decorator to be used if you don't want to use
+    """ login_required - Decorator to be used if you don't want to use
     permission='user'
     """
     def wrapper(request):
