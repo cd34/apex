@@ -1,5 +1,3 @@
-import cgi
-
 from wtforms import Form
 from wtforms import validators
 
@@ -36,13 +34,13 @@ class ExtendedForm(Form):
         """ Returns all the hidden fields.
         """
         return [self._fields[name] for name, field in self._unbound_fields
-            if self._fields.has_key(name) and self._fields[name].type == 'HiddenField']
+            if name in self._fields and self._fields[name].type == 'HiddenField']
 
     def visible_fields(self):
         """ Returns all the visible fields.
         """
         return [self._fields[name] for name, field in self._unbound_fields
-            if self._fields.has_key(name) and not self._fields[name].type == 'HiddenField']
+            if name in self._fields and not self._fields[name].type == 'HiddenField']
 
     def _get_translations(self): 
         if self.request:
@@ -70,8 +68,8 @@ class ExtendedForm(Form):
         if not template:
             settings = self.request.registry.settings
 
-            template = settings.get('apex.form_template', \
-                'apex:templates/forms/tableform.mako')
+            template = settings.get('apex.form_template',
+                                'apex:templates/forms/tableform.mako')
 
         return render(template, {
             'form': self,
@@ -95,18 +93,13 @@ class StyledWidget(object):
 
         return self.widget(field, **dict(self.kw, **kwargs)) 
 
-class FileRequired(validators.Required): 
-    """ 
-    Required validator for file upload fields. 
-
-    Bug mention for validating file field:
-    http://groups.google.com/group/wtforms/msg/666254426eff1102
-    """ 
-    def __call__(self, form, field): 
-        if not isinstance(field.data, cgi.FieldStorage): 
-            if self.message is None: 
-                self.message = field.gettext(u'This field is required.') 
-            field.errors[:] = [] 
+class FileRequired(validators.DataRequired):
+    """Required validator for file upload fields."""
+    def __call__(self, form, field):
+        if not hasattr(field.data, 'file'):
+            if self.message is None:
+                self.message = field.gettext('This field is required.')
+            field.errors[:] = []
             raise validators.StopValidation(self.message)
 
 class ModelForm(ExtendedForm):

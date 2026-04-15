@@ -83,12 +83,12 @@ def apex_id_from_token(request):
     """ Returns the apex id from the OpenID Token
     """
     payload = {'format': 'json', 'token': request.POST['token']}
-    velruse = requests.get(request.host_url + '/velruse/auth_info', \
-        params=payload)
+    velruse = requests.get(
+        request.host_url + '/velruse/auth_info', params=payload)
     if velruse.status_code == 200:
         try:
             auth = velruse.json()
-        except:
+        except Exception:
             raise HTTPBadRequest(_('Velruse error while decoding json'))
         if 'profile' in auth:
             auth['id'] = auth['profile']['accounts'][0]['userid']
@@ -117,10 +117,10 @@ class RootFactory(object):
     def __acl__(self):
         dbsession = DBSession()
         groups = dbsession.query(AuthGroup.name).all()
-        defaultlist = [ (Allow, Everyone, 'view'),
-                (Allow, Authenticated, 'authenticated'),]
+        defaultlist = [(Allow, Everyone, 'view'),
+                       (Allow, Authenticated, 'authenticated')]
         for g in groups:
-            defaultlist.append( (Allow, 'group:%s' % g, g[0]) )
+            defaultlist.append((Allow, 'group:%s' % g, g[0]))
         return defaultlist
 
 provider_forms = {
@@ -168,8 +168,8 @@ def apex_email(request, recipients, subject, body, sender=None):
     d = { 'recipients': recipients, 'subject': subject }
     report_subject = report_subject % d
 
-    body = "The following registration-related activity occurred: \r\n" + \
-        "--------------------------------------------\r\n" + body
+    body = ("The following registration-related activity occurred: \r\n"
+            "--------------------------------------------\r\n" + body)
 
     message = Message(subject=report_subject,
                       sender=sender,
@@ -178,23 +178,25 @@ def apex_email(request, recipients, subject, body, sender=None):
     mailer.send(message)
 
 def apex_email_forgot(request, user_id, email, hmac):
-    message_class_name = get_module(apex_settings('email_message_text', \
-                             'apex.lib.libapex.EmailMessageText'))
+    message_class_name = get_module(apex_settings(
+        'email_message_text', 'apex.lib.libapex.EmailMessageText'))
     message_class = message_class_name()
     message_text = getattr(message_class, 'forgot')()
 
-    message_body = message_text['body'].replace('%_url_%', \
+    message_body = message_text['body'].replace(
+        '%_url_%',
         route_url('apex_reset', request, user_id=user_id, hmac=hmac))
 
     apex_email(request, email, message_text['subject'], message_body)
 
 def apex_email_activate(request, user_id, email, hmac):
-    message_class_name = get_module(apex_settings('email_message_text', \
-                             'apex.lib.libapex.EmailMessageText'))
+    message_class_name = get_module(apex_settings(
+        'email_message_text', 'apex.lib.libapex.EmailMessageText'))
     message_class = message_class_name()
     message_text = getattr(message_class, 'activate')()
 
-    message_body = message_text['body'].replace('%_url_%', \
+    message_body = message_text['body'].replace(
+        '%_url_%',
         route_url('apex_activate', request, user_id=user_id, hmac=hmac))
 
     apex_email(request, email, message_text['subject'], message_body)
@@ -203,8 +205,8 @@ def apex_id_providers(auth_id):
     """ return a list of the providers that are currently active for 
         this auth_id
     """
-    return [x[0] for x in DBSession.query(AuthUser.provider). \
-        filter(AuthUser.auth_id==auth_id).all()]
+    return [x[0] for x in DBSession.query(AuthUser.provider).filter(
+        AuthUser.auth_id == auth_id).all()]
 
 def apex_settings(key=None, default=None):
     """ Gets an apex setting if the key is set.
@@ -248,14 +250,14 @@ def create_user(**kwargs):
         auth_id.display_name = kwargs['display_name']
         del kwargs['display_name']
 
-    user = AuthUser(login=kwargs['username'], password=kwargs['password'], \
-               active=kwargs.get('active', 'Y'))
+    user = AuthUser(login=kwargs['username'], password=kwargs['password'],
+                    active=kwargs.get('active', 'Y'))
     auth_id.users.append(user)
 
     if 'group' in kwargs:
         try:
-            group = DBSession.query(AuthGroup). \
-            filter(AuthGroup.name==kwargs['group']).one()
+            group = DBSession.query(AuthGroup).filter(
+                AuthGroup.name == kwargs['group']).one()
 
             auth_id.groups.append(group)
         except NoResultFound:
@@ -271,22 +273,23 @@ def create_user(**kwargs):
     DBSession.flush()
     return user
 
-def generate_velruse_forms(request, came_from, exclude=set([])):
-    """ Generates variable form based on OpenID providers
-    """
+def generate_velruse_forms(request, came_from, exclude=None):
+    """Generates variable form based on OpenID providers."""
+    if exclude is None:
+        exclude = set()
     velruse_forms = []
     providers = apex_settings('velruse_providers', None)
     if providers:
-        providers = list(set([x.strip() for x in providers.split(',')]) - \
-            exclude)
+        providers = list(
+            {x.strip() for x in providers.split(',')} - exclude)
         for provider in providers:
-            if provider_forms.has_key(provider):
+            if provider in provider_forms:
                 form = provider_forms[provider](
-                    end_point='%s?csrf_token=%s&came_from=%s' % \
-                     (request.route_url('apex_callback'), \
-                      request.session.get_csrf_token(),
-                      came_from), \
-                     csrf_token = request.session.get_csrf_token(),
+                    end_point='%s?csrf_token=%s&came_from=%s' % (
+                        request.route_url('apex_callback'),
+                        request.session.get_csrf_token(),
+                        came_from),
+                    csrf_token=request.session.get_csrf_token(),
                 )
                 velruse_forms.append(form)
     return velruse_forms
@@ -300,12 +303,13 @@ def get_module(package):
 def apex_remember(request, user, max_age=None):
     if asbool(apex_settings('log_logins')):
         if apex_settings('log_login_header'):
-            ip_addr = request.environ.get(apex_settings('log_login_header'), \
-                    u'invalid value - apex.log_login_header')
+            ip_addr = request.environ.get(
+                apex_settings('log_login_header'),
+                'invalid value - apex.log_login_header')
         else:
-             ip_addr = unicode(request.environ['REMOTE_ADDR'])
-        record = AuthUserLog(auth_id=user.auth_id, user_id=user.id, \
-            ip_addr=ip_addr)
+            ip_addr = str(request.environ['REMOTE_ADDR'])
+        record = AuthUserLog(auth_id=user.auth_id, user_id=user.id,
+                             ip_addr=ip_addr)
         DBSession.add(record)
         DBSession.flush()
     return remember(request, user.auth_id, max_age=max_age)
@@ -314,8 +318,8 @@ def get_came_from(request):
     return request.GET.get('came_from',
                            request.POST.get(
                                'came_from',
-                               route_url(apex_settings('came_from_route'), \
-                               request))
+                               route_url(apex_settings('came_from_route'),
+                                        request))
                           )
 
 class RequestFactory(Request):

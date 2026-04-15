@@ -44,19 +44,19 @@ def csrf_validation(event):
     """
     if event.request.method == 'POST':
         # will never hit GET
-        token = event.request.POST.get('csrf_token') \
-            or event.request.GET.get('csrf_token') \
-            or event.request.json_body.get('csrf_token') \
-            or event.request.headers.get('X-CSRF-Token')
+        token = (event.request.POST.get('csrf_token')
+                 or event.request.GET.get('csrf_token')
+                 or event.request.json_body.get('csrf_token')
+                 or event.request.headers.get('X-CSRF-Token'))
                                     
         no_csrf = apex_settings('no_csrf', '').split(',')
         if (token is None or token != event.request.session.get_csrf_token()):
-            if event.request.matched_route and \
-                event.request.matched_route.name not in no_csrf \
-                and not event.request.matched_route.name.startswith('debugtoolbar.') \
-                and not event.request.matched_route.name.startswith('apex_'):
-                    log.debug('apex: CSRF token received %s didn\'t match %s' % \
-                        (token, event.request.session.get_csrf_token()))
+            if (event.request.matched_route
+                    and event.request.matched_route.name not in no_csrf
+                    and not event.request.matched_route.name.startswith('debugtoolbar.')
+                    and not event.request.matched_route.name.startswith('apex_')):
+                    log.debug("apex: CSRF token received %s didn't match %s"
+                              % (token, event.request.session.get_csrf_token()))
                     raise HTTPForbidden(_('CSRF token is missing or invalid'))
 
 def add_renderer_globals(event):

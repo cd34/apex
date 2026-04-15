@@ -15,7 +15,7 @@ from sqlalchemy import (Column,
                         types,
                         Unicode)
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import (relationship,
                             scoped_session,
                             sessionmaker,
@@ -31,10 +31,10 @@ register(DBSession)
 Base = declarative_base()
 
 auth_group_table = Table('auth_auth_groups', Base.metadata,
-    Column('auth_id', types.Integer(), \
-        ForeignKey('auth_id.id', onupdate='CASCADE', ondelete='CASCADE')),
-    Column('group_id', types.Integer(), \
-        ForeignKey('auth_groups.id', onupdate='CASCADE', ondelete='CASCADE'))
+    Column('auth_id', types.Integer(),
+           ForeignKey('auth_id.id', onupdate='CASCADE', ondelete='CASCADE')),
+    Column('group_id', types.Integer(),
+           ForeignKey('auth_groups.id', onupdate='CASCADE', ondelete='CASCADE'))
 )
 # need to create Unique index on (auth_id,group_id)
 Index('auth_group', auth_group_table.c.auth_id, auth_group_table.c.group_id)
@@ -53,17 +53,14 @@ class AuthGroup(Base):
     
     id = Column(types.Integer(), primary_key=True)
     name = Column(Unicode(80), unique=True, nullable=False)
-    description = Column(Unicode(255), default=u'')
+    description = Column(Unicode(255), default='')
 
-    users = relationship('AuthID', secondary=auth_group_table, \
-                     backref='auth_groups')
+    users = relationship('AuthID', secondary=auth_group_table,
+                         backref='auth_groups')
 
     def __repr__(self):
-        return u'%s' % self.name
+        return '%s' % self.name
 
-    def __unicode__(self):
-        return self.name
-    
 
 class AuthID(Base):
     """ Table name: auth_id
@@ -81,24 +78,19 @@ class AuthID(Base):
     __table_args__ = {'sqlite_autoincrement': True}
 
     id = Column(types.Integer(), primary_key=True)
-    display_name = Column(Unicode(80), default=u'')
-    active = Column(types.Enum(u'Y',u'N',u'D', name=u'active'), default=u'Y')
+    display_name = Column(Unicode(80), default='')
+    active = Column(types.Enum('Y', 'N', 'D', name='active'), default='Y')
     created = Column(types.DateTime(), default=func.now())
 
-    groups = relationship('AuthGroup', secondary=auth_group_table, \
-                      backref='auth_users')
+    groups = relationship('AuthGroup', secondary=auth_group_table,
+                          backref='auth_users')
 
     users = relationship('AuthUser')
 
-    """
-    Fix this to use association_proxy
-    groups = association_proxy('auth_group_table', 'authgroup')
-    """
-
-    last_login = relationship('AuthUserLog', \
-                         order_by='AuthUserLog.id.desc()', uselist=False)
-    login_log = relationship('AuthUserLog', \
-                         order_by='AuthUserLog.id')
+    last_login = relationship('AuthUserLog',
+                              order_by='AuthUserLog.id.desc()', uselist=False)
+    login_log = relationship('AuthUserLog',
+                             order_by='AuthUserLog.id')
 
     def in_group(self, group):
         """
@@ -117,7 +109,7 @@ class AuthID(Base):
 
            user = AuthID.get_by_id(1)
         """
-        return DBSession.query(cls).filter(cls.id==id).first()    
+        return DBSession.query(cls).filter(cls.id == id).first()
 
     def get_profile(self, request=None):
         """
@@ -151,7 +143,7 @@ class AuthID(Base):
         if self.groups:
             for group in self.groups:
                 group_list.append(group.name)
-        return ','.join( map( str, group_list ) )
+        return ','.join(group_list)
 
 class AuthUser(Base):
     """ Table name: auth_users
@@ -169,13 +161,13 @@ class AuthUser(Base):
 
     id = Column(types.Integer(), primary_key=True)
     auth_id = Column(types.Integer, ForeignKey(AuthID.id), index=True)
-    provider = Column(Unicode(80), default=u'local', index=True)
-    login = Column(Unicode(80), default=u'', index=True)
+    provider = Column(Unicode(80), default='local', index=True)
+    login = Column(Unicode(80), default='', index=True)
     salt = Column(Unicode(24))
-    _password = Column('password', Unicode(80), default=u'')
-    email = Column(Unicode(80), default=u'', index=True)
+    _password = Column('password', Unicode(80), default='')
+    email = Column(Unicode(80), default='', index=True)
     created = Column(types.DateTime(), default=func.now())
-    active = Column(types.Enum(u'Y',u'N',u'D', name=u'active'), default=u'Y')
+    active = Column(types.Enum('Y', 'N', 'D', name='active'), default='Y')
 
     # need unique index on auth_id, provider, login
     # create unique index ilp on auth_users (auth_id,login,provider);
@@ -189,19 +181,13 @@ class AuthUser(Base):
     def _get_password(self):
         return self._password
 
-    password = synonym('_password', descriptor=property(_get_password, \
-                       _set_password))
+    password = synonym('_password',
+                       descriptor=property(_get_password, _set_password))
 
     def get_salt(self, length):
-        m = hashlib.sha256()
-        word = ''
-
-        for i in list(range(length)):
-            word += random.choice(string.ascii_letters)
-
-        m.update(word.encode('utf-8'))
-
-        return str(m.hexdigest()[:length])
+        word = ''.join(random.choice(string.ascii_letters) for _ in range(length))
+        m = hashlib.sha256(word.encode('utf-8'))
+        return m.hexdigest()[:length]
 
     @classmethod
     def get_by_id(cls, id):
@@ -214,7 +200,7 @@ class AuthUser(Base):
 
            user = AuthID.get_by_id(1)
         """
-        return DBSession.query(cls).filter(cls.id==id).first()    
+        return DBSession.query(cls).filter(cls.id == id).first()
 
     @classmethod
     def get_by_login(cls, login):
@@ -227,7 +213,7 @@ class AuthUser(Base):
 
            user = AuthUser.get_by_login('login')
         """
-        return DBSession.query(cls).filter(cls.login==login).first()
+        return DBSession.query(cls).filter(cls.login == login).first()
 
     @classmethod
     def get_by_email(cls, email):
@@ -240,7 +226,7 @@ class AuthUser(Base):
 
            user = AuthUser.get_by_email('email@address.com')
         """
-        return DBSession.query(cls).filter(cls.email==email).first()
+        return DBSession.query(cls).filter(cls.email == email).first()
 
     @classmethod
     def check_password(cls, **kwargs):
@@ -263,8 +249,8 @@ class AuthUser(Base):
         if fallback_auth:
             resolver = DottedNameResolver(fallback_auth.split('.', 1)[0])
             fallback = resolver.resolve(fallback_auth)
-            return fallback().check(DBSession, request, user, \
-                       kwargs['password'])
+            return fallback().check(DBSession, request, user,
+                                   kwargs['password'])
 
         return False
 
@@ -284,7 +270,7 @@ class AuthUserLog(Base):
     user_id = Column(types.Integer, ForeignKey(AuthUser.id), index=True)
     time = Column(types.DateTime(), default=func.now())
     ip_addr = Column(Unicode(39), nullable=False)
-    event = Column(types.Enum(u'L',u'R',u'P',u'F', name=u'event'), default=u'L')
+    event = Column(types.Enum('L', 'R', 'P', 'F', name='event'), default='L')
 
 def populate(settings):
     session = DBSession()
@@ -292,10 +278,10 @@ def populate(settings):
     default_groups = []
     if 'apex.default_groups' in settings:
         for name in settings['apex.default_groups'].split(','):
-            default_groups.append((str(name.strip()),u''))
+            default_groups.append((str(name.strip()), ''))
     else:
-        default_groups = [(u'users',u'User Group'), \
-                          (u'admin',u'Admin Group')]
+        default_groups = [('users', 'User Group'),
+                          ('admin', 'Admin Group')]
     for name, description in default_groups:
         group = AuthGroup(name=name, description=description)
         session.add(group)

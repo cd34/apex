@@ -14,6 +14,7 @@ install_requires = [
     "pyramid_mailer",
     "requests",
     "wtforms",
+    "wtforms-sqlalchemy",
     "wtforms-recaptcha",
 ]
 
@@ -23,8 +24,10 @@ tests_require = install_requires + ['Sphinx', 'docutils',
 
 here = os.path.abspath(os.path.dirname(__file__))
 try:
-    README = open(os.path.join(here, 'README.rst')).read()
-    CHANGELOG = open(os.path.join(here, 'CHANGELOG.txt')).read()
+    with open(os.path.join(here, 'README.rst')) as f:
+        README = f.read()
+    with open(os.path.join(here, 'CHANGELOG.txt')) as f:
+        CHANGELOG = f.read()
 except IOError:
     README = CHANGELOG = ''
 
@@ -58,11 +61,7 @@ CSRF, ReCaptcha and Sessions""",
 
 # to update catalogs, use babel and lingua !
 try:
-    import babel
-    babel = babel  # PyFlakes
-    # if babel is installed, advertise message extractors (if we pass
-    # this to setup() unconditionally, and babel isn't installed,
-    # distutils warns pointlessly)
+    import babel  # noqa: F401
     kwargs['message_extractors'] = {".": [
         ("**.py",     "lingua_python", None),
         ('**.mako', 'mako', None),

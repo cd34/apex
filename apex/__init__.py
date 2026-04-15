@@ -10,7 +10,7 @@ from pyramid.interfaces import (IAuthenticationPolicy,
                                 IAuthorizationPolicy,
                                 ISessionFactory)
 from pyramid.security import NO_PERMISSION_REQUIRED
-from pyramid.session import UnencryptedCookieSessionFactoryConfig
+from pyramid.session import SignedCookieSessionFactory
 from pyramid.settings import asbool
 
 from apex.exceptions import (ApexAuthSecret,
@@ -56,9 +56,10 @@ def includeme(config):
         if 'apex.session_secret' not in settings:
             raise ApexSessionSecret()
 
-        config.set_session_factory( \
-               UnencryptedCookieSessionFactoryConfig( \
-               settings.get('apex.session_secret')))
+        session_factory = SignedCookieSessionFactory(
+            settings.get('apex.session_secret')
+        )
+        config.set_session_factory(session_factory)
 
     if not config.registry.queryUtility(IAuthorizationPolicy):
         authz_policy = ACLAuthorizationPolicy()
@@ -68,10 +69,11 @@ def includeme(config):
     if not config.registry.queryUtility(IAuthenticationPolicy):
         if 'apex.auth_secret' not in settings:
             raise ApexAuthSecret()
-        authn_policy = AuthTktAuthenticationPolicy( \
-                       settings.get('apex.auth_secret'), \
-                       hashalg='sha512', \
-                       callback=groupfinder)
+        authn_policy = AuthTktAuthenticationPolicy(
+        settings.get('apex.auth_secret'),
+        hashalg='sha512',
+        callback=groupfinder
+    )
         config.set_authentication_policy(authn_policy)
 
     cache = RootFactory.__acl__
@@ -136,14 +138,13 @@ def includeme(config):
     config.add_view(apex_callback, route_name='apex_callback', permission=NO_PERMISSION_REQUIRED)
 
     config.add_route('apex_openid_required', '/openid_required')
-    config.add_view(openid_required, route_name= \
-                    'apex_openid_required', \
+    config.add_view(openid_required, route_name='apex_openid_required',
                     renderer=render_template, permission=NO_PERMISSION_REQUIRED)
 
     if 'apex.auth_profile' in settings:
         use_edit = asbool(settings.get('apex.use_apex_edit', False))
         if use_edit:
             config.add_route('apex_edit', '/edit')
-            config.add_view(edit, route_name='apex_edit', \
-                            renderer=render_template, \
+            config.add_view(edit, route_name='apex_edit',
+                            renderer=render_template,
                             permission='authenticated')
